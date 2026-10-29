@@ -13,15 +13,16 @@
 </head>
 <body>
 
+  <!-- SIDEBAR ADMIN -->
   <aside class="sidebar">
-    <a href="dashboard.html" class="logo">ADMIN PANEL</a>
+    <a href="dashboard.html" class="logo"><img src="../img/SELARAS.png" alt="Logo"></a>
     <div class="menu-group">
       <a href="dashboard.html" class="menu-item">Dashboard</a>
       <a href="classes.html" class="menu-item active">Kelola Kelas</a>
       <a href="orders.html" class="menu-item">Data Pesanan</a>
       <a href="gallery.html" class="menu-item">Kelola Galeri</a>
       <a href="messages.html" class="menu-item">Pesan Masuk</a>
-      <a href="settings.html" class="menu-item">Pengaturan Web</a>    
+      <a href="settings.html" class="menu-item">Pengaturan Web</a>
     </div>
     <div class="menu-group" style="margin-top: auto;">
       <a href="#" onclick="logout()" class="menu-item" style="color: #f87171;">Logout</a>
@@ -32,26 +33,26 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
       <div>
         <h1 class="page-title">Manajemen Kelas</h1>
-        <p class="page-subtitle" style="margin-bottom: 0;">Tambah, edit, atau hapus kelas yoga.</p>
+        <p class="page-subtitle" style="margin-bottom: 0;">Tambah, edit, atau hapus jadwal kelas.</p>
       </div>
       <a href="add-class.html" class="btn btn-primary">+ Tambah Kelas Baru</a>
     </div>
 
-    <!-- Tabel Kelas (Dikosongkan dulu, akan diisi via JS) -->
+    <!-- Tabel Kelas -->
     <div class="table-wrapper">
       <table class="admin-table">
         <thead>
           <tr>
             <th>Gambar</th>
-            <th>Nama Kelas</th>
+            <th>Kelas & Jadwal</th>
             <th>Harga</th>
-            <th>Level</th>
+            <th>Kuota</th>
+            <th>Status</th>
             <th>Aksi</th>
           </tr>
         </thead>
         <tbody id="tabelKelas">
-          <!-- Data dari Firebase akan muncul di sini -->
-          <tr><td colspan="5" style="text-align:center;">Memuat data...</td></tr>
+          <tr><td colspan="6" style="text-align:center;">Memuat data...</td></tr>
         </tbody>
       </table>
     </div>
@@ -59,43 +60,53 @@
 
   <script type="module">
     import { firebaseConfig, app } from '../firebase-config.js';
-    import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const db = getFirestore(app);
     const tabelKelas = document.getElementById('tabelKelas');
 
-    // Fungsi untuk mengambil data dari Firebase
+    // Fungsi Format Tanggal
+    function formatTanggal(tglString) {
+      if (!tglString) return '-';
+      return new Date(tglString).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
     async function tampilkanKelas() {
       try {
-        // Ambil data dari koleksi "classes"
-        const querySnapshot = await getDocs(collection(db, "classes"));
+        // Urutkan berdasarkan tanggal
+        const q = query(collection(db, "classes"), orderBy("tanggal", "asc"));
+        const querySnapshot = await getDocs(q);
         
-        // Kosongkan tabel
         tabelKelas.innerHTML = '';
         
         if (querySnapshot.empty) {
-          tabelKelas.innerHTML = '<tr><td colspan="5" style="text-align:center;">Belum ada kelas yang ditambahkan.</td></tr>';
+          tabelKelas.innerHTML = '<tr><td colspan="6" style="text-align:center;">Belum ada kelas yang ditambahkan.</td></tr>';
           return;
         }
 
-        // Looping data dan masukkan ke tabel
         querySnapshot.forEach((doc) => {
           const data = doc.data();
           const id = doc.id;
-          
-          // Format harga
           const hargaRupiah = 'Rp ' + data.harga.toLocaleString('id-ID');
           
-          // Buat baris tabel
+          const tanggalFormat = formatTanggal(data.tanggal);
+          const statusText = data.statusAktif !== false ? '<span style="color: #10b981; font-weight: 600;">Aktif</span>' : '<span style="color: #ef4444; font-weight: 600;">Non-Aktif</span>';
+
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td><img src="${data.gambar}" alt="Kelas" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;"></td>
-            <td><strong>${data.nama}</strong><br><span style="font-size: 0.85rem; color: #64748b;">${data.durasi} Menit</span></td>
+            <td>
+              <strong>${data.nama}</strong><br>
+              <span style="font-size: 0.85rem; color: #64748b;">
+                ${data.coach || '-'} | ${tanggalFormat} | ${data.lokasi || '-'}
+              </span>
+            </td>
             <td>${hargaRupiah}</td>
-            <td>${data.level}</td>
+            <td>${data.kuotaTersisa || 0} / ${data.kuotaAwal || 0}</td>
+            <td>${statusText}</td>
             <td>
               <div class="action-btns">
-                <a href="edit-class.html?id=${id}&nama=${encodeURIComponent(data.nama)}&harga=${data.harga}&durasi=${data.durasi}&level=${encodeURIComponent(data.level)}" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.8rem;">Edit</a>
+                <a href="edit-class.html?id=${id}" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.8rem;">Edit</a>
                 <button class="btn btn-outline" onclick="hapusKelas('${id}')" style="padding: 5px 12px; font-size: 0.8rem; color: #ef4444; border-color: #ef4444;">Hapus</button>
               </div>
             </td>
@@ -104,40 +115,31 @@
         });
       } catch (error) {
         console.error("Error mengambil data: ", error);
-        tabelKelas.innerHTML = '<tr><td colspan="5" style="text-align:center; color: red;">Gagal memuat data. Cek Console.</td></tr>';
+        tabelKelas.innerHTML = '<tr><td colspan="6" style="text-align:center; color: red;">Gagal memuat data. Cek Console.</td></tr>';
       }
     }
 
-    // Panggil fungsi saat halaman dimuat
     tampilkanKelas();
 
-        // 1. Import fungsi deleteDoc
-    // (Ubah baris import di paling atas script menjadi seperti ini)
-    // import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    // 2. Fungsi Hapus Kelas
+    // Fungsi Hapus
     window.hapusKelas = async function(id) {
       const konfirmasi = confirm("Apakah kamu yakin ingin menghapus kelas ini?");
       if (!konfirmasi) return;
 
       try {
-        // Hapus data dari Firestore berdasarkan ID dokumen
         await deleteDoc(doc(db, "classes", id));
         alert("Kelas berhasil dihapus!");
-        // Refresh halaman untuk melihat perubahan
-        window.location.reload(); 
+        tampilkanKelas(); // Refresh tabel tanpa reload halaman
       } catch (error) {
-        console.error("Error menghapus kelas: ", error);
-        alert("Gagal menghapus kelas. Cek console.");
+        console.error("Error menghapus: ", error);
+        alert("Gagal menghapus kelas.");
       }
     }
 
-    // Fungsi Logout
     window.logout = function() {
       localStorage.removeItem('isAdminLoggedIn');
       window.location.href = 'login.html';
     }
   </script>
-
 </body>
 </html>
