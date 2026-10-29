@@ -19,7 +19,7 @@
       <a href="dashboard.html" class="menu-item">Dashboard</a>
       <a href="classes.html" class="menu-item active">Kelola Kelas</a>
       <a href="orders.html" class="menu-item">Data Pesanan</a>
-      <a href="gallery.html" class="menu-item ">Kelola Galeri</a>
+      <a href="gallery.html" class="menu-item">Kelola Galeri</a>
       <a href="settings.html" class="menu-item">Pengaturan Web</a>
     </div>
     <div class="menu-group" style="margin-top: auto;">
@@ -27,7 +27,6 @@
     </div>
   </aside>
 
-  <!-- KONTEN ADMIN -->
   <main class="main-content">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
       <div>
@@ -37,7 +36,7 @@
       <a href="add-class.html" class="btn btn-primary">+ Tambah Kelas Baru</a>
     </div>
 
-    <!-- Tabel Kelas Dummy -->
+    <!-- Tabel Kelas (Dikosongkan dulu, akan diisi via JS) -->
     <div class="table-wrapper">
       <table class="admin-table">
         <thead>
@@ -49,27 +48,70 @@
             <th>Aksi</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td><img src="https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?auto=format&fit=crop&w=100&q=80" alt="Kelas"></td>
-            <td><strong>Ease Into Sleep</strong><br><span style="font-size: 0.85rem; color: #64748b;">60 Menit</span></td>
-            <td>Rp 115.000</td>
-            <td>-</td>
-            <td>
-              <div class="action-btns">
-                <a href="edit-class.html?nama=Ease Into Sleep&harga=115000&durasi=60&level=beginner" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.8rem;">Edit</a>
-                <button class="btn btn-outline" style="padding: 5px 12px; font-size: 0.8rem; color: #ef4444; border-color: #ef4444;">Hapus</button>
-              </div>
-            </td>
-          </tr>
+        <tbody id="tabelKelas">
+          <!-- Data dari Firebase akan muncul di sini -->
+          <tr><td colspan="5" style="text-align:center;">Memuat data...</td></tr>
         </tbody>
       </table>
     </div>
-
   </main>
 
-  <script>
-    function logout() {
+  <script type="module">
+    import { firebaseConfig, app } from '../firebase-config.js';
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const db = getFirestore(app);
+    const tabelKelas = document.getElementById('tabelKelas');
+
+    // Fungsi untuk mengambil data dari Firebase
+    async function tampilkanKelas() {
+      try {
+        // Ambil data dari koleksi "classes"
+        const querySnapshot = await getDocs(collection(db, "classes"));
+        
+        // Kosongkan tabel
+        tabelKelas.innerHTML = '';
+        
+        if (querySnapshot.empty) {
+          tabelKelas.innerHTML = '<tr><td colspan="5" style="text-align:center;">Belum ada kelas yang ditambahkan.</td></tr>';
+          return;
+        }
+
+        // Looping data dan masukkan ke tabel
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const id = doc.id;
+          
+          // Format harga
+          const hargaRupiah = 'Rp ' + data.harga.toLocaleString('id-ID');
+          
+          // Buat baris tabel
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><img src="${data.gambar}" alt="Kelas" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;"></td>
+            <td><strong>${data.nama}</strong><br><span style="font-size: 0.85rem; color: #64748b;">${data.durasi} Menit</span></td>
+            <td>${hargaRupiah}</td>
+            <td>${data.level}</td>
+            <td>
+              <div class="action-btns">
+                <a href="edit-class.html?id=${id}&nama=${encodeURIComponent(data.nama)}&harga=${data.harga}&durasi=${data.durasi}&level=${encodeURIComponent(data.level)}" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.8rem;">Edit</a>
+                <button class="btn btn-outline" onclick="hapusKelas('${id}')" style="padding: 5px 12px; font-size: 0.8rem; color: #ef4444; border-color: #ef4444;">Hapus</button>
+              </div>
+            </td>
+          `;
+          tabelKelas.appendChild(tr);
+        });
+      } catch (error) {
+        console.error("Error mengambil data: ", error);
+        tabelKelas.innerHTML = '<tr><td colspan="5" style="text-align:center; color: red;">Gagal memuat data. Cek Console.</td></tr>';
+      }
+    }
+
+    // Panggil fungsi saat halaman dimuat
+    tampilkanKelas();
+
+    // Fungsi Logout
+    window.logout = function() {
       localStorage.removeItem('isAdminLoggedIn');
       window.location.href = 'login.html';
     }
