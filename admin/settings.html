@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengaturan Web - Admin</title>
+  <link rel="stylesheet" href="admin-style.css">
+  <script>
+    if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
+      window.location.href = 'login.html';
+    }
+  </script>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <a href="dashboard.html" class="logo">ADMIN PANEL</a>
+    <div class="menu-group">
+      <a href="dashboard.html" class="menu-item">Dashboard</a>
+      <a href="classes.html" class="menu-item">Kelola Kelas</a>
+      <a href="orders.html" class="menu-item">Data Pesanan</a>
+      <a href="settings.html" class="menu-item active">Pengaturan Web</a>
+    </div>
+    <div class="menu-group" style="margin-top: auto;">
+      <a href="#" onclick="logout()" class="menu-item" style="color: #f87171;">Logout</a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <h1 class="page-title">Pengaturan Website</h1>
+    <p class="page-subtitle">Ubah teks dan informasi yang tampil di halaman pengunjung.</p>
+
+    <div class="table-wrapper" style="padding: 30px; max-width: 800px;">
+      <form onsubmit="event.preventDefault(); alert('Pengaturan berhasil disimpan! (Simulasi)');">
+        
+        <!-- Section Home -->
+        <h3 style="margin-bottom: 15px; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Halaman Home</h3>
+        <div class="form-group">
+          <label>Judul Utama (Hero)</label>
+          <input type="text" class="form-control" value="Find Balance Through Yoga">
+        </div>
+        <div class="form-group">
+          <label>Sub-judul (Hero)</label>
+          <textarea class="form-control" rows="2">A minimalist, calming space for mindful movement. Join a class, breathe deeply, and reset your day.</textarea>
+        </div>
+
+        <!-- Section About Us -->
+        <h3 style="margin: 30px 0 15px 0; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Halaman About Us</h3>
+        <div class="form-group">
+          <label>Judul About</label>
+          <input type="text" class="form-control" value="Temukan Ruang Untuk Dirimu.">
+        </div>
+        <div class="form-group">
+          <label>Deskripsi About</label>
+          <textarea class="form-control" rows="4">Selaras Wellness Club didirikan pada tahun 2020 dengan satu misi sederhana: menciptakan ruang yang aman dan tenang di tengah hiruk-pikuk kota.</textarea>
+        </div>
+
+        <!-- Section Contact -->
+        <h3 style="margin: 30px 0 15px 0; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Halaman Contact</h3>
+        <div class="form-group">
+          <label>Alamat Studio</label>
+          <input type="text" class="form-control" value="Jl. Ketenangan No. 88, Bandung">
+        </div>
+        <div class="form-group">
+          <label>Nomor Telepon / WA Studio</label>
+          <input type="text" class="form-control" value="+62 812 3456 7890">
+        </div>
+        
+        <!-- Section Link Tambahan -->
+        <h3 style="margin: 30px 0 15px 0; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Lainnya</h3>
+        <div class="form-group">
+          <label>Link Grup WhatsApp (Untuk Halaman Sukses)</label>
+          <input type="text" class="form-control" value="https://chat.whatsapp.com/xxxxxxx">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Simpan Semua Pengaturan</button>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    function logout() {
+      localStorage.removeItem('isAdminLoggedIn');
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Pesanan - Admin</title>
+  <link rel="stylesheet" href="admin-style.css">
+  <script>
+    if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
+      window.location.href = 'login.html';
+    }
+  </script>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <a href="dashboard.html" class="logo">ADMIN PANEL</a>
+    <div class="menu-group">
+      <a href="dashboard.html" class="menu-item">Dashboard</a>
+      <a href="classes.html" class="menu-item">Kelola Kelas</a>
+      <a href="orders.html" class="menu-item active">Data Pesanan</a>
+      <a href="settings.html" class="menu-item">Pengaturan Web</a> <!-- Menu Baru -->
+    </div>
+    <div class="menu-group" style="margin-top: auto;">
+      <a href="#" onclick="logout()" class="menu-item" style="color: #f87171;">Logout</a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <h1 class="page-title">Data Pesanan</h1>
+    <p class="page-subtitle">Semua riwayat pemesanan kelas yoga.</p>
+
+    <div class="table-wrapper">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nama</th>
+            <th>Kelas</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>#ORD-001</td>
+            <td>Budi Santoso</td>
+            <td>Ease Into Sleep</td>
+            <td>Rp 115.000</td>
+            <td><span class="badge-status status-pending">Pending</span></td>
+            <td><a href="order-detail.html" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.8rem; display: inline-block;">Cek Detail</a></td>
+          </tr>
+          <tr>
+            <td>#ORD-002</td>
+            <td>Siti Aminah</td>
+            <td>Heart-to-Heart Duo</td>
+            <td>Rp 55.000</td>
+            <td><span class="badge-status status-success">Sukses</span></td>
+            <td><a href="order-detail.html" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.8rem; display: inline-block;">Cek Detail</a></td>
+          </tr>
+          <tr>
+            <td>#ORD-003</td>
+            <td>Andi Wijaya</td>
+            <td>Power Flow Intensive</td>
+            <td>Rp 45.000</td>
+            <td><span class="badge-status status-pending">Pending</span></td>
+            <td><a href="order-detail.html" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.8rem; display: inline-block;">Cek Detail</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    function logout() {
+      localStorage.removeItem('isAdminLoggedIn');
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>
