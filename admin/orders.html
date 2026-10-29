@@ -35,7 +35,7 @@
       <table class="admin-table">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Tanggal</th>
             <th>Nama</th>
             <th>Kelas</th>
             <th>Total</th>
@@ -43,38 +43,66 @@
             <th>Aksi</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>#ORD-001</td>
-            <td>Budi Santoso</td>
-            <td>Ease Into Sleep</td>
-            <td>Rp 115.000</td>
-            <td><span class="badge-status status-pending">Pending</span></td>
-            <td><a href="order-detail.html" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.8rem; display: inline-block;">Cek Detail</a></td>
-          </tr>
-          <tr>
-            <td>#ORD-002</td>
-            <td>Siti Aminah</td>
-            <td>Heart-to-Heart Duo</td>
-            <td>Rp 55.000</td>
-            <td><span class="badge-status status-success">Sukses</span></td>
-            <td><a href="order-detail.html" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.8rem; display: inline-block;">Cek Detail</a></td>
-          </tr>
-          <tr>
-            <td>#ORD-003</td>
-            <td>Andi Wijaya</td>
-            <td>Power Flow Intensive</td>
-            <td>Rp 45.000</td>
-            <td><span class="badge-status status-pending">Pending</span></td>
-            <td><a href="order-detail.html" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.8rem; display: inline-block;">Cek Detail</a></td>
-          </tr>
+        <tbody id="tabelPesanan">
+          <tr><td colspan="6" style="text-align:center;">Memuat data...</td></tr>
         </tbody>
       </table>
     </div>
   </main>
 
-  <script>
-    function logout() {
+  <script type="module">
+    import { firebaseConfig, app } from '../firebase-config.js';
+    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const db = getFirestore(app);
+    const tabelPesanan = document.getElementById('tabelPesanan');
+
+    async function tampilkanPesanan() {
+      try {
+        // Ambil data dari koleksi "orders", urutkan dari yang terbaru
+        const q = query(collection(db, "orders"), orderBy("tanggal", "desc"));
+        const querySnapshot = await getDocs(q);
+        
+        tabelPesanan.innerHTML = '';
+        
+        if (querySnapshot.empty) {
+          tabelPesanan.innerHTML = '<tr><td colspan="6" style="text-align:center;">Belum ada pesanan masuk.</td></tr>';
+          return;
+        }
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const id = doc.id;
+          
+          // Format tanggal
+          const tanggal = data.tanggal ? data.tanggal.toDate().toLocaleDateString('id-ID') : '-';
+          const hargaRupiah = 'Rp ' + data.totalHarga.toLocaleString('id-ID');
+          
+          // Warna Badge
+          let badgeClass = data.status === 'Pending' ? 'status-pending' : 'status-success';
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${tanggal}</td>
+            <td>${data.nama}</td>
+            <td>${data.kelas}</td>
+            <td>${hargaRupiah}</td>
+            <td><span class="badge-status ${badgeClass}">${data.status}</span></td>
+            <td>
+              <a href="order-detail.html?id=${id}" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.8rem; display: inline-block;">Cek Detail</a>
+            </td>
+          `;
+          tabelPesanan.appendChild(tr);
+        });
+      } catch (error) {
+        console.error("Error: ", error);
+        tabelPesanan.innerHTML = '<tr><td colspan="6" style="text-align:center; color: red;">Gagal memuat data.</td></tr>';
+      }
+    }
+
+    tampilkanPesanan();
+
+    window.logout = function() {
       localStorage.removeItem('isAdminLoggedIn');
       window.location.href = 'login.html';
     }

@@ -6,55 +6,17 @@
   <title>Detail Pesanan - Admin</title>
   <link rel="stylesheet" href="admin-style.css">
   <style>
-    /* Layout Grid untuk Detail */
-    .detail-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 30px;
-      max-width: 900px;
-    }
-    .info-box {
-      background: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-      border: 1px solid #e2e8f0;
-    }
-    .info-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 15px;
-      padding-bottom: 15px;
-      border-bottom: 1px dashed #e2e8f0;
-    }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 900px; }
+    .info-box { background: #fff; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0; }
+    .info-row { display: flex; justify-content: space-between; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed #e2e8f0; }
     .info-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
     .info-label { color: #64748b; font-weight: 500; }
     .info-value { font-weight: 600; color: #0f172a; text-align: right; }
-    
-    .proof-box {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-      border: 1px solid #e2e8f0;
-      text-align: center;
-    }
-    .proof-img {
-      width: 100%;
-      max-height: 400px;
-      object-fit: contain;
-      border-radius: 8px;
-      border: 1px solid #e2e8f0;
-      background: #f8fafc;
-      margin-bottom: 20px;
-    }
-    
+    .proof-box { background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center; }
+    .proof-img { width: 100%; max-height: 400px; object-fit: contain; border-radius: 8px; margin-bottom: 20px; background: #f8fafc; }
     .action-area { display: flex; gap: 15px; margin-top: 20px; }
     .action-area button { flex: 1; }
-
-    @media (max-width: 768px) {
-      .detail-grid { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 768px) { .detail-grid { grid-template-columns: 1fr; } }
   </style>
   <script>
     if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
@@ -64,7 +26,6 @@
 </head>
 <body>
 
-  <!-- SIDEBAR ADMIN -->
   <aside class="sidebar">
     <a href="dashboard.html" class="logo">ADMIN PANEL</a>
     <div class="menu-group">
@@ -79,77 +40,102 @@
     </div>
   </aside>
 
-  <!-- KONTEN ADMIN -->
   <main class="main-content">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
       <div>
         <h1 class="page-title">Detail Pesanan</h1>
         <p class="page-subtitle" style="margin-bottom: 0;">Verifikasi pembayaran dan detail murid.</p>
       </div>
-      <a href="dashboard.html" class="btn btn-outline">Kembali ke Dashboard</a>
+      <a href="orders.html" class="btn btn-outline">Kembali</a>
     </div>
 
-    <div class="detail-grid">
-      
-      <!-- KOLOM KIRI: Data Pemesan -->
-      <div class="info-box">
-        <h3 style="margin-bottom: 20px; font-size: 1.2rem; color: #0f172a;">Informasi Pemesan</h3>
-        
-        <div class="info-row">
-          <span class="info-label">Nama Lengkap</span>
-          <span class="info-value">Budi Santoso</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Email</span>
-          <span class="info-value">budi@example.com</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">WhatsApp</span>
-          <span class="info-value">0812-3456-7890</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Kelas</span>
-          <span class="info-value">Ease Into Sleep</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Tambahan</span>
-          <span class="info-value">Sewa Mat (+10k)</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label" style="color: #0f172a; font-size: 1.1rem;">Total Transfer</span>
-          <span class="info-value" style="color: #3b82f6; font-size: 1.2rem;">Rp 125.000</span>
-        </div>
-
-        <div style="margin-top: 30px;">
-          <a href="https://wa.me/6281234567890" target="_blank" class="btn btn-primary" style="width: 100%; background: #25D366; display: flex; justify-content: center; align-items: center; gap: 10px;">
-            Hubungi via WhatsApp
-          </a>
-        </div>
-      </div>
-
-      <!-- KOLOM KANAN: Bukti Transfer -->
-      <div class="proof-box">
-        <h3 style="margin-bottom: 20px; font-size: 1.2rem; color: #0f172a; text-align: left;">Bukti Transfer</h3>
-        
-        <!-- Gambar Dummy Bukti Transfer -->
-        <img src="https://images.unsplash.com/photo-1554224155-1696413565d3?auto=format&fit=crop&w=600&q=80" alt="Bukti Transfer" class="proof-img">
-        
-        <div class="action-area">
-          <button class="btn btn-danger" onclick="alert('Pesanan Ditolak!')">Tolak</button>
-          <button class="btn btn-primary" onclick="alert('Pesanan Disetujui! Status berubah menjadi Sukses.')">Approve</button>
-        </div>
-      </div>
-
+    <div class="detail-grid" id="detailContainer">
+      <p>Memuat data...</p>
     </div>
-
   </main>
 
-  <script>
-    function logout() {
+  <script type="module">
+    import { firebaseConfig, app } from '../firebase-config.js';
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const db = getFirestore(app);
+    const urlParams = new URLSearchParams(window.location.search);
+    const idPesanan = urlParams.get('id');
+    const container = document.getElementById('detailContainer');
+
+    async function loadDetail() {
+      if (!idPesanan) {
+        container.innerHTML = '<p>ID Pesanan tidak ditemukan.</p>';
+        return;
+      }
+
+      try {
+        const docRef = doc(db, "orders", idPesanan);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          const hargaRupiah = 'Rp ' + data.totalHarga.toLocaleString('id-ID');
+          const waLink = 'https://wa.me/' + data.wa.replace(/^0/, '62'); // Ubah 08 jadi 628
+
+          // Tampilkan HTML
+          container.innerHTML = `
+            <div class="info-box">
+              <h3 style="margin-bottom: 20px; font-size: 1.2rem;">Informasi Pemesan</h3>
+              <div class="info-row"><span class="info-label">Nama Lengkap</span><span class="info-value">${data.nama}</span></div>
+              <div class="info-row"><span class="info-label">Email</span><span class="info-value">${data.email}</span></div>
+              <div class="info-row"><span class="info-label">WhatsApp</span><span class="info-value">${data.wa}</span></div>
+              <div class="info-row"><span class="info-label">Kelas</span><span class="info-value">${data.kelas}</span></div>
+              <div class="info-row"><span class="info-label" style="color: #0f172a; font-size: 1.1rem;">Total Transfer</span><span class="info-value" style="color: #3b82f6; font-size: 1.2rem;">${hargaRupiah}</span></div>
+              <div style="margin-top: 30px;">
+                <a href="${waLink}" target="_blank" class="btn btn-primary" style="width: 100%; background: #25D366; display: flex; justify-content: center;">Hubungi via WhatsApp</a>
+              </div>
+            </div>
+
+            <div class="proof-box">
+              <h3 style="margin-bottom: 20px; font-size: 1.2rem; text-align: left;">Bukti Transfer</h3>
+              <img src="${data.buktiTransfer}" alt="Bukti Transfer" class="proof-img">
+              <div class="action-area" id="actionButtons">
+                ${data.status === 'Pending' ? `
+                  <button class="btn btn-danger" onclick="updateStatus('Rejected')">Tolak</button>
+                  <button class="btn btn-primary" onclick="updateStatus('Success')">Approve</button>
+                ` : `
+                  <button class="btn btn-outline" style="width: 100%;" disabled>Status: ${data.status}</button>
+                `}
+              </div>
+            </div>
+          `;
+        } else {
+          container.innerHTML = '<p>Pesanan tidak ditemukan di database.</p>';
+        }
+      } catch (error) {
+        console.error(error);
+        container.innerHTML = '<p>Gagal memuat data.</p>';
+      }
+    }
+
+    // Fungsi untuk Approve / Reject
+    window.updateStatus = async function(newStatus) {
+      const konfirmasi = confirm(`Yakin ingin mengubah status pesanan menjadi ${newStatus}?`);
+      if (!konfirmasi) return;
+
+      try {
+        const docRef = doc(db, "orders", idPesanan);
+        await updateDoc(docRef, { status: newStatus });
+        alert('Status berhasil diubah!');
+        window.location.reload(); // Refresh halaman
+      } catch (error) {
+        console.error(error);
+        alert('Gagal update status.');
+      }
+    }
+
+    loadDetail();
+
+    window.logout = function() {
       localStorage.removeItem('isAdminLoggedIn');
       window.location.href = 'login.html';
     }
   </script>
-
 </body>
 </html>

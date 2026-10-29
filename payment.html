@@ -6,99 +6,45 @@
   <title>Payment - Yoga Fest</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
-    /* Styling khusus halaman payment */
     .payment-box { max-width: 550px; }
     .form-label { font-weight: 500; margin-bottom: 8px; display: block; font-size: 1rem; }
-    .provider-box {
-      border: 2px solid var(--primary);
-      background: var(--pink-light);
-      padding: 15px;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 1.1rem;
-      display: inline-block;
-      margin-bottom: 20px;
-    }
-    .readonly-input {
-      background: #f0f0f0;
-      color: #555;
-      cursor: not-allowed;
-    }
-    .btn-group-payment {
-      display: flex;
-      gap: 15px;
-      margin-top: 30px;
-    }
+    .provider-box { border: 2px solid var(--primary); background: var(--pink-light); padding: 15px; border-radius: 10px; font-weight: 600; font-size: 1.1rem; display: inline-block; margin-bottom: 20px; }
+    .readonly-input { background: #f0f0f0; color: #555; cursor: not-allowed; }
+    .btn-group-payment { display: flex; gap: 15px; margin-top: 30px; }
     .btn-group-payment .btn { flex: 1; text-align: center; }
-    .btn-disabled {
-      background-color: #cccccc !important;
-      color: #888888 !important;
-      cursor: not-allowed !important;
-      pointer-events: none;
-    }
-    /* Styling input file */
-    input[type="file"] {
-      background: #fff;
-      padding: 10px;
-      border: 1px dashed var(--border);
-      width: 100%;
-    }
+    .btn-disabled { background-color: #cccccc !important; color: #888888 !important; cursor: not-allowed !important; pointer-events: none; }
+    input[type="file"] { background: #fff; padding: 10px; border: 1px dashed var(--border); width: 100%; }
   </style>
 </head>
 <body>
 
-   <!-- SIDEBAR -->
   <aside class="sidebar">
     <a href="index.html" class="logo">SELARAS.</a>
-    
     <div class="menu-group">
-      <a href="index.html" class="menu-item active">
-        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-        Home
-      </a>
-      <a href="classes.html" class="menu-item">
-        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-        Book a Class
-      </a>
-      <a href="galeri.html" class="menu-item">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-        Galeri
-      </a>
-      <a href="about.html" class="menu-item">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-        About Us
-      </a>
-    </div>
-
-    <div class="menu-group">
-      <a href="contact.html" class="menu-item">
-        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-        Contact
-      </a>
+      <a href="index.html" class="menu-item">Home</a>
+      <a href="classes.html" class="menu-item">Classes & Pricing</a>
+      <a href="galeri.html" class="menu-item">Galeri</a>
+      <a href="about.html" class="menu-item">About Us</a>
     </div>
   </aside>
 
-  <!-- KONTEN UTAMA -->
   <main class="main-content">
     <div class="payment-box">
       <h1 class="page-title">Payment</h1>
       <p class="page-subtitle" style="margin-bottom: 30px;">Complete payment to submit your booking request. Your reservation will be pending approval until confirmed by the studio.</p>
 
-      <form id="paymentForm" onsubmit="event.preventDefault(); window.location.href='success.html';">
+      <form id="paymentForm">
         
-        <!-- Provider -->
         <div class="form-group">
           <label class="form-label">Payment Provider *</label>
           <div class="provider-box">BCA</div>
         </div>
 
-        <!-- No Rekening -->
         <div class="form-group">
           <label class="form-label">Transfer Ke *</label>
-          <input type="text" class="form-control readonly-input" value="5395099938 (a.n Dwipayani Aulia)" readonly>
+          <input type="text" class="form-control readonly-input" value="5395099938 (a.n Selaras Studio)" readonly>
         </div>
 
-        <!-- Kelas & Harga (Otomatis dari URL) -->
         <div class="form-group">
           <label class="form-label">Booking Untuk *</label>
           <input type="text" id="inpKelas" class="form-control readonly-input" readonly>
@@ -109,17 +55,14 @@
           <input type="text" id="inpHarga" class="form-control readonly-input" readonly>
         </div>
 
-        <!-- Upload Bukti -->
         <div class="form-group">
           <label class="form-label">Upload Bukti Pembayaran *</label>
           <input type="file" id="buktiTransfer" accept="image/*" onchange="cekFile()" required>
-          <small style="color: var(--text-muted); margin-top: 5px; display: block;">Format: JPG, PNG. (Wajib diisi)</small>
+          <small style="color: var(--text-muted); margin-top: 5px; display: block;">Format: JPG, PNG.</small>
         </div>
 
-        <!-- Tombol Aksi -->
         <div class="btn-group-payment">
           <a href="classes.html" class="btn btn-outline">Back</a>
-          <!-- Tombol ini awalnya disabled -->
           <button type="submit" id="btnSelesai" class="btn btn-primary btn-disabled" disabled>Selesai</button>
         </div>
 
@@ -127,8 +70,15 @@
     </div>
   </main>
 
-    <script>
-    // 1. Ambil SEMUA data dari URL
+  <script type="module">
+    import { firebaseConfig, app } from './firebase-config.js';
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    // 1. Ambil Data dari URL
     const urlParams = new URLSearchParams(window.location.search);
     const kelas = urlParams.get('kelas') || 'Kelas Reguler';
     const harga = urlParams.get('harga') || '0';
@@ -136,12 +86,12 @@
     const emailUser = urlParams.get('email') || '-';
     const waUser = urlParams.get('wa') || '-';
 
-    // 2. Tampilkan ke dalam form
+    // 2. Tampilkan ke Form
     document.getElementById('inpKelas').value = kelas;
     document.getElementById('inpHarga').value = 'Rp ' + parseInt(harga).toLocaleString('id-ID');
 
-    // 3. Logika aktifkan tombol jika file sudah diupload
-    function cekFile() {
+    // 3. Logika Tombol Disable
+    window.cekFile = function() {
       const fileInput = document.getElementById('buktiTransfer');
       const btnSelesai = document.getElementById('btnSelesai');
 
@@ -153,6 +103,44 @@
         btnSelesai.setAttribute('disabled', 'true');
       }
     }
+
+    // 4. Proses Submit (Upload Bukti & Simpan Data)
+    document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btnSelesai = document.getElementById('btnSelesai');
+      btnSelesai.innerText = 'Memproses...';
+      btnSelesai.disabled = true;
+
+      try {
+        const fileBukti = document.getElementById('buktiTransfer').files[0];
+        
+        // Upload foto bukti ke Firebase Storage
+        const storageRef = ref(storage, 'bukti_transfer/' + Date.now() + '_' + fileBukti.name);
+        const snapshot = await uploadBytes(storageRef, fileBukti);
+        const buktiUrl = await getDownloadURL(snapshot.ref);
+
+        // Simpan data pesanan ke Firestore
+        await addDoc(collection(db, "orders"), {
+          nama: namaUser,
+          email: emailUser,
+          wa: waUser,
+          kelas: kelas,
+          totalHarga: parseInt(harga),
+          buktiTransfer: buktiUrl,
+          status: "Pending",
+          tanggal: new Date()
+        });
+
+        // Jika sukses, lempar ke halaman sukses
+        window.location.href = 'success.html';
+        
+      } catch (error) {
+        console.error("Error booking: ", error);
+        alert('Gagal memproses pesanan. Cek console.');
+        btnSelesai.innerText = 'Selesai';
+        btnSelesai.disabled = false;
+      }
+    });
   </script>
 
 </body>
