@@ -11,6 +11,7 @@
 </head>
 <body>
 
+  <!-- SIDEBAR ADMIN -->
   <aside class="sidebar">
     <a href="dashboard.html" class="logo"><img src="../img/SELARAS.png" alt="Logo"></a>
     <div class="menu-group">
@@ -26,6 +27,7 @@
     </div>
   </aside>
 
+  <!-- KONTEN UTAMA -->
   <main class="main-content">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
       <div>
@@ -101,9 +103,8 @@
         const fileGambar = document.getElementById('gambar').files[0];
         if (!fileGambar) { alert("Pilih gambar dulu!"); return; }
 
-        // Konfigurasi Cloudinary
         const cloudName = 'd4cltmgp'; // GANTI DENGAN CLOUD NAME KAMU
-        const uploadPreset = 'selaras_bukti'; // GANTI DENGAN PRESET KAMU
+        const uploadPreset = 'selaras_bukti';
 
         const formData = new FormData();
         formData.append('file', fileGambar);
@@ -127,7 +128,7 @@
           harga: parseInt(document.getElementById('harga').value),
           kuotaAwal: parseInt(document.getElementById('kuota').value),
           kuotaTersisa: parseInt(document.getElementById('kuota').value),
-          gambar: imageUrl, // URL hasil upload
+          gambar: imageUrl,
           deskripsi: document.getElementById('deskripsi').value,
           statusAktif: true,
           createdAt: new Date()

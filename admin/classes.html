@@ -6,7 +6,6 @@
   <title>Kelola Kelas - Admin</title>
   <link rel="stylesheet" href="admin-style.css">
   <style>
-    /* Style untuk Toggle Switch */
     .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
     .switch input { opacity: 0; width: 0; height: 0; }
     .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
@@ -20,6 +19,7 @@
 </head>
 <body>
 
+  <!-- SIDEBAR ADMIN -->
   <aside class="sidebar">
     <a href="dashboard.html" class="logo"><img src="../img/SELARAS.png" alt="Logo"></a>
     <div class="menu-group">
@@ -35,6 +35,7 @@
     </div>
   </aside>
 
+  <!-- KONTEN UTAMA -->
   <main class="main-content">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
       <div>
@@ -92,8 +93,6 @@
           const id = doc.id;
           const hargaRupiah = 'Rp ' + data.harga.toLocaleString('id-ID');
           const tanggalFormat = formatTanggal(data.tanggal);
-          
-          // Cek Status (Default true jika belum di-set)
           const isAktif = data.statusAktif !== false;
 
           const tr = document.createElement('tr');
@@ -108,7 +107,6 @@
             <td>${hargaRupiah}</td>
             <td>${data.kuotaTersisa || 0} / ${data.kuotaAwal || 0}</td>
             <td>
-              <!-- Toggle Switch -->
               <label class="switch">
                 <input type="checkbox" ${isAktif ? 'checked' : ''} onchange="toggleStatus('${id}', this.checked)">
                 <span class="slider"></span>
@@ -131,19 +129,12 @@
 
     tampilkanKelas();
 
-    // Fungsi untuk Toggle Status
     window.toggleStatus = async function(id, isChecked) {
       try {
-        const kelasRef = doc(db, "classes", id);
-        await updateDoc(kelasRef, {
-          statusAktif: isChecked
-        });
-        // Opsional: kasih notifikasi kecil
-        console.log(`Status kelas ${id} diubah menjadi ${isChecked}`);
+        await updateDoc(doc(db, "classes", id), { statusAktif: isChecked });
       } catch (error) {
         console.error("Gagal update status: ", error);
         alert("Gagal mengubah status kelas.");
-        // Balikkan toggle jika gagal
         tampilkanKelas(); 
       }
     }
