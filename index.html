@@ -8,7 +8,6 @@
 </head>
 <body>
 
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <a href="index.html" class="logo">
   <img src="img/SELARAS.png" alt="Selaras Logo">
@@ -42,7 +41,6 @@
     </div>
   </aside>
 
-  <!-- KONTEN HOME -->
   <main class="main-content">
     <section class="hero">
       <div class="hero-text">
@@ -51,7 +49,6 @@
           <span class="badge-text">WELCOME</span> Yoga Fest 2026
         </div>
         
-        <!-- Teks ini akan diisi oleh JavaScript -->
         <h1 id="heroJudul">Memuat...</h1>
         <p id="heroSub">Memuat...</p>
         
@@ -60,6 +57,8 @@
           <a href="classes.html" class="btn btn-outline">View Schedule</a>
         </div>
       </div>
+      
+      <!-- ID heroGambar ditambahkan di sini -->
       <div class="hero-image" id="heroGambar" style="background-image: url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1000&q=80');"></div>
     </section>
   </main>
@@ -71,6 +70,7 @@
     const db = getFirestore(app);
     const heroJudul = document.getElementById('heroJudul');
     const heroSub = document.getElementById('heroSub');
+    const heroGambar = document.getElementById('heroGambar');
 
     async function loadHomeText() {
       try {
@@ -79,28 +79,19 @@
 
         if (docSnap.exists()) {
           const data = docSnap.data();
-          heroJudul.innerHTML = data.homeJudul || "Find Balance<br>Through Yoga";
-          heroSub.innerText = data.homeSub || "A minimalist, calming space for mindful movement.";
-        } else {
-          // Jika database kosong, pakai teks default
-          heroJudul.innerHTML = "Find Balance<br>Through Yoga";
-          heroSub.innerText = "A minimalist, calming space for mindful movement.";
-        }
-      } catch (error) {
-        console.error("Error load text: ", error);
-        heroJudul.innerText = "Find Balance Through Yoga";
-        heroSub.innerText = "A minimalist, calming space for mindful movement.";
-      }
-              if (docSnap.exists()) {
-          const data = docSnap.data();
+          
+          // Set Teks
           heroJudul.innerHTML = data.homeJudul || "Find Balance<br>Through Yoga";
           heroSub.innerText = data.homeSub || "A minimalist, calming space for mindful movement.";
           
-          // TAMBAHKAN BARIS INI UNTUK GANTI GAMBAR HERO
+          // Set Gambar (Jika ada di database)
           if (data.homeGambar) {
-            document.getElementById('heroGambar').style.backgroundImage = `url('${data.homeGambar}')`;
+            heroGambar.style.backgroundImage = `url('${data.homeGambar}')`;
           }
         }
+      } catch (error) {
+        console.error("Error load text: ", error);
+      }
     }
 
     loadHomeText();
