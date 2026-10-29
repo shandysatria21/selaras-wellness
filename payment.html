@@ -73,10 +73,8 @@
   <script type="module">
     import { firebaseConfig, app } from './firebase-config.js';
     import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
     const db = getFirestore(app);
-    const storage = getStorage(app);
 
     // 1. Ambil Data dari URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -111,22 +109,39 @@
       btnSelesai.innerText = 'Memproses...';
       btnSelesai.disabled = true;
 
-      try {
+            try {
         const fileBukti = document.getElementById('buktiTransfer').files[0];
         
-        // Upload foto bukti ke Firebase Storage
-        const storageRef = ref(storage, 'bukti_transfer/' + Date.now() + '_' + fileBukti.name);
-        const snapshot = await uploadBytes(storageRef, fileBukti);
-        const buktiUrl = await getDownloadURL(snapshot.ref);
+        // --- PROSES UPLOAD KE CLOUDINARY ---
+        // Ganti 'CLOUD_NAME_KAMU' dan 'PRESET_KAMU' sesuai milikmu
+        const cloudName = 'd4cltmgp'; 
+        const uploadPreset = 'selaras_bukti';
 
-        // Simpan data pesanan ke Firestore
+        const formData = new FormData();
+        formData.append('file', fileBukti);
+        formData.append('upload_preset', uploadPreset);
+
+        // Kirim ke API Cloudinary
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) {
+          throw new Error('Gagal upload ke Cloudinary');
+        }
+
+        const cloudinaryData = await response.json();
+        const buktiUrl = cloudinaryData.secure_url; // Ini URL gambar dari Cloudinary
+
+        // --- SIMPAN KE FIRESTORE ---
         await addDoc(collection(db, "orders"), {
           nama: namaUser,
           email: emailUser,
           wa: waUser,
           kelas: kelas,
           totalHarga: parseInt(harga),
-          buktiTransfer: buktiUrl,
+          buktiTransfer: buktiUrl, // Simpan URL Cloudinary
           status: "Pending",
           tanggal: new Date()
         });
@@ -137,8 +152,7 @@
       } catch (error) {
         console.error("Error booking: ", error);
         alert('Gagal memproses pesanan. Cek console.');
-        btnSelesai.innerText = 'Selesai';
-        btnSelesai.disabled = false;
+        // ... (kode tombol reset)
       }
     });
   </script>
