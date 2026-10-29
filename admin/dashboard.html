@@ -6,7 +6,6 @@
   <title>Dashboard Admin - Selaras</title>
   <link rel="stylesheet" href="admin-style.css">
   <script>
-    // Proteksi Halaman
     if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
       window.location.href = 'login.html';
     }
@@ -34,25 +33,25 @@
     <h1 class="page-title">Dashboard</h1>
     <p class="page-subtitle">Selamat datang kembali, Admin.</p>
 
-    <!-- Statistik Dummy -->
+    <!-- Statistik Dinamis -->
     <div class="stat-grid">
       <div class="stat-card">
         <h4>Total Pendapatan</h4>
-        <h2>Rp 1.250.000</h2>
+        <h2 id="statPendapatan">Rp 0</h2>
       </div>
       <div class="stat-card">
         <h4>Total Pesanan</h4>
-        <h2>12</h2>
+        <h2 id="statPesanan">0</h2>
       </div>
       <div class="stat-card">
         <h4>Menunggu Konfirmasi</h4>
-        <h2>4</h2>
+        <h2 id="statPending">0</h2>
       </div>
     </div>
 
     <h2 style="font-size: 1.5rem; margin-bottom: 20px;">Pesanan Terbaru</h2>
     
-    <!-- Tabel Pesanan Dummy -->
+    <!-- Tabel Pesanan Dinamis -->
     <div class="table-wrapper">
       <table class="admin-table">
         <thead>
@@ -64,35 +63,100 @@
             <th>Aksi</th>
           </tr>
         </thead>
-        <tbody>
-          <!-- Baris 1 -->
-          <tr>
-            <td>Budi Santoso</td>
-            <td>Ease Into Sleep</td>
-            <td>Rp 115.000</td>
-            <td><span class="badge-status status-pending">Pending</span></td>
-            <td>
-              <a href="order-detail.html" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.8rem; display: inline-block;">Cek Bukti</a>
-            </td>
-          </tr>
-          <!-- Baris 2 -->
-          <tr>
-            <td>Siti Aminah</td>
-            <td>Heart-to-Heart Duo</td>
-            <td>Rp 55.000</td>
-            <td><span class="badge-status status-success">Sukses</span></td>
-            <td>
-              <button class="btn btn-outline" style="padding: 5px 10px; font-size: 0.8rem;" disabled>Verified</button>
-            </td>
-          </tr>
+        <tbody id="tabelPesananTerbaru">
+          <tr><td colspan="5" style="text-align:center;">Memuat data...</td></tr>
         </tbody>
       </table>
     </div>
 
   </main>
 
-  <script>
-    function logout() {
+  <script type="module">
+    import { firebaseConfig, app } from '../firebase-config.js';
+    import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const db = getFirestore(app);
+
+    // 1. Fungsi Hitung Statistik
+    async function hitungStatistik() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "orders"));
+        
+        let totalPendapatan = 0;
+        let totalPesanan = 0;
+        let totalPending = 0;
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          totalPesanan++;
+          
+          // Hanya hitung pendapatan jika statusnya "Success"
+          if (data.status === "Success") {
+            totalPendapatan += data.totalHarga;
+          }
+          
+          // Hitung yang masih pending
+          if (data.status === "Pending") {
+            totalPending++;
+          }
+        });
+
+        // Tampilkan ke HTML
+        document.getElementById('statPendapatan').innerText = 'Rp ' + totalPendapatan.toLocaleString('id-ID');
+        document.getElementById('statPesanan').innerText = totalPesanan;
+        document.getElementById('statPending').innerText = totalPending;
+
+      } catch (error) {
+        console.error("Gagal hitung statistik: ", error);
+      }
+    }
+
+    // 2. Fungsi Ambil 3 Pesanan Terbaru
+    async function tampilkanPesananTerbaru() {
+      const tbody = document.getElementById('tabelPesananTerbaru');
+      
+      try {
+        // Ambil 3 data terbaru dari koleksi orders
+        const q = query(collection(db, "orders"), orderBy("tanggal", "desc"), limit(3));
+        const querySnapshot = await getDocs(q);
+
+        tbody.innerHTML = '';
+
+        if (querySnapshot.empty) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Belum ada pesanan.</td></tr>';
+          return;
+        }
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const id = doc.id;
+          const hargaRupiah = 'Rp ' + data.totalHarga.toLocaleString('id-ID');
+          const badgeClass = data.status === 'Pending' ? 'status-pending' : 'status-success';
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${data.nama}</td>
+            <td>${data.kelas}</td>
+            <td>${hargaRupiah}</td>
+            <td><span class="badge-status ${badgeClass}">${data.status}</span></td>
+            <td>
+              <a href="order-detail.html?id=${id}" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.8rem; display: inline-block;">Cek Bukti</a>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+      } catch (error) {
+        console.error("Gagal load pesanan: ", error);
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: red;">Gagal memuat data.</td></tr>';
+      }
+    }
+
+    // Jalankan kedua fungsi saat halaman dibuka
+    hitungStatistik();
+    tampilkanPesananTerbaru();
+
+    window.logout = function() {
       localStorage.removeItem('isAdminLoggedIn');
       window.location.href = 'login.html';
     }
