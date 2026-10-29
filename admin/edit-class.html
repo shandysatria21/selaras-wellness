@@ -9,15 +9,13 @@
     .img-preview { width: 120px; height: 120px; object-fit: cover; border-radius: 8px; margin-top: 10px; border: 1px solid #e2e8f0; display: block; }
   </style>
   <script>
-    if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
-      window.location.href = 'login.html';
-    }
+    if (localStorage.getItem('isAdminLoggedIn') !== 'true') { window.location.href = 'login.html'; }
   </script>
 </head>
 <body>
 
   <aside class="sidebar">
-    <a href="dashboard.html" class="logo">ADMIN PANEL</a>
+    <a href="dashboard.html" class="logo"><img src="../img/SELARAS.png" alt="Logo"></a>
     <div class="menu-group">
       <a href="dashboard.html" class="menu-item">Dashboard</a>
       <a href="classes.html" class="menu-item active">Kelola Kelas</a>
@@ -35,7 +33,7 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
       <div>
         <h1 class="page-title">Edit Kelas</h1>
-        <p class="page-subtitle" style="margin-bottom: 0;">Perbarui informasi kelas yoga di bawah ini.</p>
+        <p class="page-subtitle" style="margin-bottom: 0;">Perbarui jadwal kelas.</p>
       </div>
       <a href="classes.html" class="btn btn-outline">Batal & Kembali</a>
     </div>
@@ -44,8 +42,31 @@
       <form id="formEditKelas">
         
         <div class="form-group">
+          <label>Status Kelas *</label>
+          <select id="statusAktif" class="form-control" required>
+            <option value="true">Aktif (Buka Pendaftaran)</option>
+            <option value="false">Non-Aktif (Tutup Pendaftaran)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
           <label>Nama Kelas *</label>
           <input type="text" id="inpNama" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label>Nama Coach *</label>
+          <input type="text" id="inpCoach" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label>Tanggal Kelas *</label>
+          <input type="date" id="inpTanggal" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label>Lokasi *</label>
+          <input type="text" id="inpLokasi" class="form-control" required>
         </div>
 
         <div style="display: flex; gap: 20px;">
@@ -54,19 +75,9 @@
             <input type="number" id="inpHarga" class="form-control" required>
           </div>
           <div class="form-group" style="flex: 1;">
-            <label>Durasi (Menit) *</label>
-            <input type="number" id="inpDurasi" class="form-control" required>
+            <label>Kuota Tersisa *</label>
+            <input type="number" id="inpKuota" class="form-control" required>
           </div>
-        </div>
-
-        <div class="form-group">
-          <label>Level Kelas *</label>
-          <select id="inpLevel" class="form-control" required>
-            <option value="All levels">All levels</option>
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-            <option value="Advanced">Advanced</option>
-          </select>
         </div>
 
         <div class="form-group">
@@ -75,8 +86,8 @@
         </div>
 
         <div class="form-group">
-          <label>Link URL Gambar Baru (Biarkan kosong jika tidak diganti)</label>
-          <input type="url" id="inpGambar" class="form-control" placeholder="https://images.unsplash.com/..." >
+          <label>Ganti Gambar (Biarkan kosong jika tidak diganti)</label>
+          <input type="file" id="inpGambarBaru" class="form-control" accept="image/*" style="background: #fff;">
         </div>
 
         <div class="form-group">
@@ -94,90 +105,78 @@
     import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const db = getFirestore(app);
-
     const urlParams = new URLSearchParams(window.location.search);
     const idKelas = urlParams.get('id');
-
     const form = document.getElementById('formEditKelas');
     const btnSimpan = document.getElementById('btnSimpan');
     const previewGambar = document.getElementById('previewGambar');
 
-    // 1. Ambil Data dari Database
     async function loadDataKelas() {
-      if (!idKelas) {
-        alert("ID Kelas tidak ditemukan!");
-        window.location.href = 'classes.html';
-        return;
-      }
-
+      if (!idKelas) { window.location.href = 'classes.html'; return; }
       try {
-        const docRef = doc(db, "classes", idKelas);
-        const docSnap = await getDoc(docRef);
-
+        const docSnap = await getDoc(doc(db, "classes", idKelas));
         if (docSnap.exists()) {
           const data = docSnap.data();
+          document.getElementById('statusAktif').value = data.statusAktif !== false ? "true" : "false";
           document.getElementById('inpNama').value = data.nama;
+          document.getElementById('inpCoach').value = data.coach || '';
+          document.getElementById('inpTanggal').value = data.tanggal || '';
+          document.getElementById('inpLokasi').value = data.lokasi || '';
           document.getElementById('inpHarga').value = data.harga;
-          document.getElementById('inpDurasi').value = data.durasi;
-          
-          // Perbaikan Dropdown Level
-          const selectLevel = document.getElementById('inpLevel');
-          for (let i = 0; i < selectLevel.options.length; i++) {
-            if (selectLevel.options[i].value.toLowerCase() === data.level.toLowerCase()) {
-              selectLevel.selectedIndex = i;
-              break;
-            }
-          }
-          
+          document.getElementById('inpKuota').value = data.kuotaTersisa || 0;
           document.getElementById('inpDeskripsi').value = data.deskripsi || '';
           
-          if (data.gambar) {
-            previewGambar.src = data.gambar;
-            previewGambar.style.display = 'block';
-          } else {
-            previewGambar.style.display = 'none';
-          }
-        } else {
-          alert("Kelas tidak ditemukan di database.");
+          if (data.gambar) previewGambar.src = data.gambar;
         }
-      } catch (error) {
-        console.error("Error load: ", error);
-      }
+      } catch (error) { console.error(error); }
     }
-
     loadDataKelas();
 
-    // 2. Proses Update ke Database
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       btnSimpan.innerText = 'Menyimpan...';
       btnSimpan.disabled = true;
 
       try {
-        // Siapkan data
+        let newImageUrl = null;
+        const fileGambar = document.getElementById('inpGambarBaru').files[0];
+
+        // Jika admin upload gambar baru
+        if (fileGambar) {
+          const cloudName = 'd4cltmgp'; // GANTI DENGAN CLOUD NAME KAMU
+          const uploadPreset = 'selaras_bukti';
+
+          const formData = new FormData();
+          formData.append('file', fileGambar);
+          formData.append('upload_preset', uploadPreset);
+
+          const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+            method: 'POST',
+            body: formData
+          });
+          const data = await response.json();
+          newImageUrl = data.secure_url;
+        }
+
         const updateData = {
+          statusAktif: document.getElementById('statusAktif').value === "true",
           nama: document.getElementById('inpNama').value,
+          coach: document.getElementById('inpCoach').value,
+          tanggal: document.getElementById('inpTanggal').value,
+          lokasi: document.getElementById('inpLokasi').value,
           harga: parseInt(document.getElementById('inpHarga').value),
-          durasi: parseInt(document.getElementById('inpDurasi').value),
-          level: document.getElementById('inpLevel').value,
+          kuotaTersisa: parseInt(document.getElementById('inpKuota').value),
           deskripsi: document.getElementById('inpDeskripsi').value
         };
 
-        // Cek apakah admin mengisi Link Gambar Baru
-        const linkGambarBaru = document.getElementById('inpGambar').value;
-        if (linkGambarBaru) {
-          updateData.gambar = linkGambarBaru;
-        }
+        if (newImageUrl) updateData.gambar = newImageUrl;
 
-        // Update Firestore
         await updateDoc(doc(db, "classes", idKelas), updateData);
-
         alert('Perubahan berhasil disimpan!');
         window.location.href = 'classes.html';
-        
       } catch (error) {
-        console.error("Error update: ", error);
-        alert('Gagal menyimpan. Cek console.');
+        console.error(error);
+        alert('Gagal menyimpan.');
       } finally {
         btnSimpan.innerText = 'Simpan Perubahan';
         btnSimpan.disabled = false;
