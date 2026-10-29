@@ -48,7 +48,7 @@
         <h1 id="aboutJudul">Memuat...</h1>
         <p id="aboutDesc">Memuat...</p>
       </div>
-      <div class="about-image"></div>
+      <div class="about-image" id="aboutGambar" style="background-image: url('https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?auto=format&fit=crop&w=800&q=80');"></div>
     </section>
 
     <section class="quote-section">
@@ -104,6 +104,16 @@
       } catch (error) {
         console.error("Error load text: ", error);
       }
+              if (docSnap.exists()) {
+          const data = docSnap.data();
+          aboutJudul.innerHTML = data.aboutJudul || "Temukan Ruang<br>Untuk Dirimu.";
+          aboutDesc.innerText = data.aboutDesc || "Selaras Wellness Club didirikan pada tahun 2020...";
+          
+          // TAMBAHKAN BARIS INI UNTUK GANTI GAMBAR ABOUT
+          if (data.aboutGambar) {
+            document.getElementById('aboutGambar').style.backgroundImage = `url('${data.aboutGambar}')`;
+          }
+        }
     }
 
     loadAboutText();

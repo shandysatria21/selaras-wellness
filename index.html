@@ -60,7 +60,7 @@
           <a href="classes.html" class="btn btn-outline">View Schedule</a>
         </div>
       </div>
-      <div class="hero-image"></div>
+      <div class="hero-image" id="heroGambar" style="background-image: url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1000&q=80');"></div>
     </section>
   </main>
 
@@ -91,6 +91,16 @@
         heroJudul.innerText = "Find Balance Through Yoga";
         heroSub.innerText = "A minimalist, calming space for mindful movement.";
       }
+              if (docSnap.exists()) {
+          const data = docSnap.data();
+          heroJudul.innerHTML = data.homeJudul || "Find Balance<br>Through Yoga";
+          heroSub.innerText = data.homeSub || "A minimalist, calming space for mindful movement.";
+          
+          // TAMBAHKAN BARIS INI UNTUK GANTI GAMBAR HERO
+          if (data.homeGambar) {
+            document.getElementById('heroGambar').style.backgroundImage = `url('${data.homeGambar}')`;
+          }
+        }
     }
 
     loadHomeText();

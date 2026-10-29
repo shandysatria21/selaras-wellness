@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pengaturan Web - Admin</title>
   <link rel="stylesheet" href="admin-style.css">
+  <style>
+    .img-preview { width: 150px; height: 100px; object-fit: cover; border-radius: 8px; margin-top: 10px; border: 1px solid #e2e8f0; display: block; }
+  </style>
   <script>
     if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
       window.location.href = 'login.html';
@@ -29,13 +32,14 @@
 
   <main class="main-content">
     <h1 class="page-title">Pengaturan Website</h1>
-    <p class="page-subtitle">Ubah teks dan informasi yang tampil di halaman pengunjung.</p>
+    <p class="page-subtitle">Ubah teks dan gambar yang tampil di halaman pengunjung.</p>
 
     <div class="table-wrapper" style="padding: 30px; max-width: 800px;">
       <form id="formPengaturan">
         
-        <!-- Section Home -->
+        <!-- SECTION HOME -->
         <h3 style="margin-bottom: 15px; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Halaman Home</h3>
+        
         <div class="form-group">
           <label>Judul Utama (Hero)</label>
           <input type="text" id="inpHomeJudul" class="form-control" required>
@@ -44,9 +48,19 @@
           <label>Sub-judul (Hero)</label>
           <textarea id="inpHomeSub" class="form-control" rows="2" required></textarea>
         </div>
+        
+        <div class="form-group">
+          <label>Gambar Hero (Home) Saat Ini:</label>
+          <img id="previewHome" src="" alt="Gambar Home" class="img-preview">
+        </div>
+        <div class="form-group">
+          <label>Ganti Gambar Hero (Biarkan kosong jika tidak diganti)</label>
+          <input type="file" id="inpHomeGambar" class="form-control" accept="image/*" style="background: #fff;">
+        </div>
 
-        <!-- Section About Us -->
+        <!-- SECTION ABOUT US -->
         <h3 style="margin: 30px 0 15px 0; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Halaman About Us</h3>
+        
         <div class="form-group">
           <label>Judul About</label>
           <input type="text" id="inpAboutJudul" class="form-control" required>
@@ -55,9 +69,19 @@
           <label>Deskripsi About</label>
           <textarea id="inpAboutDesc" class="form-control" rows="4" required></textarea>
         </div>
+        
+        <div class="form-group">
+          <label>Gambar About Us Saat Ini:</label>
+          <img id="previewAbout" src="" alt="Gambar About" class="img-preview">
+        </div>
+        <div class="form-group">
+          <label>Ganti Gambar About (Biarkan kosong jika tidak diganti)</label>
+          <input type="file" id="inpAboutGambar" class="form-control" accept="image/*" style="background: #fff;">
+        </div>
 
-        <!-- Section Contact -->
+        <!-- SECTION CONTACT -->
         <h3 style="margin: 30px 0 15px 0; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Halaman Contact</h3>
+        
         <div class="form-group">
           <label>Alamat Studio</label>
           <input type="text" id="inpContactAlamat" class="form-control" required>
@@ -67,8 +91,9 @@
           <input type="text" id="inpContactWa" class="form-control" required>
         </div>
         
-        <!-- Section Link Tambahan -->
+        <!-- SECTION LAINNYA -->
         <h3 style="margin: 30px 0 15px 0; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Lainnya</h3>
+        
         <div class="form-group">
           <label>Link Grup WhatsApp (Halaman Sukses)</label>
           <input type="url" id="inpLinkWa" class="form-control" required>
@@ -84,13 +109,14 @@
     import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const db = getFirestore(app);
-    // Kita akan simpan pengaturan di 1 dokumen khusus bernama "data-web"
     const docRef = doc(db, "pengaturan", "data-web"); 
 
     const form = document.getElementById('formPengaturan');
     const btnSimpan = document.getElementById('btnSimpan');
+    const previewHome = document.getElementById('previewHome');
+    const previewAbout = document.getElementById('previewAbout');
 
-    // 1. Ambil Data dari Database saat halaman dibuka
+    // 1. Load Data
     async function loadPengaturan() {
       try {
         const docSnap = await getDoc(docRef);
@@ -104,8 +130,13 @@
           document.getElementById('inpContactAlamat').value = data.contactAlamat || '';
           document.getElementById('inpContactWa').value = data.contactWa || '';
           document.getElementById('inpLinkWa').value = data.linkWa || '';
+          
+          // Tampilkan gambar jika ada
+          if (data.homeGambar) previewHome.src = data.homeGambar;
+          if (data.aboutGambar) previewAbout.src = data.aboutGambar;
+          
         } else {
-          // Jika belum ada data (pertama kali), isi dengan teks default
+          // Default values
           document.getElementById('inpHomeJudul').value = "Find Balance Through Yoga";
           document.getElementById('inpHomeSub').value = "A minimalist, calming space for mindful movement. Join a class, breathe deeply, and reset your day.";
           document.getElementById('inpAboutJudul').value = "Temukan Ruang Untuk Dirimu.";
@@ -121,14 +152,45 @@
 
     loadPengaturan();
 
-    // 2. Simpan Data ke Database saat form disubmit
+    // 2. Simpan Data & Upload Gambar
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       btnSimpan.innerText = 'Menyimpan...';
       btnSimpan.disabled = true;
 
       try {
-        await setDoc(docRef, {
+        let homeImageUrl = null;
+        let aboutImageUrl = null;
+
+        // Konfigurasi Cloudinary
+        const cloudName = 'd4cltmgp'; // GANTI DENGAN CLOUD NAME KAMU
+        const uploadPreset = 'selaras_bukti'; // GANTI DENGAN PRESET KAMU
+
+        const fileHome = document.getElementById('inpHomeGambar').files[0];
+        const fileAbout = document.getElementById('inpAboutGambar').files[0];
+
+        // Upload gambar Home jika ada
+        if (fileHome) {
+          const formDataHome = new FormData();
+          formDataHome.append('file', fileHome);
+          formDataHome.append('upload_preset', uploadPreset);
+          const resHome = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: 'POST', body: formDataHome });
+          const dataHome = await resHome.json();
+          homeImageUrl = dataHome.secure_url;
+        }
+
+        // Upload gambar About jika ada
+        if (fileAbout) {
+          const formDataAbout = new FormData();
+          formDataAbout.append('file', fileAbout);
+          formDataAbout.append('upload_preset', uploadPreset);
+          const resAbout = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: 'POST', body: formDataAbout });
+          const dataAbout = await resAbout.json();
+          aboutImageUrl = dataAbout.secure_url;
+        }
+
+        // Siapkan data untuk disimpan
+        const updateData = {
           homeJudul: document.getElementById('inpHomeJudul').value,
           homeSub: document.getElementById('inpHomeSub').value,
           aboutJudul: document.getElementById('inpAboutJudul').value,
@@ -136,9 +198,17 @@
           contactAlamat: document.getElementById('inpContactAlamat').value,
           contactWa: document.getElementById('inpContactWa').value,
           linkWa: document.getElementById('inpLinkWa').value
-        });
+        };
 
-        alert('Pengaturan berhasil disimpan ke database!');
+        // Tambahkan URL gambar baru jika ada
+        if (homeImageUrl) updateData.homeGambar = homeImageUrl;
+        if (aboutImageUrl) updateData.aboutGambar = aboutImageUrl;
+
+        // Simpan ke Firestore
+        await setDoc(docRef, updateData, { merge: true });
+
+        alert('Pengaturan berhasil disimpan!');
+        window.location.reload(); // Refresh agar preview gambar terupdate
       } catch (error) {
         console.error("Gagal simpan: ", error);
         alert('Gagal menyimpan pengaturan.');
