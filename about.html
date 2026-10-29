@@ -8,7 +8,6 @@
 </head>
 <body>
 
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <a href="index.html" class="logo">
   <img src="img/SELARAS.png" alt="Selaras Logo">
@@ -42,25 +41,20 @@
     </div>
   </aside>
 
-  <!-- KONTEN UTAMA -->
   <main class="main-content">
-    
-    <!-- ABOUT HERO -->
     <section class="about-hero">
       <div class="about-text">
-        <h1>Temukan Ruang<br>Untuk Dirimu.</h1>
-        <p>Selaras Wellness Club didirikan pada tahun 2020 dengan satu misi sederhana: menciptakan ruang yang aman dan tenang di tengah hiruk-pikuk kota.</p>
-        <p>Kami percaya bahwa yoga bukan sekadar olahraga, melainkan seni untuk menyelaraskan tubuh, pikiran, dan napas. Di studio kami, kamu tidak perlu menjadi ahli; kamu hanya perlu hadir.</p>
+        <!-- Teks ini akan diisi oleh JavaScript -->
+        <h1 id="aboutJudul">Memuat...</h1>
+        <p id="aboutDesc">Memuat...</p>
       </div>
       <div class="about-image"></div>
     </section>
 
-    <!-- QUOTE SECTION -->
     <section class="quote-section">
       <blockquote>"Yoga is the journey of the self, through the self, to the self."<br><span style="font-size: 1rem; font-weight: 400; color: var(--text-muted); font-style: normal; display: block; margin-top: 15px;">— The Bhagavad Gita</span></blockquote>
     </section>
 
-    <!-- PHILOSOPHY / VALUES -->
     <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 10px; text-align: center;">Filosofi Kami</h2>
     <p class="page-subtitle" style="text-align: center; margin-bottom: 40px;">Tiga pilar yang menjadi fondasi setiap kelas di Selaras.</p>
 
@@ -81,8 +75,39 @@
         <p>Kami tumbuh bersama. Studio ini adalah rumah kedua bagi siapa saja yang mencari koneksi dan dukungan.</p>
       </div>
     </section>
-
   </main>
+
+  <script type="module">
+    import { firebaseConfig, app } from './firebase-config.js';
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const db = getFirestore(app);
+    const aboutJudul = document.getElementById('aboutJudul');
+    const aboutDesc = document.getElementById('aboutDesc');
+
+    async function loadAboutText() {
+      try {
+        const docRef = doc(db, "pengaturan", "data-web");
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          // Karena judulnya pakai <br> di HTML, kita pakai innerHTML
+          aboutJudul.innerHTML = data.aboutJudul || "Temukan Ruang<br>Untuk Dirimu.";
+          
+          // Deskripsi pakai innerText (teks biasa)
+          aboutDesc.innerText = data.aboutDesc || "Selaras Wellness Club didirikan pada tahun 2020 dengan satu misi sederhana: menciptakan ruang yang aman dan tenang di tengah hiruk-pikuk kota.";
+        } else {
+          aboutJudul.innerHTML = "Temukan Ruang<br>Untuk Dirimu.";
+          aboutDesc.innerText = "Selaras Wellness Club didirikan pada tahun 2020 dengan satu misi sederhana: menciptakan ruang yang aman dan tenang di tengah hiruk-pikuk kota.";
+        }
+      } catch (error) {
+        console.error("Error load text: ", error);
+      }
+    }
+
+    loadAboutText();
+  </script>
 
 </body>
 </html>
