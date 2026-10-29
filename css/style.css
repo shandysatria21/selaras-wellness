@@ -190,3 +190,93 @@ body {
   .menu-group { flex-direction: row; flex-wrap: wrap; }
   .main-content { padding: 30px 20px; }
 }
+
+/* ---------- KHUSUS HALAMAN PRICING ---------- */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  margin-top: 30px;
+}
+.pricing-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 35px 30px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.pricing-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+.pricing-card.popular {
+  border-color: var(--primary);
+  position: relative;
+}
+.popular-badge {
+  position: absolute;
+  top: -12px; left: 50%; transform: translateX(-50%);
+  background: var(--primary); color: #fff;
+  padding: 4px 15px; border-radius: 20px;
+  font-size: 0.8rem; font-weight: 600;
+}
+.pricing-card h3 { font-size: 1.2rem; margin-bottom: 10px; }
+.pricing-price { font-size: 2.5rem; font-weight: 700; margin-bottom: 20px; }
+.pricing-price span { font-size: 1rem; font-weight: 400; color: var(--text-muted); }
+.pricing-features { list-style: none; margin-bottom: 30px; border-top: 1px solid var(--border); padding-top: 20px; }
+.pricing-features li { margin-bottom: 12px; font-size: 0.95rem; display: flex; align-items: center; gap: 10px; }
+.pricing-features li::before { content: '✓'; color: var(--primary); font-weight: bold; }
+
+/* ---------- KHUSUS HALAMAN GALERI ---------- */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+  margin-top: 30px;
+}
+.gallery-item {
+  height: 250px;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+}
+.gallery-item img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.4s;
+}
+.gallery-item:hover img { transform: scale(1.05); }
+
+/* Lightbox Sederhana */
+.lightbox {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+  display: none; justify-content: center; align-items: center; z-index: 999;
+}
+.lightbox.active { display: flex; }
+.lightbox img { max-width: 90%; max-height: 90vh; border-radius: 10px; }
+.lightbox-close {
+  position: absolute; top: 20px; right: 30px;
+  color: #fff; font-size: 2.5rem; cursor: pointer;
+}
+
+/* ---------- KHUSUS HALAMAN CONTACT ---------- */
+.contact-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-top: 30px;
+}
+.contact-info-card {
+  background: #fff; padding: 30px; border-radius: 16px; border: 1px solid var(--border);
+}
+.contact-info-item { margin-bottom: 25px; }
+.contact-info-item h4 { font-size: 1.1rem; margin-bottom: 5px; }
+.contact-info-item p { color: var(--text-muted); }
+.contact-form-card {
+  background: #fff; padding: 30px; border-radius: 16px; border: 1px solid var(--border);
+}
+textarea.form-control { resize: vertical; min-height: 120px; }
+
+@media (max-width: 768px) {
+  .contact-wrapper { grid-template-columns: 1fr; }
+}
