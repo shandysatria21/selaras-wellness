@@ -3,145 +3,109 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Payment - Yoga Fest</title>
-  <link rel="stylesheet" href="css/style.css">
-  <style>
-    .payment-box { max-width: 550px; }
-    .form-label { font-weight: 500; margin-bottom: 8px; display: block; font-size: 1rem; }
-    .provider-box { border: 2px solid var(--primary); background: var(--pink-light); padding: 15px; border-radius: 10px; font-weight: 600; font-size: 1.1rem; display: inline-block; margin-bottom: 20px; }
-    .readonly-input { background: #f0f0f0; color: #555; cursor: not-allowed; }
-    .btn-group-payment { display: flex; gap: 15px; margin-top: 30px; }
-    .btn-group-payment .btn { flex: 1; text-align: center; }
-    .btn-disabled { background-color: #cccccc !important; color: #888888 !important; cursor: not-allowed !important; pointer-events: none; }
-    input[type="file"] { background: #fff; padding: 10px; border: 1px dashed var(--border); width: 100%; }
-  </style>
+  <title>Data Pesanan - Admin</title>
+  <link rel="stylesheet" href="admin-style.css">
+  <script>
+    if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
+      window.location.href = 'login.html';
+    }
+  </script>
 </head>
 <body>
 
   <aside class="sidebar">
-    <a href="index.html" class="logo">SELARAS.</a>
+    <a href="dashboard.html" class="logo">ADMIN PANEL</a>
     <div class="menu-group">
-      <a href="index.html" class="menu-item">Home</a>
-      <a href="classes.html" class="menu-item">Classes & Pricing</a>
-      <a href="galeri.html" class="menu-item">Galeri</a>
-      <a href="about.html" class="menu-item">About Us</a>
+      <a href="dashboard.html" class="menu-item">Dashboard</a>
+      <a href="classes.html" class="menu-item">Kelola Kelas</a>
+      <a href="orders.html" class="menu-item active">Data Pesanan</a>
+      <a href="gallery.html" class="menu-item">Kelola Galeri</a>
+      <a href="settings.html" class="menu-item">Pengaturan Web</a>
+    </div>
+    <div class="menu-group" style="margin-top: auto;">
+      <a href="#" onclick="logout()" class="menu-item" style="color: #f87171;">Logout</a>
     </div>
   </aside>
 
   <main class="main-content">
-    <div class="payment-box">
-      <h1 class="page-title">Payment</h1>
-      <p class="page-subtitle" style="margin-bottom: 30px;">Complete payment to submit your booking request. Your reservation will be pending approval until confirmed by the studio.</p>
+    <h1 class="page-title">Data Pesanan</h1>
+    <p class="page-subtitle">Semua riwayat pemesanan kelas yoga.</p>
 
-      <form id="paymentForm">
-        
-        <div class="form-group">
-          <label class="form-label">Payment Provider *</label>
-          <div class="provider-box">BCA</div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Transfer Ke *</label>
-          <input type="text" class="form-control readonly-input" value="5395099938 (a.n Selaras Studio)" readonly>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Booking Untuk *</label>
-          <input type="text" id="inpKelas" class="form-control readonly-input" readonly>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Payment Amount *</label>
-          <input type="text" id="inpHarga" class="form-control readonly-input" readonly>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Upload Bukti Pembayaran *</label>
-          <input type="file" id="buktiTransfer" accept="image/*" onchange="cekFile()" required>
-          <small style="color: var(--text-muted); margin-top: 5px; display: block;">Format: JPG, PNG.</small>
-        </div>
-
-        <div class="btn-group-payment">
-          <a href="classes.html" class="btn btn-outline">Back</a>
-          <button type="submit" id="btnSelesai" class="btn btn-primary btn-disabled" disabled>Selesai</button>
-        </div>
-
-      </form>
+    <div class="table-wrapper">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Tanggal</th>
+            <th>Nama</th>
+            <th>Kelas</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tabelPesanan">
+          <tr><td colspan="6" style="text-align:center;">Memuat data...</td></tr>
+        </tbody>
+      </table>
     </div>
   </main>
 
   <script type="module">
-    import { firebaseConfig, app } from './firebase-config.js';
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+    import { firebaseConfig, app } from '../firebase-config.js';
+    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const db = getFirestore(app);
-    const storage = getStorage(app);
+    const tabelPesanan = document.getElementById('tabelPesanan');
 
-    // 1. Ambil Data dari URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const kelas = urlParams.get('kelas') || 'Kelas Reguler';
-    const harga = urlParams.get('harga') || '0';
-    const namaUser = urlParams.get('nama') || '-';
-    const emailUser = urlParams.get('email') || '-';
-    const waUser = urlParams.get('wa') || '-';
+    async function tampilkanPesanan() {
+      try {
+        // Ambil data dari koleksi "orders", urutkan dari yang terbaru
+        const q = query(collection(db, "orders"), orderBy("tanggal", "desc"));
+        const querySnapshot = await getDocs(q);
+        
+        tabelPesanan.innerHTML = '';
+        
+        if (querySnapshot.empty) {
+          tabelPesanan.innerHTML = '<tr><td colspan="6" style="text-align:center;">Belum ada pesanan masuk.</td></tr>';
+          return;
+        }
 
-    // 2. Tampilkan ke Form
-    document.getElementById('inpKelas').value = kelas;
-    document.getElementById('inpHarga').value = 'Rp ' + parseInt(harga).toLocaleString('id-ID');
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const id = doc.id;
+          
+          // Format tanggal
+          const tanggal = data.tanggal ? data.tanggal.toDate().toLocaleDateString('id-ID') : '-';
+          const hargaRupiah = 'Rp ' + data.totalHarga.toLocaleString('id-ID');
+          
+          // Warna Badge
+          let badgeClass = data.status === 'Pending' ? 'status-pending' : 'status-success';
 
-    // 3. Logika Tombol Disable
-    window.cekFile = function() {
-      const fileInput = document.getElementById('buktiTransfer');
-      const btnSelesai = document.getElementById('btnSelesai');
-
-      if (fileInput.files.length > 0) {
-        btnSelesai.classList.remove('btn-disabled');
-        btnSelesai.removeAttribute('disabled');
-      } else {
-        btnSelesai.classList.add('btn-disabled');
-        btnSelesai.setAttribute('disabled', 'true');
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${tanggal}</td>
+            <td>${data.nama}</td>
+            <td>${data.kelas}</td>
+            <td>${hargaRupiah}</td>
+            <td><span class="badge-status ${badgeClass}">${data.status}</span></td>
+            <td>
+              <a href="order-detail.html?id=${id}" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.8rem; display: inline-block;">Cek Detail</a>
+            </td>
+          `;
+          tabelPesanan.appendChild(tr);
+        });
+      } catch (error) {
+        console.error("Error: ", error);
+        tabelPesanan.innerHTML = '<tr><td colspan="6" style="text-align:center; color: red;">Gagal memuat data.</td></tr>';
       }
     }
 
-    // 4. Proses Submit (Upload Bukti & Simpan Data)
-    document.getElementById('paymentForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const btnSelesai = document.getElementById('btnSelesai');
-      btnSelesai.innerText = 'Memproses...';
-      btnSelesai.disabled = true;
+    tampilkanPesanan();
 
-      try {
-        const fileBukti = document.getElementById('buktiTransfer').files[0];
-        
-        // Upload foto bukti ke Firebase Storage
-        const storageRef = ref(storage, 'bukti_transfer/' + Date.now() + '_' + fileBukti.name);
-        const snapshot = await uploadBytes(storageRef, fileBukti);
-        const buktiUrl = await getDownloadURL(snapshot.ref);
-
-        // Simpan data pesanan ke Firestore
-        await addDoc(collection(db, "orders"), {
-          nama: namaUser,
-          email: emailUser,
-          wa: waUser,
-          kelas: kelas,
-          totalHarga: parseInt(harga),
-          buktiTransfer: buktiUrl,
-          status: "Pending",
-          tanggal: new Date()
-        });
-
-        // Jika sukses, lempar ke halaman sukses
-        window.location.href = 'success.html';
-        
-      } catch (error) {
-        console.error("Error booking: ", error);
-        alert('Gagal memproses pesanan. Cek console.');
-        btnSelesai.innerText = 'Selesai';
-        btnSelesai.disabled = false;
-      }
-    });
+    window.logout = function() {
+      localStorage.removeItem('isAdminLoggedIn');
+      window.location.href = 'login.html';
+    }
   </script>
-
 </body>
 </html>
