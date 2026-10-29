@@ -277,8 +277,64 @@ body {
 }
 textarea.form-control { resize: vertical; min-height: 120px; }
 
+/* Responsive Perbaikan */
+@media (max-width: 1024px) {
+  .hero { flex-direction: column; text-align: center; }
+  .hero h1 { font-size: 3rem; }
+  .btn-group { justify-content: center; }
+  .hero-image { width: 100%; height: 400px; }
+  
+  .about-hero { flex-direction: column; }
+  .about-text { text-align: center; }
+  .about-image { width: 100%; height: 400px; }
+}
+
+/* KHUSUS UNTUK LAYAR HP / TABLET KECIL */
 @media (max-width: 768px) {
-  .contact-wrapper { grid-template-columns: 1fr; }
+  body { 
+    flex-direction: column; 
+    height: auto; /* Biarkan body memanjang ke bawah */
+    overflow: auto; 
+  }
+  
+  .sidebar { 
+    width: 100%; 
+    height: auto; 
+    border-right: none; 
+    border-bottom: 1px solid var(--border); 
+    padding: 20px; 
+    position: relative;
+  }
+  
+  .menu-group { 
+    flex-direction: row; 
+    flex-wrap: wrap; 
+    gap: 10px;
+  }
+
+  .menu-item {
+    padding: 8px 12px;
+  }
+  
+  .main-content { 
+    padding: 30px 20px; 
+    width: 100%;
+    overflow: visible; /* Hapus scroll internal di HP */
+  }
+
+  .page-title {
+    font-size: 2rem;
+  }
+
+  /* Perbaikan Galeri di HP */
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr); /* Bagi 2 kolom di HP */
+    gap: 10px;
+  }
+
+  .gallery-item {
+    height: 150px; /* Kecilkan tinggi gambar di HP */
+  }
 }
 
 /* ---------- KHUSUS HALAMAN ABOUT US ---------- */
