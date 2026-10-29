@@ -58,7 +58,7 @@
 
   <script type="module">
     import { firebaseConfig, app } from '../firebase-config.js';
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const db = getFirestore(app);
     const tabelKelas = document.getElementById('tabelKelas');
@@ -109,6 +109,27 @@
 
     // Panggil fungsi saat halaman dimuat
     tampilkanKelas();
+
+        // 1. Import fungsi deleteDoc
+    // (Ubah baris import di paling atas script menjadi seperti ini)
+    // import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // 2. Fungsi Hapus Kelas
+    window.hapusKelas = async function(id) {
+      const konfirmasi = confirm("Apakah kamu yakin ingin menghapus kelas ini?");
+      if (!konfirmasi) return;
+
+      try {
+        // Hapus data dari Firestore berdasarkan ID dokumen
+        await deleteDoc(doc(db, "classes", id));
+        alert("Kelas berhasil dihapus!");
+        // Refresh halaman untuk melihat perubahan
+        window.location.reload(); 
+      } catch (error) {
+        console.error("Error menghapus kelas: ", error);
+        alert("Gagal menghapus kelas. Cek console.");
+      }
+    }
 
     // Fungsi Logout
     window.logout = function() {

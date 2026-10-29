@@ -85,22 +85,81 @@
 
   </main>
 
-  <script>
-    // 1. Ambil data dari URL
+    <script type="module">
+    import { firebaseConfig, app } from '../firebase-config.js';
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const db = getFirestore(app);
+
+    // 1. Ambil ID dari URL
     const urlParams = new URLSearchParams(window.location.search);
-    const nama = urlParams.get('nama') || 'Nama Kelas Default';
-    const harga = urlParams.get('harga') || '0';
-    const durasi = urlParams.get('durasi') || '60';
-    const level = urlParams.get('level') || 'all';
+    const idKelas = urlParams.get('id');
 
-    // 2. Isi otomatis ke dalam form
-    document.getElementById('inpNama').value = nama;
-    document.getElementById('inpHarga').value = harga;
-    document.getElementById('inpDurasi').value = durasi;
-    document.getElementById('inpLevel').value = level;
+    // Ambil elemen form
+    const form = document.querySelector('form');
+    const inpNama = document.getElementById('inpNama');
+    const inpHarga = document.getElementById('inpHarga');
+    const inpDurasi = document.getElementById('inpDurasi');
+    const inpLevel = document.getElementById('inpLevel');
 
-    // Fungsi Logout
-    function logout() {
+    // 2. Tampilkan data yang ada di database ke dalam form
+    async function loadDataKelas() {
+      if (!idKelas) {
+        alert("ID Kelas tidak ditemukan!");
+        window.location.href = 'classes.html';
+        return;
+      }
+
+      try {
+        const docRef = doc(db, "classes", idKelas);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          inpNama.value = data.nama;
+          inpHarga.value = data.harga;
+          inpDurasi.value = data.durasi;
+          inpLevel.value = data.level;
+        } else {
+          alert("Kelas tidak ditemukan di database.");
+        }
+      } catch (error) {
+        console.error("Error mengambil data: ", error);
+      }
+    }
+
+    loadDataKelas();
+
+    // 3. Proses Update saat form disubmit
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const btnSimpan = form.querySelector('button[type="submit"]');
+      btnSimpan.innerText = 'Menyimpan...';
+      btnSimpan.disabled = true;
+
+      try {
+        const docRef = doc(db, "classes", idKelas);
+        await updateDoc(docRef, {
+          nama: inpNama.value,
+          harga: parseInt(inpHarga.value),
+          durasi: parseInt(inpDurasi.value),
+          level: inpLevel.value
+        });
+
+        alert('Perubahan berhasil disimpan ke database!');
+        window.location.href = 'classes.html';
+      } catch (error) {
+        console.error("Error update data: ", error);
+        alert('Gagal menyimpan perubahan. Cek console.');
+      } finally {
+        btnSimpan.innerText = 'Simpan Perubahan';
+        btnSimpan.disabled = false;
+      }
+    });
+
+    // Logout
+    window.logout = function() {
       localStorage.removeItem('isAdminLoggedIn');
       window.location.href = 'login.html';
     }
