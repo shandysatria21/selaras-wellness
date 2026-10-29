@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Admin - Selaras</title>
+  <link rel="stylesheet" href="admin-style.css">
+  <script>
+    // Proteksi Halaman
+    if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
+      window.location.href = 'login.html';
+    }
+  </script>
+</head>
+<body>
+
+  <!-- SIDEBAR ADMIN -->
+  <aside class="sidebar">
+    <a href="dashboard.html" class="logo">ADMIN PANEL</a>
+    <div class="menu-group">
+      <a href="dashboard.html" class="menu-item active">Dashboard</a>
+      <a href="classes.html" class="menu-item">Kelola Kelas</a>
+      <a href="#" class="menu-item">Data Pesanan</a>
+    </div>
+    <div class="menu-group" style="margin-top: auto;">
+      <a href="#" onclick="logout()" class="menu-item" style="color: #f87171;">Logout</a>
+    </div>
+  </aside>
+
+  <!-- KONTEN ADMIN -->
+  <main class="main-content">
+    <h1 class="page-title">Dashboard</h1>
+    <p class="page-subtitle">Selamat datang kembali, Admin.</p>
+
+    <!-- Statistik Dummy -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <h4>Total Pendapatan</h4>
+        <h2>Rp 1.250.000</h2>
+      </div>
+      <div class="stat-card">
+        <h4>Total Pesanan</h4>
+        <h2>12</h2>
+      </div>
+      <div class="stat-card">
+        <h4>Menunggu Konfirmasi</h4>
+        <h2>4</h2>
+      </div>
+    </div>
+
+    <h2 style="font-size: 1.5rem; margin-bottom: 20px;">Pesanan Terbaru</h2>
+    
+    <!-- Tabel Pesanan Dummy -->
+    <div class="table-wrapper">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Nama</th>
+            <th>Kelas</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Budi Santoso</td>
+            <td>Ease Into Sleep</td>
+            <td>Rp 115.000</td>
+            <td><span class="badge-status status-pending">Pending</span></td>
+            <td><button class="btn btn-outline" style="padding: 5px 10px; font-size: 0.8rem;">Cek Bukti</button></td>
+          </tr>
+          <tr>
+            <td>Siti Aminah</td>
+            <td>Heart-to-Heart Duo</td>
+            <td>Rp 55.000</td>
+            <td><span class="badge-status status-success">Sukses</span></td>
+            <td><button class="btn btn-outline" style="padding: 5px 10px; font-size: 0.8rem;" disabled>Verified</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <script>
+    function logout() {
+      localStorage.removeItem('isAdminLoggedIn');
+      window.location.href = 'login.html';
+    }
+  </script>
+
+</body>
+</html>

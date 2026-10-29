@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kelola Kelas - Admin</title>
+  <link rel="stylesheet" href="admin-style.css">
+  <script>
+    if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
+      window.location.href = 'login.html';
+    }
+  </script>
+</head>
+<body>
+
+  <!-- SIDEBAR ADMIN -->
+  <aside class="sidebar">
+    <a href="dashboard.html" class="logo">ADMIN PANEL</a>
+    <div class="menu-group">
+      <a href="dashboard.html" class="menu-item">Dashboard</a>
+      <a href="classes.html" class="menu-item active">Kelola Kelas</a>
+      <a href="#" class="menu-item">Data Pesanan</a>
+    </div>
+    <div class="menu-group" style="margin-top: auto;">
+      <a href="#" onclick="logout()" class="menu-item" style="color: #f87171;">Logout</a>
+    </div>
+  </aside>
+
+  <!-- KONTEN ADMIN -->
+  <main class="main-content">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+      <div>
+        <h1 class="page-title">Manajemen Kelas</h1>
+        <p class="page-subtitle" style="margin-bottom: 0;">Tambah, edit, atau hapus kelas yoga.</p>
+      </div>
+      <button class="btn btn-primary" onclick="alert('Fitur form tambah kelas akan dibuat selanjutnya!')">+ Tambah Kelas Baru</button>
+    </div>
+
+    <!-- Tabel Kelas Dummy -->
+    <div class="table-wrapper">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Gambar</th>
+            <th>Nama Kelas</th>
+            <th>Harga</th>
+            <th>Level</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><img src="https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?auto=format&fit=crop&w=100&q=80" alt="Kelas"></td>
+            <td><strong>Ease Into Sleep</strong><br><span style="font-size: 0.85rem; color: #64748b;">60 Menit</span></td>
+            <td>Rp 115.000</td>
+            <td>-</td>
+            <td>
+              <div class="action-btns">
+                <button class="btn btn-outline" style="padding: 5px 12px; font-size: 0.8rem;">Edit</button>
+                <button class="btn btn-outline" style="padding: 5px 12px; font-size: 0.8rem; color: #ef4444; border-color: #ef4444;">Hapus</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <script>
+    function logout() {
+      localStorage.removeItem('isAdminLoggedIn');
+      window.location.href = 'login.html';
+    }
+  </script>
+
+</body>
+</html>
