@@ -280,3 +280,88 @@ textarea.form-control { resize: vertical; min-height: 120px; }
 @media (max-width: 768px) {
   .contact-wrapper { grid-template-columns: 1fr; }
 }
+/* ---------- KHUSUS HALAMAN ABOUT US ---------- */
+.about-hero {
+  display: flex;
+  align-items: center;
+  gap: 50px;
+  margin-bottom: 60px;
+}
+.about-text {
+  flex: 1;
+}
+.about-text h1 {
+  font-size: 3.5rem;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  margin-bottom: 20px;
+}
+.about-text p {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+.about-image {
+  flex: 1;
+  height: 500px;
+  border-radius: 20px;
+  background: url('https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?auto=format&fit=crop&w=800&q=80') center/cover;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+}
+
+/* Value / Philosophy Section */
+.about-values {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+  margin-bottom: 60px;
+}
+.value-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  padding: 30px;
+  border-radius: 16px;
+  text-align: center;
+}
+.value-icon {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  display: inline-block;
+}
+.value-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+.value-card p {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Quote Section */
+.quote-section {
+  background: var(--pink-light);
+  padding: 50px 40px;
+  border-radius: 20px;
+  text-align: center;
+  margin-bottom: 40px;
+}
+.quote-section blockquote {
+  font-size: 1.8rem;
+  font-style: italic;
+  font-weight: 500;
+  color: var(--primary);
+  line-height: 1.5;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+@media (max-width: 1024px) {
+  .about-hero { flex-direction: column; }
+  .about-text { text-align: center; }
+  .about-image { width: 100%; height: 400px; }
+}
