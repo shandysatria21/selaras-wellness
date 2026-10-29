@@ -1,1 +1,148 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yoga Fest 2026 - Event Yoga</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; color: #2f3e46; line-height: 1.6; }
 
+  /* Navbar */
+  nav {
+    position: fixed; top: 0; width: 100%;
+    background: rgba(255,255,255,0.95);
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 15px 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); z-index: 100;
+  }
+  nav h1 { color: #52796f; font-size: 1.4rem; }
+  nav ul { list-style: none; display: flex; gap: 25px; }
+  nav a { text-decoration: none; color: #2f3e46; font-weight: 500; transition: color 0.3s; }
+  nav a:hover { color: #52796f; }
+
+  /* Hero */
+  .hero {
+    height: 100vh;
+    background: linear-gradient(rgba(47,62,70,0.55), rgba(47,62,70,0.55)),
+                url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=80') center/cover;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; color: #fff; padding: 20px;
+  }
+  .hero h2 { font-size: 3rem; margin-bottom: 15px; }
+  .hero p { font-size: 1.2rem; margin-bottom: 30px; max-width: 600px; }
+  .btn {
+    background: #84a98c; color: #fff; padding: 14px 36px;
+    border: none; border-radius: 30px; font-size: 1rem; cursor: pointer;
+    text-decoration: none; transition: background 0.3s, transform 0.2s;
+  }
+  .btn:hover { background: #52796f; transform: translateY(-2px); }
+
+  /* Section umum */
+  section { padding: 80px 40px; max-width: 1100px; margin: auto; }
+  section h2 { text-align: center; font-size: 2rem; margin-bottom: 40px; color: #354f52; }
+
+  /* Jadwal */
+  .schedule { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .card {
+    background: #f4f9f4; border-left: 5px solid #84a98c;
+    padding: 20px; border-radius: 10px;
+  }
+  .card h3 { color: #52796f; margin-bottom: 8px; }
+  .card span { font-size: 0.9rem; color: #6b7b73; }
+
+  /* Form pendaftaran */
+  form {
+    max-width: 500px; margin: auto;
+    background: #f4f9f4; padding: 30px; border-radius: 14px;
+    display: flex; flex-direction: column; gap: 15px;
+  }
+  input, select {
+    padding: 12px; border: 1px solid #cad2c5; border-radius: 8px; font-size: 1rem;
+  }
+  form .btn { align-self: center; }
+
+  /* Footer */
+  footer {
+    background: #354f52; color: #cad2c5; text-align: center;
+    padding: 25px; font-size: 0.9rem;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <h1>🧘 Yoga Fest 2026</h1>
+  <ul>
+    <li><a href="#tentang">Tentang</a></li>
+    <li><a href="#jadwal">Jadwal</a></li>
+    <li><a href="#daftar">Daftar</a></li>
+  </ul>
+</nav>
+
+<header class="hero">
+  <h2>Yoga Fest 2026</h2>
+  <p>Temukan ketenangan pikiran dan keseimbangan tubuh bersama instruktur yoga profesional.</p>
+  <a href="#daftar" class="btn">Daftar Sekarang</a>
+</header>
+
+<section id="tentang">
+  <h2>Tentang Event</h2>
+  <p style="text-align:center; max-width:700px; margin:auto;">
+    Yoga Fest 2026 adalah event tahunan yang mempertemukan pecinta yoga dari berbagai kalangan.
+    Nikmati sesi yoga pagi, meditasi, workshop, dan komunitas yang hangat dalam suasana alam terbuka.
+  </p>
+</section>
+
+<section id="jadwal">
+  <h2>Jadwal Acara</h2>
+  <div class="schedule">
+    <div class="card">
+      <h3>06.00 - Sunrise Yoga</h3>
+      <span>Yoga pemula & menengah</span>
+    </div>
+    <div class="card">
+      <h3>08.00 - Meditasi & Breathing</h3>
+      <span>Latihan pernapasan dan mindfulness</span>
+    </div>
+    <div class="card">
+      <h3>10.00 - Workshop Asana</h3>
+      <span>Teknik pose lanjutan</span>
+    </div>
+    <div class="card">
+      <h3>13.00 - Yin Yoga</h3>
+      <span>Yoga relaksasi & peregangan</span>
+    </div>
+  </div>
+</section>
+
+<section id="daftar">
+  <h2>Pendaftaran</h2>
+  <form id="formDaftar">
+    <input type="text" name="nama" placeholder="Nama Lengkap" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <select name="kelas" required>
+      <option value="">Pilih Kelas</option>
+      <option>Sunrise Yoga</option>
+      <option>Meditasi & Breathing</option>
+      <option>Workshop Asana</option>
+      <option>Yin Yoga</option>
+    </select>
+    <button type="submit" class="btn">Kirim Pendaftaran</button>
+  </form>
+</section>
+
+<footer>
+  © 2026 Yoga Fest. Dibuat dengan ❤️ untuk komunitas yoga.
+</footer>
+
+<script>
+  document.getElementById('formDaftar').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const nama = this.nama.value;
+    alert(`Terima kasih, ${nama}! Pendaftaran Anda berhasil. 🧘‍♀️`);
+    this.reset();
+  });
+</script>
+
+</body>
+</html>
