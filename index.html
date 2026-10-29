@@ -5,20 +5,37 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Yoga Fest 2026 - Event Yoga</title>
 <style>
+  :root {
+    --primary: #84a98c;
+    --primary-dark: #52796f;
+    --dark: #354f52;
+    --text: #2f3e46;
+    --bg-soft: #f4f9f4;
+    --border: #cad2c5;
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Segoe UI', sans-serif; color: #2f3e46; line-height: 1.6; }
+  body { font-family: 'Segoe UI', sans-serif; color: var(--text); line-height: 1.6; overflow-x: hidden; }
+
+  /* Animasi global */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+  .reveal.active { opacity: 1; transform: translateY(0); }
 
   /* Navbar */
   nav {
     position: fixed; top: 0; width: 100%;
     background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
     display: flex; justify-content: space-between; align-items: center;
     padding: 15px 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); z-index: 100;
   }
-  nav h1 { color: #52796f; font-size: 1.4rem; }
+  nav h1 { color: var(--primary-dark); font-size: 1.4rem; }
   nav ul { list-style: none; display: flex; gap: 25px; }
-  nav a { text-decoration: none; color: #2f3e46; font-weight: 500; transition: color 0.3s; }
-  nav a:hover { color: #52796f; }
+  nav a { text-decoration: none; color: var(--text); font-weight: 500; transition: color 0.3s; }
+  nav a:hover { color: var(--primary-dark); }
 
   /* Hero */
   .hero {
@@ -28,43 +45,106 @@
     display: flex; flex-direction: column; justify-content: center; align-items: center;
     text-align: center; color: #fff; padding: 20px;
   }
-  .hero h2 { font-size: 3rem; margin-bottom: 15px; }
-  .hero p { font-size: 1.2rem; margin-bottom: 30px; max-width: 600px; }
+  .hero h2 { font-size: 3rem; margin-bottom: 15px; animation: fadeUp 1s ease both; }
+  .hero p { font-size: 1.2rem; margin-bottom: 30px; max-width: 600px; animation: fadeUp 1s ease 0.2s both; }
+  .hero .btn { animation: fadeUp 1s ease 0.4s both; }
   .btn {
-    background: #84a98c; color: #fff; padding: 14px 36px;
+    background: var(--primary); color: #fff; padding: 14px 36px;
     border: none; border-radius: 30px; font-size: 1rem; cursor: pointer;
     text-decoration: none; transition: background 0.3s, transform 0.2s;
+    display: inline-block;
   }
-  .btn:hover { background: #52796f; transform: translateY(-2px); }
+  .btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
 
   /* Section umum */
   section { padding: 80px 40px; max-width: 1100px; margin: auto; }
-  section h2 { text-align: center; font-size: 2rem; margin-bottom: 40px; color: #354f52; }
+  section h2 { text-align: center; font-size: 2rem; margin-bottom: 40px; color: var(--dark); }
+
+  /* Countdown */
+  .countdown-wrap { text-align: center; }
+  .countdown {
+    display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+    margin-top: 30px;
+  }
+  .cd-box {
+    background: var(--dark); color: #fff;
+    padding: 20px 25px; border-radius: 14px; min-width: 100px;
+    box-shadow: 0 6px 20px rgba(53,79,82,0.25);
+  }
+  .cd-box span { display: block; font-size: 2.2rem; font-weight: 700; }
+  .cd-box small { font-size: 0.85rem; opacity: 0.8; }
 
   /* Jadwal */
   .schedule { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
   .card {
-    background: #f4f9f4; border-left: 5px solid #84a98c;
+    background: var(--bg-soft); border-left: 5px solid var(--primary);
     padding: 20px; border-radius: 10px;
+    transition: transform 0.3s, box-shadow 0.3s;
   }
-  .card h3 { color: #52796f; margin-bottom: 8px; }
+  .card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+  .card h3 { color: var(--primary-dark); margin-bottom: 8px; }
   .card span { font-size: 0.9rem; color: #6b7b73; }
 
-  /* Form pendaftaran */
-  form {
-    max-width: 500px; margin: auto;
-    background: #f4f9f4; padding: 30px; border-radius: 14px;
+  /* Galeri */
+  .gallery {
+    display: grid; gap: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  .gallery img {
+    width: 100%; height: 220px; object-fit: cover;
+    border-radius: 12px; cursor: pointer;
+    transition: transform 0.4s, filter 0.4s;
+  }
+  .gallery img:hover { transform: scale(1.05); filter: brightness(1.1); }
+
+  /* Lightbox */
+  .lightbox {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+    display: none; justify-content: center; align-items: center; z-index: 200;
+    padding: 20px;
+  }
+  .lightbox.active { display: flex; animation: fadeUp 0.3s ease; }
+  .lightbox img { max-width: 90%; max-height: 85vh; border-radius: 10px; }
+  .lightbox .close {
+    position: absolute; top: 20px; right: 30px;
+    color: #fff; font-size: 2.5rem; cursor: pointer; line-height: 1;
+  }
+
+  /* Pendaftaran + Tiket */
+  .form-tiket {
+    max-width: 520px; margin: auto;
+    background: var(--bg-soft); padding: 30px; border-radius: 14px;
     display: flex; flex-direction: column; gap: 15px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.06);
   }
   input, select {
-    padding: 12px; border: 1px solid #cad2c5; border-radius: 8px; font-size: 1rem;
+    padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem;
+    transition: border 0.3s;
   }
-  form .btn { align-self: center; }
+  input:focus, select:focus { outline: none; border-color: var(--primary); }
+
+  .tiket-info {
+    display: flex; justify-content: space-between; align-items: center;
+    background: #fff; padding: 14px 18px; border-radius: 10px;
+    border: 1px dashed var(--primary);
+  }
+  .tiket-info .harga { font-size: 1.3rem; font-weight: 700; color: var(--primary-dark); }
+
+  .form-tiket .btn { align-self: center; width: 100%; }
 
   /* Footer */
   footer {
-    background: #354f52; color: #cad2c5; text-align: center;
+    background: var(--dark); color: var(--border); text-align: center;
     padding: 25px; font-size: 0.9rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    nav { padding: 12px 20px; flex-direction: column; gap: 10px; }
+    nav ul { gap: 15px; font-size: 0.9rem; }
+    .hero h2 { font-size: 2rem; }
+    .cd-box { min-width: 75px; padding: 15px; }
+    .cd-box span { font-size: 1.6rem; }
   }
 </style>
 </head>
@@ -75,17 +155,18 @@
   <ul>
     <li><a href="#tentang">Tentang</a></li>
     <li><a href="#jadwal">Jadwal</a></li>
-    <li><a href="#daftar">Daftar</a></li>
+    <li><a href="#galeri">Galeri</a></li>
+    <li><a href="#daftar">Tiket</a></li>
   </ul>
 </nav>
 
 <header class="hero">
   <h2>Yoga Fest 2026</h2>
   <p>Temukan ketenangan pikiran dan keseimbangan tubuh bersama instruktur yoga profesional.</p>
-  <a href="#daftar" class="btn">Daftar Sekarang</a>
+  <a href="#daftar" class="btn">Beli Tiket</a>
 </header>
 
-<section id="tentang">
+<section id="tentang" class="reveal">
   <h2>Tentang Event</h2>
   <p style="text-align:center; max-width:700px; margin:auto;">
     Yoga Fest 2026 adalah event tahunan yang mempertemukan pecinta yoga dari berbagai kalangan.
@@ -93,7 +174,18 @@
   </p>
 </section>
 
-<section id="jadwal">
+<!-- COUNTDOWN -->
+<section id="countdown" class="reveal countdown-wrap">
+  <h2>Menuju Hari-H</h2>
+  <div class="countdown">
+    <div class="cd-box"><span id="cd-hari">0</span><small>Hari</small></div>
+    <div class="cd-box"><span id="cd-jam">0</span><small>Jam</small></div>
+    <div class="cd-box"><span id="cd-menit">0</span><small>Menit</small></div>
+    <div class="cd-box"><span id="cd-detik">0</span><small>Detik</small></div>
+  </div>
+</section>
+
+<section id="jadwal" class="reveal">
   <h2>Jadwal Acara</h2>
   <div class="schedule">
     <div class="card">
@@ -115,9 +207,23 @@
   </div>
 </section>
 
-<section id="daftar">
-  <h2>Pendaftaran</h2>
-  <form id="formDaftar">
+<!-- GALERI -->
+<section id="galeri" class="reveal">
+  <h2>Galeri</h2>
+  <div class="gallery">
+    <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80" alt="Yoga 1">
+    <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80" alt="Yoga 2">
+    <img src="https://images.unsplash.com/photo-1552196563-55cd4e45efb3?auto=format&fit=crop&w=600&q=80" alt="Yoga 3">
+    <img src="https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?auto=format&fit=crop&w=600&q=80" alt="Yoga 4">
+    <img src="https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?auto=format&fit=crop&w=600&q=80" alt="Yoga 5">
+    <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80" alt="Yoga 6">
+  </div>
+</section>
+
+<!-- PENDAFTARAN & TIKET -->
+<section id="daftar" class="reveal">
+  <h2>Pendaftaran & Tiket</h2>
+  <form id="formDaftar" class="form-tiket">
     <input type="text" name="nama" placeholder="Nama Lengkap" required>
     <input type="email" name="email" placeholder="Email" required>
     <select name="kelas" required>
@@ -127,20 +233,107 @@
       <option>Workshop Asana</option>
       <option>Yin Yoga</option>
     </select>
-    <button type="submit" class="btn">Kirim Pendaftaran</button>
+    <select name="tiket" id="pilihTiket" required>
+      <option value="">Pilih Jenis Tiket</option>
+      <option value="75000">Reguler - Rp 75.000</option>
+      <option value="150000">Premium - Rp 150.000</option>
+      <option value="250000">VIP + Workshop - Rp 250.000</option>
+    </select>
+
+    <div class="tiket-info">
+      <span>Total Bayar</span>
+      <span class="harga" id="totalHarga">Rp 0</span>
+    </div>
+
+    <button type="submit" class="btn">Lanjut ke Pembayaran</button>
   </form>
 </section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <span class="close" id="closeLightbox">&times;</span>
+  <img id="lightboxImg" src="" alt="Preview">
+</div>
 
 <footer>
   © 2026 Yoga Fest. Dibuat dengan ❤️ untuk komunitas yoga.
 </footer>
 
 <script>
+  /* ---------- ANIMASI REVEAL SAAT SCROLL ---------- */
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('active');
+    });
+  }, { threshold: 0.15 });
+  reveals.forEach(el => observer.observe(el));
+
+  /* ---------- COUNTDOWN ---------- */
+  const targetDate = new Date('2026-06-15T06:00:00').getTime();
+
+  function updateCountdown() {
+    const now = Date.now();
+    const diff = targetDate - now;
+
+    if (diff <= 0) {
+      document.getElementById('cd-hari').textContent = 0;
+      document.getElementById('cd-jam').textContent = 0;
+      document.getElementById('cd-menit').textContent = 0;
+      document.getElementById('cd-detik').textContent = 0;
+      return;
+    }
+    const hari  = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const jam   = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const menit = Math.floor((diff / (1000 * 60)) % 60);
+    const detik = Math.floor((diff / 1000) % 60);
+
+    document.getElementById('cd-hari').textContent = hari;
+    document.getElementById('cd-jam').textContent = String(jam).padStart(2, '0');
+    document.getElementById('cd-menit').textContent = String(menit).padStart(2, '0');
+    document.getElementById('cd-detik').textContent = String(detik).padStart(2, '0');
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  /* ---------- GALERI LIGHTBOX ---------- */
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  document.querySelectorAll('.gallery img').forEach(img => {
+    img.addEventListener('click', () => {
+      lightboxImg.src = img.src;
+      lightbox.classList.add('active');
+    });
+  });
+  document.getElementById('closeLightbox').addEventListener('click', () => {
+    lightbox.classList.remove('active');
+  });
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) lightbox.classList.remove('active');
+  });
+
+  /* ---------- TOTAL HARGA TIKET ---------- */
+  const pilihTiket = document.getElementById('pilihTiket');
+  const totalHarga = document.getElementById('totalHarga');
+  pilihTiket.addEventListener('change', () => {
+    const val = parseInt(pilihTiket.value) || 0;
+    totalHarga.textContent = 'Rp ' + val.toLocaleString('id-ID');
+  });
+
+  /* ---------- SUBMIT FORM ---------- */
   document.getElementById('formDaftar').addEventListener('submit', function(e) {
     e.preventDefault();
     const nama = this.nama.value;
-    alert(`Terima kasih, ${nama}! Pendaftaran Anda berhasil. 🧘‍♀️`);
+    const tiketVal = parseInt(pilihTiket.value) || 0;
+
+    if (!tiketVal) {
+      alert('Silakan pilih jenis tiket terlebih dahulu.');
+      return;
+    }
+
+    alert(`Terima kasih, ${nama}! 🧘‍♀️\n\nPesanan tiket sebesar Rp ${tiketVal.toLocaleString('id-ID')} berhasil dibuat.\n\n(Langkah pembayaran akan diarahkan ke halaman pembayaran.)`);
     this.reset();
+    totalHarga.textContent = 'Rp 0';
   });
 </script>
 
