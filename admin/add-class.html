@@ -27,6 +27,7 @@
       <a href="#" onclick="logout()" class="menu-item" style="color: #f87171;">Logout</a>
     </div>
   </aside>
+
   <!-- KONTEN ADMIN -->
   <main class="main-content">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
@@ -39,53 +40,112 @@
 
     <!-- Form Tambah Kelas -->
     <div class="table-wrapper" style="padding: 30px; max-width: 700px;">
-      <form onsubmit="event.preventDefault(); alert('Kelas berhasil ditambahkan! (Simulasi)'); window.location.href='classes.html';">
+      <form id="formTambahKelas">
         
         <div class="form-group">
           <label>Nama Kelas *</label>
-          <input type="text" class="form-control" placeholder="Contoh: Sunrise Yoga" required>
+          <input type="text" id="nama" class="form-control" placeholder="Contoh: Sunrise Yoga" required>
         </div>
 
         <div style="display: flex; gap: 20px;">
           <div class="form-group" style="flex: 1;">
             <label>Harga (Rp) *</label>
-            <input type="number" class="form-control" placeholder="115000" required>
+            <input type="number" id="harga" class="form-control" placeholder="115000" required>
           </div>
           <div class="form-group" style="flex: 1;">
             <label>Durasi (Menit) *</label>
-            <input type="number" class="form-control" placeholder="60" required>
+            <input type="number" id="durasi" class="form-control" placeholder="60" required>
           </div>
         </div>
 
         <div class="form-group">
           <label>Level Kelas *</label>
-          <select class="form-control" required>
+          <select id="level" class="form-control" required>
             <option value="">Pilih Level</option>
-            <option value="all">All Levels</option>
-            <option value="beginner">Beginner</option>
-            <option value="intermediate">Intermediate</option>
-            <option value="advanced">Advanced</option>
+            <option value="All levels">All Levels</option>
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label>Upload Gambar Kelas *</label>
-          <input type="file" class="form-control" accept="image/*" required style="background: #fff;">
+          <label>Link URL Gambar Kelas *</label>
+          <!-- Kita pakai input teks URL dulu agar simpel. (Upload file butuh Firebase Storage) -->
+          <input type="url" id="gambar" class="form-control" placeholder="https://images.unsplash.com/..." required>
+          <small style="color: #64748b; font-size: 0.8rem; margin-top: 5px; display: block;">Masukkan link gambar dari Unsplash atau internet.</small>
         </div>
 
         <div class="form-group">
           <label>Deskripsi Singkat</label>
-          <textarea class="form-control" rows="3" placeholder="Jelaskan sedikit tentang kelas ini..."></textarea>
+          <textarea id="deskripsi" class="form-control" rows="3" placeholder="Jelaskan sedikit tentang kelas ini..."></textarea>
         </div>
 
-        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Simpan Kelas</button>
+        <button type="submit" id="btnSimpan" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Simpan Kelas</button>
       </form>
     </div>
 
   </main>
 
-  <script>
-    function logout() {
+  <!-- SCRIPT FIREBASE -->
+  <script type="module">
+    // 1. Import fungsi dari file config yang tadi kita buat
+    import { firebaseConfig } from '../firebase-config.js';
+    
+    // 2. Import library Firebase (via CDN)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // 3. Inisialisasi Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // 4. Tangkap Form
+    const form = document.getElementById('formTambahKelas');
+    const btnSimpan = document.getElementById('btnSimpan');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault(); // Tahan form agar tidak refresh halaman
+      
+      // Ubah tombol jadi loading
+      btnSimpan.innerText = 'Menyimpan...';
+      btnSimpan.disabled = true;
+
+      // Ambil nilai dari input
+      const namaKelas = document.getElementById('nama').value;
+      const hargaKelas = document.getElementById('harga').value;
+      const durasiKelas = document.getElementById('durasi').value;
+      const levelKelas = document.getElementById('level').value;
+      const gambarKelas = document.getElementById('gambar').value;
+      const deskripsiKelas = document.getElementById('deskripsi').value;
+
+      try {
+        // Simpan ke database Firestore (koleksi bernama "classes")
+        await addDoc(collection(db, "classes"), {
+          nama: namaKelas,
+          harga: parseInt(hargaKelas),
+          durasi: parseInt(durasiKelas),
+          level: levelKelas,
+          gambar: gambarKelas,
+          deskripsi: deskripsiKelas,
+          createdAt: new Date()
+        });
+
+        alert('Kelas berhasil ditambahkan ke database!');
+        window.location.href = 'classes.html'; // Kembali ke tabel
+        
+      } catch (error) {
+        console.error("Error menambahkan dokumen: ", error);
+        alert('Gagal menyimpan data. Cek console untuk detail error.');
+      } finally {
+        // Kembalikan tombol
+        btnSimpan.innerText = 'Simpan Kelas';
+        btnSimpan.disabled = false;
+      }
+    });
+
+    // Fungsi Logout
+    window.logout = function() {
       localStorage.removeItem('isAdminLoggedIn');
       window.location.href = 'login.html';
     }
