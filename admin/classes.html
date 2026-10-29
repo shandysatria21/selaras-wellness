@@ -5,15 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kelola Kelas - Admin</title>
   <link rel="stylesheet" href="admin-style.css">
+  <style>
+    /* Style untuk Toggle Switch */
+    .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
+    .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+    input:checked + .slider { background-color: #10b981; }
+    input:checked + .slider:before { transform: translateX(20px); }
+  </style>
   <script>
-    if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
-      window.location.href = 'login.html';
-    }
+    if (localStorage.getItem('isAdminLoggedIn') !== 'true') { window.location.href = 'login.html'; }
   </script>
 </head>
 <body>
 
-  <!-- SIDEBAR ADMIN -->
   <aside class="sidebar">
     <a href="dashboard.html" class="logo"><img src="../img/SELARAS.png" alt="Logo"></a>
     <div class="menu-group">
@@ -38,7 +44,6 @@
       <a href="add-class.html" class="btn btn-primary">+ Tambah Kelas Baru</a>
     </div>
 
-    <!-- Tabel Kelas -->
     <div class="table-wrapper">
       <table class="admin-table">
         <thead>
@@ -47,7 +52,7 @@
             <th>Kelas & Jadwal</th>
             <th>Harga</th>
             <th>Kuota</th>
-            <th>Status</th>
+            <th>Status (Aktif/Non)</th>
             <th>Aksi</th>
           </tr>
         </thead>
@@ -60,12 +65,11 @@
 
   <script type="module">
     import { firebaseConfig, app } from '../firebase-config.js';
-    import { getFirestore, collection, getDocs, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, deleteDoc, doc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const db = getFirestore(app);
     const tabelKelas = document.getElementById('tabelKelas');
 
-    // Fungsi Format Tanggal
     function formatTanggal(tglString) {
       if (!tglString) return '-';
       return new Date(tglString).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -73,14 +77,13 @@
 
     async function tampilkanKelas() {
       try {
-        // Urutkan berdasarkan tanggal
         const q = query(collection(db, "classes"), orderBy("tanggal", "asc"));
         const querySnapshot = await getDocs(q);
         
         tabelKelas.innerHTML = '';
         
         if (querySnapshot.empty) {
-          tabelKelas.innerHTML = '<tr><td colspan="6" style="text-align:center;">Belum ada kelas yang ditambahkan.</td></tr>';
+          tabelKelas.innerHTML = '<tr><td colspan="6" style="text-align:center;">Belum ada kelas.</td></tr>';
           return;
         }
 
@@ -88,9 +91,10 @@
           const data = doc.data();
           const id = doc.id;
           const hargaRupiah = 'Rp ' + data.harga.toLocaleString('id-ID');
-          
           const tanggalFormat = formatTanggal(data.tanggal);
-          const statusText = data.statusAktif !== false ? '<span style="color: #10b981; font-weight: 600;">Aktif</span>' : '<span style="color: #ef4444; font-weight: 600;">Non-Aktif</span>';
+          
+          // Cek Status (Default true jika belum di-set)
+          const isAktif = data.statusAktif !== false;
 
           const tr = document.createElement('tr');
           tr.innerHTML = `
@@ -103,7 +107,13 @@
             </td>
             <td>${hargaRupiah}</td>
             <td>${data.kuotaTersisa || 0} / ${data.kuotaAwal || 0}</td>
-            <td>${statusText}</td>
+            <td>
+              <!-- Toggle Switch -->
+              <label class="switch">
+                <input type="checkbox" ${isAktif ? 'checked' : ''} onchange="toggleStatus('${id}', this.checked)">
+                <span class="slider"></span>
+              </label>
+            </td>
             <td>
               <div class="action-btns">
                 <a href="edit-class.html?id=${id}" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.8rem;">Edit</a>
@@ -115,24 +125,36 @@
         });
       } catch (error) {
         console.error("Error mengambil data: ", error);
-        tabelKelas.innerHTML = '<tr><td colspan="6" style="text-align:center; color: red;">Gagal memuat data. Cek Console.</td></tr>';
+        tabelKelas.innerHTML = '<tr><td colspan="6" style="text-align:center; color: red;">Gagal memuat data.</td></tr>';
       }
     }
 
     tampilkanKelas();
 
-    // Fungsi Hapus
-    window.hapusKelas = async function(id) {
-      const konfirmasi = confirm("Apakah kamu yakin ingin menghapus kelas ini?");
-      if (!konfirmasi) return;
+    // Fungsi untuk Toggle Status
+    window.toggleStatus = async function(id, isChecked) {
+      try {
+        const kelasRef = doc(db, "classes", id);
+        await updateDoc(kelasRef, {
+          statusAktif: isChecked
+        });
+        // Opsional: kasih notifikasi kecil
+        console.log(`Status kelas ${id} diubah menjadi ${isChecked}`);
+      } catch (error) {
+        console.error("Gagal update status: ", error);
+        alert("Gagal mengubah status kelas.");
+        // Balikkan toggle jika gagal
+        tampilkanKelas(); 
+      }
+    }
 
+    window.hapusKelas = async function(id) {
+      if (!confirm("Yakin ingin menghapus kelas ini?")) return;
       try {
         await deleteDoc(doc(db, "classes", id));
-        alert("Kelas berhasil dihapus!");
-        tampilkanKelas(); // Refresh tabel tanpa reload halaman
+        tampilkanKelas();
       } catch (error) {
-        console.error("Error menghapus: ", error);
-        alert("Gagal menghapus kelas.");
+        console.error(error);
       }
     }
 
