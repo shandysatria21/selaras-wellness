@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tambah Kelas - Admin</title>
+  <link rel="stylesheet" href="admin-style.css">
+  <script>
+    if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
+      window.location.href = 'login.html';
+    }
+  </script>
+</head>
+<body>
+
+  <!-- SIDEBAR ADMIN -->
+  <aside class="sidebar">
+    <a href="dashboard.html" class="logo">ADMIN PANEL</a>
+    <div class="menu-group">
+      <a href="dashboard.html" class="menu-item">Dashboard</a>
+      <a href="classes.html" class="menu-item active">Kelola Kelas</a>
+      <a href="#" class="menu-item">Data Pesanan</a>
+    </div>
+    <div class="menu-group" style="margin-top: auto;">
+      <a href="#" onclick="logout()" class="menu-item" style="color: #f87171;">Logout</a>
+    </div>
+  </aside>
+
+  <!-- KONTEN ADMIN -->
+  <main class="main-content">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+      <div>
+        <h1 class="page-title">Tambah Kelas Baru</h1>
+        <p class="page-subtitle" style="margin-bottom: 0;">Lengkapi data kelas yoga di bawah ini.</p>
+      </div>
+      <a href="classes.html" class="btn btn-outline">Kembali</a>
+    </div>
+
+    <!-- Form Tambah Kelas -->
+    <div class="table-wrapper" style="padding: 30px; max-width: 700px;">
+      <form onsubmit="event.preventDefault(); alert('Kelas berhasil ditambahkan! (Simulasi)'); window.location.href='classes.html';">
+        
+        <div class="form-group">
+          <label>Nama Kelas *</label>
+          <input type="text" class="form-control" placeholder="Contoh: Sunrise Yoga" required>
+        </div>
+
+        <div style="display: flex; gap: 20px;">
+          <div class="form-group" style="flex: 1;">
+            <label>Harga (Rp) *</label>
+            <input type="number" class="form-control" placeholder="115000" required>
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label>Durasi (Menit) *</label>
+            <input type="number" class="form-control" placeholder="60" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Level Kelas *</label>
+          <select class="form-control" required>
+            <option value="">Pilih Level</option>
+            <option value="all">All Levels</option>
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Upload Gambar Kelas *</label>
+          <input type="file" class="form-control" accept="image/*" required style="background: #fff;">
+        </div>
+
+        <div class="form-group">
+          <label>Deskripsi Singkat</label>
+          <textarea class="form-control" rows="3" placeholder="Jelaskan sedikit tentang kelas ini..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Simpan Kelas</button>
+      </form>
+    </div>
+
+  </main>
+
+  <script>
+    function logout() {
+      localStorage.removeItem('isAdminLoggedIn');
+      window.location.href = 'login.html';
+    }
+  </script>
+
+</body>
+</html>
