@@ -42,7 +42,7 @@ body {
 }
 
 .logo img {
-  height: 100px; /* Dibesarkan dari 30px */
+  height: 180px; /* Dibesarkan dari 30px */
   width: auto;
   object-fit: contain;
 }
