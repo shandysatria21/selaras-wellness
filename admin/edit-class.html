@@ -5,8 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Kelas - Admin</title>
   <link rel="stylesheet" href="admin-style.css">
+  <style>
+    .img-preview { width: 120px; height: 120px; object-fit: cover; border-radius: 8px; margin-top: 10px; border: 1px solid #e2e8f0; display: block; }
+  </style>
   <script>
-    // Proteksi Halaman
     if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
       window.location.href = 'login.html';
     }
@@ -14,7 +16,6 @@
 </head>
 <body>
 
-  <!-- SIDEBAR ADMIN -->
   <aside class="sidebar">
     <a href="dashboard.html" class="logo">ADMIN PANEL</a>
     <div class="menu-group">
@@ -29,7 +30,6 @@
     </div>
   </aside>
 
-  <!-- KONTEN ADMIN -->
   <main class="main-content">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
       <div>
@@ -39,9 +39,8 @@
       <a href="classes.html" class="btn btn-outline">Batal & Kembali</a>
     </div>
 
-    <!-- Form Edit Kelas -->
     <div class="table-wrapper" style="padding: 30px; max-width: 700px;">
-      <form onsubmit="event.preventDefault(); alert('Perubahan kelas berhasil disimpan! (Simulasi)'); window.location.href='classes.html';">
+      <form id="formEditKelas">
         
         <div class="form-group">
           <label>Nama Kelas *</label>
@@ -62,47 +61,47 @@
         <div class="form-group">
           <label>Level Kelas *</label>
           <select id="inpLevel" class="form-control" required>
-            <option value="all">All Levels</option>
-            <option value="beginner">Beginner</option>
-            <option value="intermediate">Intermediate</option>
-            <option value="advanced">Advanced</option>
+            <option value="All levels">All levels</option>
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label>Ganti Gambar Kelas (Biarkan kosong jika tidak diganti)</label>
-          <input type="file" class="form-control" accept="image/*" style="background: #fff;">
+          <label>Gambar Saat Ini:</label>
+          <img id="previewGambar" src="" alt="Gambar Kelas" class="img-preview">
+        </div>
+
+        <div class="form-group">
+          <label>Link URL Gambar Baru (Biarkan kosong jika tidak diganti)</label>
+          <input type="url" id="inpGambar" class="form-control" placeholder="https://images.unsplash.com/..." >
         </div>
 
         <div class="form-group">
           <label>Deskripsi Singkat</label>
-          <textarea class="form-control" rows="3">Kelas yoga yang menenangkan dan cocok untuk relaksasi.</textarea>
+          <textarea id="inpDeskripsi" class="form-control" rows="3"></textarea>
         </div>
 
-        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Simpan Perubahan</button>
+        <button type="submit" id="btnSimpan" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Simpan Perubahan</button>
       </form>
     </div>
-
   </main>
 
-    <script type="module">
+  <script type="module">
     import { firebaseConfig, app } from '../firebase-config.js';
     import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const db = getFirestore(app);
 
-    // 1. Ambil ID dari URL
     const urlParams = new URLSearchParams(window.location.search);
     const idKelas = urlParams.get('id');
 
-    // Ambil elemen form
-    const form = document.querySelector('form');
-    const inpNama = document.getElementById('inpNama');
-    const inpHarga = document.getElementById('inpHarga');
-    const inpDurasi = document.getElementById('inpDurasi');
-    const inpLevel = document.getElementById('inpLevel');
+    const form = document.getElementById('formEditKelas');
+    const btnSimpan = document.getElementById('btnSimpan');
+    const previewGambar = document.getElementById('previewGambar');
 
-    // 2. Tampilkan data yang ada di database ke dalam form
+    // 1. Ambil Data dari Database
     async function loadDataKelas() {
       if (!idKelas) {
         alert("ID Kelas tidak ditemukan!");
@@ -116,54 +115,78 @@
 
         if (docSnap.exists()) {
           const data = docSnap.data();
-          inpNama.value = data.nama;
-          inpHarga.value = data.harga;
-          inpDurasi.value = data.durasi;
-          inpLevel.value = data.level;
+          document.getElementById('inpNama').value = data.nama;
+          document.getElementById('inpHarga').value = data.harga;
+          document.getElementById('inpDurasi').value = data.durasi;
+          
+          // Perbaikan Dropdown Level
+          const selectLevel = document.getElementById('inpLevel');
+          for (let i = 0; i < selectLevel.options.length; i++) {
+            if (selectLevel.options[i].value.toLowerCase() === data.level.toLowerCase()) {
+              selectLevel.selectedIndex = i;
+              break;
+            }
+          }
+          
+          document.getElementById('inpDeskripsi').value = data.deskripsi || '';
+          
+          if (data.gambar) {
+            previewGambar.src = data.gambar;
+            previewGambar.style.display = 'block';
+          } else {
+            previewGambar.style.display = 'none';
+          }
         } else {
           alert("Kelas tidak ditemukan di database.");
         }
       } catch (error) {
-        console.error("Error mengambil data: ", error);
+        console.error("Error load: ", error);
       }
     }
 
     loadDataKelas();
 
-    // 3. Proses Update saat form disubmit
+    // 2. Proses Update ke Database
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      
-      const btnSimpan = form.querySelector('button[type="submit"]');
       btnSimpan.innerText = 'Menyimpan...';
       btnSimpan.disabled = true;
 
       try {
-        const docRef = doc(db, "classes", idKelas);
-        await updateDoc(docRef, {
-          nama: inpNama.value,
-          harga: parseInt(inpHarga.value),
-          durasi: parseInt(inpDurasi.value),
-          level: inpLevel.value
-        });
+        // Siapkan data
+        const updateData = {
+          nama: document.getElementById('inpNama').value,
+          harga: parseInt(document.getElementById('inpHarga').value),
+          durasi: parseInt(document.getElementById('inpDurasi').value),
+          level: document.getElementById('inpLevel').value,
+          deskripsi: document.getElementById('inpDeskripsi').value
+        };
 
-        alert('Perubahan berhasil disimpan ke database!');
+        // Cek apakah admin mengisi Link Gambar Baru
+        const linkGambarBaru = document.getElementById('inpGambar').value;
+        if (linkGambarBaru) {
+          updateData.gambar = linkGambarBaru;
+        }
+
+        // Update Firestore
+        await updateDoc(doc(db, "classes", idKelas), updateData);
+
+        alert('Perubahan berhasil disimpan!');
         window.location.href = 'classes.html';
+        
       } catch (error) {
-        console.error("Error update data: ", error);
-        alert('Gagal menyimpan perubahan. Cek console.');
+        console.error("Error update: ", error);
+        alert('Gagal menyimpan. Cek console.');
       } finally {
         btnSimpan.innerText = 'Simpan Perubahan';
         btnSimpan.disabled = false;
       }
     });
 
-    // Logout
     window.logout = function() {
       localStorage.removeItem('isAdminLoggedIn');
       window.location.href = 'login.html';
     }
   </script>
-
 </body>
 </html>
