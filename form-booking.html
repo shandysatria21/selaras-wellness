@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Booking - Yoga Fest</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .booking-box { max-width: 550px; }
+    .form-label { font-weight: 500; margin-bottom: 8px; display: block; font-size: 1rem; }
+    .checkbox-group {
+      display: flex; gap: 20px; align-items: center;
+      background: #fff; padding: 15px; border-radius: 10px; border: 1px solid var(--border);
+    }
+    .checkbox-group label { display: flex; align-items: center; gap: 8px; font-weight: 400; cursor: pointer; margin: 0; }
+    input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <a href="index.html" class="logo">SELARAS.</a>
+    <div class="menu-group">
+      <a href="index.html" class="menu-item">Home</a>
+      <a href="classes.html" class="menu-item active">Classes & Pricing</a>
+      <a href="galeri.html" class="menu-item">Galeri</a>
+      <a href="about.html" class="menu-item">About Us</a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="booking-box">
+      <h1 class="page-title">Booking Detail</h1>
+      <p class="page-subtitle" style="margin-bottom: 30px;">Lengkapi data dirimu sebelum melanjutkan ke pembayaran.</p>
+
+      <form id="formBooking" onsubmit="prosesForm(event)">
+        
+        <!-- Info Kelas yang dipilih -->
+        <div class="form-group" style="background: var(--pink-light); padding: 15px; border-radius: 10px; margin-bottom: 25px;">
+          <span style="font-size: 0.9rem; color: var(--text-muted);">Kelas yang dipilih:</span>
+          <h3 id="tampilKelas" style="color: var(--primary); font-size: 1.2rem; margin-top: 5px;">-</h3>
+        </div>
+
+        <!-- Data Diri -->
+        <div class="form-group">
+          <label class="form-label">Nama Lengkap *</label>
+          <input type="text" id="nama" class="form-control" placeholder="Masukkan nama" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email *</label>
+          <input type="email" id="email" class="form-control" placeholder="email@contoh.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nomor WhatsApp *</label>
+          <input type="tel" id="wa" class="form-control" placeholder="08123456789" required>
+        </div>
+
+        <!-- Opsi Matras -->
+        <div class="form-group">
+          <label class="form-label">Pilihan Matras *</label>
+          <div class="checkbox-group">
+            <label>
+              <input type="radio" name="matras" value="bawa" checked onchange="hitungTotal()">
+              Bawa Sendiri
+            </label>
+            <label>
+              <input type="radio" name="matras" value="sewa" onchange="hitungTotal()">
+              Sewa Mat (+ Rp 10.000)
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Lanjut ke Pembayaran</button>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    // Ambil data dari URL (dari classes.html)
+    const urlParams = new URLSearchParams(window.location.search);
+    const namaKelas = urlParams.get('kelas') || 'Kelas Reguler';
+    const hargaDasar = parseInt(urlParams.get('harga')) || 0;
+
+    // Tampilkan nama kelas di form
+    document.getElementById('tampilKelas').innerText = namaKelas;
+
+    // Fungsi untuk menghitung total saat form di-submit
+    function prosesForm(event) {
+      event.preventDefault();
+
+      const nama = document.getElementById('nama').value;
+      const email = document.getElementById('email').value;
+      const wa = document.getElementById('wa').value;
+      
+      // Cek apakah user memilih sewa matras
+      const isSewa = document.querySelector('input[name="matras"]:checked').value === 'sewa';
+      
+      // Kalkulasi harga akhir
+      let hargaAkhir = hargaDasar;
+      if (isSewa) {
+        hargaAkhir += 10000;
+      }
+
+      // Buat URL untuk halaman payment dengan membawa semua data
+      const paymentUrl = `payment.html?kelas=${encodeURIComponent(namaKelas)}&harga=${hargaAkhir}&nama=${encodeURIComponent(nama)}&email=${encodeURIComponent(email)}&wa=${encodeURIComponent(wa)}`;
+      
+      // Pindah ke halaman payment
+      window.location.href = paymentUrl;
+    }
+  </script>
+
+</body>
+</html>

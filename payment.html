@@ -127,15 +127,17 @@
     </div>
   </main>
 
-  <script>
-    // 1. Ambil data dari URL (dikirim dari classes.html)
+    <script>
+    // 1. Ambil SEMUA data dari URL
     const urlParams = new URLSearchParams(window.location.search);
     const kelas = urlParams.get('kelas') || 'Kelas Reguler';
     const harga = urlParams.get('harga') || '0';
+    const namaUser = urlParams.get('nama') || '-';
+    const emailUser = urlParams.get('email') || '-';
+    const waUser = urlParams.get('wa') || '-';
 
     // 2. Tampilkan ke dalam form
     document.getElementById('inpKelas').value = kelas;
-    // Format harga jadi Rupiah (contoh: Rp 115.000)
     document.getElementById('inpHarga').value = 'Rp ' + parseInt(harga).toLocaleString('id-ID');
 
     // 3. Logika aktifkan tombol jika file sudah diupload
@@ -144,11 +146,9 @@
       const btnSelesai = document.getElementById('btnSelesai');
 
       if (fileInput.files.length > 0) {
-        // Jika ada file, hapus class disabled
         btnSelesai.classList.remove('btn-disabled');
         btnSelesai.removeAttribute('disabled');
       } else {
-        // Jika kosong, pasang class disabled lagi
         btnSelesai.classList.add('btn-disabled');
         btnSelesai.setAttribute('disabled', 'true');
       }
