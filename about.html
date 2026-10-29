@@ -26,7 +26,7 @@
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
         Galeri
       </a>
-      <!-- MENU ABOUT US (AKTIF) -->
+    
       <a href="about.html" class="menu-item active">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
         About Us
@@ -44,11 +44,12 @@
   <main class="main-content">
     <section class="about-hero">
       <div class="about-text">
-        <!-- Teks ini akan diisi oleh JavaScript -->
         <h1 id="aboutJudul">Memuat...</h1>
         <p id="aboutDesc">Memuat...</p>
       </div>
-      <div class="about-image" id="aboutGambar"></div>
+      
+      <!-- ID aboutGambar ditambahkan di sini -->
+      <div class="about-image" id="aboutGambar" style="background-image: url('https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?auto=format&fit=crop&w=800&q=80');"></div>
     </section>
 
     <section class="quote-section">
@@ -84,6 +85,7 @@
     const db = getFirestore(app);
     const aboutJudul = document.getElementById('aboutJudul');
     const aboutDesc = document.getElementById('aboutDesc');
+    const aboutGambar = document.getElementById('aboutGambar'); // Ambil elemen gambar
 
     async function loadAboutText() {
       try {
@@ -92,11 +94,15 @@
 
         if (docSnap.exists()) {
           const data = docSnap.data();
-          // Karena judulnya pakai <br> di HTML, kita pakai innerHTML
-          aboutJudul.innerHTML = data.aboutJudul || "Temukan Ruang<br>Untuk Dirimu.";
           
-          // Deskripsi pakai innerText (teks biasa)
+          // Set Teks
+          aboutJudul.innerHTML = data.aboutJudul || "Temukan Ruang<br>Untuk Dirimu.";
           aboutDesc.innerText = data.aboutDesc || "Selaras Wellness Club didirikan pada tahun 2020 dengan satu misi sederhana: menciptakan ruang yang aman dan tenang di tengah hiruk-pikuk kota.";
+          
+          // Set Gambar (Jika ada di database)
+          if (data.aboutGambar) {
+            aboutGambar.style.backgroundImage = `url('${data.aboutGambar}')`;
+          }
         } else {
           aboutJudul.innerHTML = "Temukan Ruang<br>Untuk Dirimu.";
           aboutDesc.innerText = "Selaras Wellness Club didirikan pada tahun 2020 dengan satu misi sederhana: menciptakan ruang yang aman dan tenang di tengah hiruk-pikuk kota.";
@@ -104,16 +110,6 @@
       } catch (error) {
         console.error("Error load text: ", error);
       }
-              if (docSnap.exists()) {
-          const data = docSnap.data();
-          aboutJudul.innerHTML = data.aboutJudul || "Temukan Ruang<br>Untuk Dirimu.";
-          aboutDesc.innerText = data.aboutDesc || "Selaras Wellness Club didirikan pada tahun 2020...";
-          
-          // TAMBAHKAN BARIS INI UNTUK GANTI GAMBAR ABOUT
-          if (data.aboutGambar) {
-            document.getElementById('aboutGambar').style.backgroundImage = `url('${data.aboutGambar}')`;
-          }
-        }
     }
 
     loadAboutText();
