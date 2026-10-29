@@ -35,14 +35,16 @@ body {
 }
 
 .logo {
-  font-weight: 700;
-  font-size: 1.1rem;
-  letter-spacing: 2px;
+  display: inline-block;
   margin-bottom: 40px;
   padding-left: 10px;
   text-decoration: none;
-  color: var(--text-main);
-  display: block;
+}
+
+.logo img {
+  height: 60px; /* Dibesarkan dari 30px */
+  width: auto;
+  object-fit: contain;
 }
 
 .menu-group {
