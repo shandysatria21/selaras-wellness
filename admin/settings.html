@@ -5,18 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pengaturan Web - Admin</title>
   <link rel="stylesheet" href="admin-style.css">
-  <style>
-    /* Style tambahan untuk preview gambar */
-    .img-preview { 
-      width: 150px; 
-      height: 100px; 
-      object-fit: cover; 
-      border-radius: 8px; 
-      margin-top: 10px; 
-      border: 1px solid #e2e8f0; 
-      display: block;
-    }
-  </style>
   <script>
     if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
       window.location.href = 'login.html';
@@ -25,7 +13,6 @@
 </head>
 <body>
 
-  <!-- SIDEBAR ADMIN -->
   <aside class="sidebar">
     <a href="dashboard.html" class="logo">ADMIN PANEL</a>
     <div class="menu-group">
@@ -40,81 +27,128 @@
     </div>
   </aside>
 
-  <!-- KONTEN ADMIN -->
   <main class="main-content">
     <h1 class="page-title">Pengaturan Website</h1>
-    <p class="page-subtitle">Ubah teks dan gambar yang tampil di halaman pengunjung.</p>
+    <p class="page-subtitle">Ubah teks dan informasi yang tampil di halaman pengunjung.</p>
 
     <div class="table-wrapper" style="padding: 30px; max-width: 800px;">
-      <form onsubmit="event.preventDefault(); alert('Pengaturan berhasil disimpan! (Simulasi)');">
+      <form id="formPengaturan">
         
-        <!-- SECTION HOME -->
+        <!-- Section Home -->
         <h3 style="margin-bottom: 15px; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Halaman Home</h3>
-        
         <div class="form-group">
           <label>Judul Utama (Hero)</label>
-          <input type="text" class="form-control" value="Find Balance Through Yoga">
+          <input type="text" id="inpHomeJudul" class="form-control" required>
         </div>
         <div class="form-group">
           <label>Sub-judul (Hero)</label>
-          <textarea class="form-control" rows="2">A minimalist, calming space for mindful movement. Join a class, breathe deeply, and reset your day.</textarea>
-        </div>
-        
-        <div class="form-group">
-          <label>Gambar Hero (Home)</label>
-          <!-- Gambar Preview -->
-          <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=400&q=80" alt="Hero Image" class="img-preview">
-          <!-- Input Upload -->
-          <input type="file" class="form-control" accept="image/*" style="background: #fff; margin-top: 10px;">
+          <textarea id="inpHomeSub" class="form-control" rows="2" required></textarea>
         </div>
 
-        <!-- SECTION ABOUT US -->
+        <!-- Section About Us -->
         <h3 style="margin: 30px 0 15px 0; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Halaman About Us</h3>
-        
         <div class="form-group">
           <label>Judul About</label>
-          <input type="text" class="form-control" value="Temukan Ruang Untuk Dirimu.">
+          <input type="text" id="inpAboutJudul" class="form-control" required>
         </div>
         <div class="form-group">
           <label>Deskripsi About</label>
-          <textarea class="form-control" rows="4">Selaras Wellness Club didirikan pada tahun 2020 dengan satu misi sederhana: menciptakan ruang yang aman dan tenang di tengah hiruk-pikuk kota.</textarea>
-        </div>
-        
-        <div class="form-group">
-          <label>Gambar About Us</label>
-          <!-- Gambar Preview -->
-          <img src="https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?auto=format&fit=crop&w=400&q=80" alt="About Image" class="img-preview">
-          <!-- Input Upload -->
-          <input type="file" class="form-control" accept="image/*" style="background: #fff; margin-top: 10px;">
+          <textarea id="inpAboutDesc" class="form-control" rows="4" required></textarea>
         </div>
 
-        <!-- SECTION CONTACT -->
+        <!-- Section Contact -->
         <h3 style="margin: 30px 0 15px 0; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Halaman Contact</h3>
-        
         <div class="form-group">
           <label>Alamat Studio</label>
-          <input type="text" class="form-control" value="Jl. Ketenangan No. 88, Bandung">
+          <input type="text" id="inpContactAlamat" class="form-control" required>
         </div>
         <div class="form-group">
           <label>Nomor Telepon / WA Studio</label>
-          <input type="text" class="form-control" value="+62 812 3456 7890">
+          <input type="text" id="inpContactWa" class="form-control" required>
         </div>
         
-        <!-- SECTION LAINNYA -->
+        <!-- Section Link Tambahan -->
         <h3 style="margin: 30px 0 15px 0; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Lainnya</h3>
-        
         <div class="form-group">
           <label>Link Grup WhatsApp (Halaman Sukses)</label>
-          <input type="text" class="form-control" value="https://chat.whatsapp.com/xxxxxxx">
+          <input type="url" id="inpLinkWa" class="form-control" required>
         </div>
 
-        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Simpan Semua Pengaturan</button>
+        <button type="submit" id="btnSimpan" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Simpan Semua Pengaturan</button>
       </form>
     </div>
   </main>
 
-  <script>
-    function logout() {
+  <script type="module">
+    import { firebaseConfig, app } from '../firebase-config.js';
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const db = getFirestore(app);
+    // Kita akan simpan pengaturan di 1 dokumen khusus bernama "data-web"
+    const docRef = doc(db, "pengaturan", "data-web"); 
+
+    const form = document.getElementById('formPengaturan');
+    const btnSimpan = document.getElementById('btnSimpan');
+
+    // 1. Ambil Data dari Database saat halaman dibuka
+    async function loadPengaturan() {
+      try {
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          document.getElementById('inpHomeJudul').value = data.homeJudul || '';
+          document.getElementById('inpHomeSub').value = data.homeSub || '';
+          document.getElementById('inpAboutJudul').value = data.aboutJudul || '';
+          document.getElementById('inpAboutDesc').value = data.aboutDesc || '';
+          document.getElementById('inpContactAlamat').value = data.contactAlamat || '';
+          document.getElementById('inpContactWa').value = data.contactWa || '';
+          document.getElementById('inpLinkWa').value = data.linkWa || '';
+        } else {
+          // Jika belum ada data (pertama kali), isi dengan teks default
+          document.getElementById('inpHomeJudul').value = "Find Balance Through Yoga";
+          document.getElementById('inpHomeSub').value = "A minimalist, calming space for mindful movement. Join a class, breathe deeply, and reset your day.";
+          document.getElementById('inpAboutJudul').value = "Temukan Ruang Untuk Dirimu.";
+          document.getElementById('inpAboutDesc').value = "Selaras Wellness Club didirikan pada tahun 2020 dengan satu misi sederhana: menciptakan ruang yang aman dan tenang di tengah hiruk-pikuk kota.";
+          document.getElementById('inpContactAlamat').value = "Jl. Ketenangan No. 88, Bandung";
+          document.getElementById('inpContactWa').value = "+62 812 3456 7890";
+          document.getElementById('inpLinkWa').value = "https://chat.whatsapp.com/xxxxxxx";
+        }
+      } catch (error) {
+        console.error("Gagal load pengaturan: ", error);
+      }
+    }
+
+    loadPengaturan();
+
+    // 2. Simpan Data ke Database saat form disubmit
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      btnSimpan.innerText = 'Menyimpan...';
+      btnSimpan.disabled = true;
+
+      try {
+        await setDoc(docRef, {
+          homeJudul: document.getElementById('inpHomeJudul').value,
+          homeSub: document.getElementById('inpHomeSub').value,
+          aboutJudul: document.getElementById('inpAboutJudul').value,
+          aboutDesc: document.getElementById('inpAboutDesc').value,
+          contactAlamat: document.getElementById('inpContactAlamat').value,
+          contactWa: document.getElementById('inpContactWa').value,
+          linkWa: document.getElementById('inpLinkWa').value
+        });
+
+        alert('Pengaturan berhasil disimpan ke database!');
+      } catch (error) {
+        console.error("Gagal simpan: ", error);
+        alert('Gagal menyimpan pengaturan.');
+      } finally {
+        btnSimpan.innerText = 'Simpan Semua Pengaturan';
+        btnSimpan.disabled = false;
+      }
+    });
+
+    window.logout = function() {
       localStorage.removeItem('isAdminLoggedIn');
       window.location.href = 'login.html';
     }
