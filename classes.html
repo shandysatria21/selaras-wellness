@@ -8,10 +8,9 @@
 </head>
 <body>
 
-  <!-- SIDEBAR -->
+  <!-- SIDEBAR USER -->
   <aside class="sidebar">
     <a href="index.html" class="logo">SELARAS.</a>
-    
     <div class="menu-group">
       <a href="index.html" class="menu-item">
         <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
@@ -30,7 +29,6 @@
         About Us
       </a>
     </div>
-
     <div class="menu-group">
       <a href="contact.html" class="menu-item">
         <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
@@ -42,85 +40,126 @@
   <!-- KONTEN UTAMA -->
   <main class="main-content">
     
-    <!-- BAGIAN 1: DAFTAR KELAS -->
+    <!-- DAFTAR KELAS DINAMIS -->
     <h1 class="page-title">Classes & Pricing</h1>
     <p class="page-subtitle">Temukan kelas yang cocok dan paket terbaik untukmu.</p>
 
-    <div class="grid-cards" style="margin-bottom: 60px;">
-      <!-- Card 1 -->
-      <div class="card">
-        <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?auto=format&fit=crop&w=600&q=80');">
-          <span class="card-label">Beginner Yoga</span>
-        </div>
-        <div class="card-content">
-          <h3>Ease Into Sleep : After Hour Stress Release</h3>
-          <div class="card-info">
-            <div class="info-row"><span class="info-label">Level</span><span class="info-val">-</span></div>
-            <div class="info-row"><span class="info-label">Duration (min)</span><span class="info-val">60</span></div>
-          </div>
-          <div class="card-footer">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <div>
-                <span class="price-label">Price</span>
-                <span class="price-val">Rp 115.000</span>
-              </div>
-              <!-- TOMBOL BOOK NOW -->
-              <a href="form-booking.html?kelas=Ease Into Sleep&harga=115000" class="btn btn-primary" style="padding: 10px 20px; font-size: 0.9rem;">Book Now</a>
-            </div>
-          </div>
-        </div>
+    <!-- Wadah untuk kartu-kartu kelas dari Firebase -->
+    <div class="grid-cards" id="container-kelas" style="margin-bottom: 60px;">
+      <!-- Akan diisi oleh JavaScript -->
+      <p style="text-align:center; width: 100%; color: var(--text-muted);">Memuat kelas...</p>
+    </div>
+
+    <!-- PAKET HARGA (Tetap Statis) -->
+    <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 10px;">Membership Plans</h2>
+    <p class="page-subtitle">Ingin rutin yoga? Pilih paket membership yang lebih hemat.</p>
+
+    <div class="pricing-grid">
+      <!-- Paket 1 -->
+      <div class="pricing-card">
+        <h3>Single Pass</h3>
+        <div class="pricing-price">Rp 150k <span>/ kelas</span></div>
+        <ul class="pricing-features">
+          <li>Akses 1 kelas reguler</li>
+          <li>Matras & air mineral</li>
+          <li>Berlaku 1 bulan</li>
+        </ul>
+        <a href="form-booking.html?kelas=Single Pass&harga=150000" class="btn btn-outline" style="width: 100%; text-align: center;">Pilih Paket</a>
       </div>
 
-      <!-- Card 2 -->
-      <div class="card">
-        <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80');">
-          <span class="card-label">Couple Yoga</span>
-        </div>
-        <div class="card-content">
-          <h3>Heart-to-Heart Duo</h3>
-          <div class="card-info">
-            <div class="info-row"><span class="info-label">Level</span><span class="badge-level level-all">All levels</span></div>
-            <div class="info-row"><span class="info-label">Duration (min)</span><span class="info-val">90</span></div>
-          </div>
-          <div class="card-footer">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <div>
-                <span class="price-label">Price</span>
-                <span class="price-val">Rp 45.000</span>
-              </div>
-              <!-- TOMBOL BOOK NOW -->
-              <a href="form-booking.html?kelas=Heart-to-Heart Duo&harga=45000" class="btn btn-primary" style="padding: 10px 20px; font-size: 0.9rem;">Book Now</a>
-            </div>
-          </div>
-        </div>
+      <!-- Paket 2 (Populer) -->
+      <div class="pricing-card popular">
+        <div class="popular-badge">Paling Populer</div>
+        <h3>Monthly Unlimited</h3>
+        <div class="pricing-price">Rp 800k <span>/ bulan</span></div>
+        <ul class="pricing-features">
+          <li>Kelas tak terbatas</li>
+          <li>Akses semua instruktur</li>
+          <li>Free 1 sesi private</li>
+          <li>Prioritas booking</li>
+        </ul>
+        <a href="form-booking.html?kelas=Monthly Unlimited&harga=800000" class="btn btn-primary" style="width: 100%; text-align: center;">Pilih Paket</a>
       </div>
 
-      <!-- Card 3 -->
-      <div class="card">
-        <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80');">
-          <span class="card-label">Flow Yoga</span>
-        </div>
-        <div class="card-content">
-          <h3>Power Flow Intensive</h3>
-          <div class="card-info">
-            <div class="info-row"><span class="info-label">Level</span><span class="badge-level level-int">Intermediate</span></div>
-            <div class="info-row"><span class="info-label">Duration (min)</span><span class="info-val">90</span></div>
-          </div>
-          <div class="card-footer">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <div>
-                <span class="price-label">Price</span>
-                <span class="price-val">Rp 35.000</span>
-              </div>
-              <!-- TOMBOL BOOK NOW -->
-              <a href="form-booking.html?kelas=Power Flow Intensive&harga=35000" class="btn btn-primary" style="padding: 10px 20px; font-size: 0.9rem;">Book Now</a>
-            </div>
-          </div>
-        </div>
+      <!-- Paket 3 -->
+      <div class="pricing-card">
+        <h3>Annual Membership</h3>
+        <div class="pricing-price">Rp 7.5jt <span>/ tahun</span></div>
+        <ul class="pricing-features">
+          <li>Semua benefit Monthly</li>
+          <li>Free akses workshop</li>
+          <li>Merchandise eksklusif</li>
+        </ul>
+        <a href="form-booking.html?kelas=Annual Membership&harga=7500000" class="btn btn-outline" style="width: 100%; text-align: center;">Pilih Paket</a>
       </div>
     </div>
 
   </main>
+
+  <!-- SCRIPT FIREBASE UNTUK USER -->
+  <script type="module">
+    import { firebaseConfig, app } from './firebase-config.js';
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const db = getFirestore(app);
+    const container = document.getElementById('container-kelas');
+
+    async function muatKelasUser() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "classes"));
+        
+        container.innerHTML = ''; // Hapus tulisan "Memuat kelas..."
+
+        if (querySnapshot.empty) {
+          container.innerHTML = '<p style="text-align:center; width: 100%;">Belum ada kelas yang tersedia.</p>';
+          return;
+        }
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const hargaRupiah = 'Rp ' + data.harga.toLocaleString('id-ID');
+          
+          // Tentukan warna badge level
+          let badgeClass = 'level-all';
+          if (data.level.toLowerCase().includes('inter')) badgeClass = 'level-int';
+          if (data.level.toLowerCase().includes('beg')) badgeClass = 'level-all'; // Bisa disesuaikan
+
+          // Buat HTML Kartu
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <div class="card-img" style="background-image: url('${data.gambar}');">
+              <span class="card-label">${data.level}</span>
+            </div>
+            <div class="card-content">
+              <h3>${data.nama}</h3>
+              <div class="card-info">
+                <div class="info-row"><span class="info-label">Level</span><span class="badge-level ${badgeClass}">${data.level}</span></div>
+                <div class="info-row"><span class="info-label">Duration (min)</span><span class="info-val">${data.durasi}</span></div>
+              </div>
+              <div class="card-footer">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <span class="price-label">Price</span>
+                    <span class="price-val">${hargaRupiah}</span>
+                  </div>
+                  <!-- Tombol Book Now membawa data kelas ke form booking -->
+                  <a href="form-booking.html?kelas=${encodeURIComponent(data.nama)}&harga=${data.harga}" class="btn btn-primary" style="padding: 10px 20px; font-size: 0.9rem;">Book Now</a>
+                </div>
+              </div>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+
+      } catch (error) {
+        console.error("Error memuat kelas: ", error);
+        container.innerHTML = '<p style="text-align:center; width: 100%; color: red;">Gagal memuat data kelas.</p>';
+      }
+    }
+
+    muatKelasUser();
+  </script>
 
 </body>
 </html>
