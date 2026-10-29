@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pesan Masuk - Admin</title>
+  <link rel="stylesheet" href="admin-style.css">
+  <script>
+    if (localStorage.getItem('isAdminLoggedIn') !== 'true') { window.location.href = 'login.html'; }
+  </script>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <a href="dashboard.html" class="logo">ADMIN PANEL</a>
+    <div class="menu-group">
+      <a href="dashboard.html" class="menu-item">Dashboard</a>
+      <a href="classes.html" class="menu-item">Kelola Kelas</a>
+      <a href="orders.html" class="menu-item">Data Pesanan</a>
+      <a href="gallery.html" class="menu-item">Kelola Galeri</a>
+      <a href="messages.html" class="menu-item active">Pesan Masuk</a> <!-- Menu Baru -->
+      <a href="settings.html" class="menu-item">Pengaturan Web</a>
+    </div>
+    <div class="menu-group" style="margin-top: auto;">
+      <a href="#" onclick="logout()" class="menu-item" style="color: #f87171;">Logout</a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <h1 class="page-title">Pesan Masuk</h1>
+    <p class="page-subtitle">Daftar pesan dari formulir kontak pengunjung.</p>
+
+    <div class="table-wrapper">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Tanggal</th>
+            <th>Nama</th>
+            <th>Email</th>
+            <th>Pesan</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tabelPesan">
+          <tr><td colspan="5" style="text-align:center;">Memuat data...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script type="module">
+    import { firebaseConfig, app } from '../firebase-config.js';
+    import { getFirestore, collection, getDocs, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const db = getFirestore(app);
+    const tabelPesan = document.getElementById('tabelPesan');
+
+    async function loadPesan() {
+      try {
+        const q = query(collection(db, "pesan_kontak"), orderBy("tanggal", "desc"));
+        const querySnapshot = await getDocs(q);
+        
+        tabelPesan.innerHTML = '';
+        
+        if (querySnapshot.empty) {
+          tabelPesan.innerHTML = '<tr><td colspan="5" style="text-align:center;">Belum ada pesan masuk.</td></tr>';
+          return;
+        }
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const id = doc.id;
+          const tanggal = data.tanggal ? data.tanggal.toDate().toLocaleDateString('id-ID') : '-';
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${tanggal}</td>
+            <td>${data.nama}</td>
+            <td>${data.email}</td>
+            <td style="max-width: 300px; white-space: normal;">${data.pesan}</td>
+            <td>
+              <button class="btn btn-outline" onclick="hapusPesan('${id}')" style="padding: 5px 12px; font-size: 0.8rem; color: #ef4444; border-color: #ef4444;">Hapus</button>
+            </td>
+          `;
+          tabelPesan.appendChild(tr);
+        });
+      } catch (error) {
+        console.error("Error: ", error);
+        tabelPesan.innerHTML = '<tr><td colspan="5" style="text-align:center; color: red;">Gagal memuat data.</td></tr>';
+      }
+    }
+
+    loadPesan();
+
+    window.hapusPesan = async function(id) {
+      if (!confirm("Hapus pesan ini?")) return;
+      try {
+        await deleteDoc(doc(db, "pesan_kontak", id));
+        loadPesan();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    window.logout = function() {
+      localStorage.removeItem('isAdminLoggedIn');
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>

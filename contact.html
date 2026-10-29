@@ -2,12 +2,12 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact - Yoga Fest</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <a href="index.html" class="logo">
   <img src="img/SELARAS.png" alt="Selaras Logo">
@@ -26,7 +26,7 @@
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
         Galeri
       </a>
-
+    
       <a href="about.html" class="menu-item">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
         About Us
@@ -52,12 +52,12 @@
         
         <div class="contact-info-item">
           <h4>📍 Lokasi Studio</h4>
-          <p>Jl. Ketenangan No. 88, Bandung<br>Jawa Barat, Indonesia</p>
+          <p id="infoAlamat">Memuat...</p>
         </div>
         
         <div class="contact-info-item">
           <h4>📞 Telepon</h4>
-          <p>+62 812 3456 7890</p>
+          <p id="infoTelepon">Memuat...</p>
         </div>
         
         <div class="contact-info-item">
@@ -74,24 +74,74 @@
       <!-- Form Kontak -->
       <div class="contact-form-card">
         <h3 style="margin-bottom: 20px;">Kirim Pesan</h3>
-        <form onsubmit="event.preventDefault(); alert('Pesan Anda berhasil terkirim! Terima kasih.'); this.reset();">
+        <form id="formKontak">
           <div class="form-group">
             <label>Nama Lengkap</label>
-            <input type="text" class="form-control" placeholder="Masukkan nama" required>
+            <input type="text" id="inpNama" class="form-control" placeholder="Masukkan nama" required>
           </div>
           <div class="form-group">
             <label>Email</label>
-            <input type="email" class="form-control" placeholder="email@contoh.com" required>
+            <input type="email" id="inpEmail" class="form-control" placeholder="email@contoh.com" required>
           </div>
           <div class="form-group">
             <label>Pesan</label>
-            <textarea class="form-control" placeholder="Tulis pesan Anda di sini..." required></textarea>
+            <textarea id="inpPesan" class="form-control" placeholder="Tulis pesan Anda di sini..." required></textarea>
           </div>
-          <button type="submit" class="btn btn-primary" style="width: 100%;">Kirim Pesan</button>
+          <button type="submit" id="btnKirim" class="btn btn-primary" style="width: 100%;">Kirim Pesan</button>
         </form>
       </div>
     </div>
   </main>
+
+  <script type="module">
+    import { firebaseConfig, app } from './firebase-config.js';
+    import { getFirestore, collection, addDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const db = getFirestore(app);
+
+    // 1. Ambil Info Kontak dari Pengaturan
+    async function loadInfoKontak() {
+      try {
+        const docRef = doc(db, "pengaturan", "data-web");
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          document.getElementById('infoAlamat').innerText = data.contactAlamat || "Jl. Ketenangan No. 88, Bandung";
+          document.getElementById('infoTelepon').innerText = data.contactWa || "+62 812 3456 7890";
+        }
+      } catch (error) {
+        console.error("Error load info: ", error);
+      }
+    }
+    loadInfoKontak();
+
+    // 2. Proses Kirim Pesan
+    document.getElementById('formKontak').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btnKirim = document.getElementById('btnKirim');
+      btnKirim.innerText = 'Mengirim...';
+      btnKirim.disabled = true;
+
+      try {
+        await addDoc(collection(db, "pesan_kontak"), {
+          nama: document.getElementById('inpNama').value,
+          email: document.getElementById('inpEmail').value,
+          pesan: document.getElementById('inpPesan').value,
+          tanggal: new Date()
+        });
+
+        alert('Pesan Anda berhasil terkirim! Kami akan segera menghubungi Anda.');
+        document.getElementById('formKontak').reset();
+      } catch (error) {
+        console.error("Error kirim pesan: ", error);
+        alert('Gagal mengirim pesan. Silakan coba lagi.');
+      } finally {
+        btnKirim.innerText = 'Kirim Pesan';
+        btnKirim.disabled = false;
+      }
+    });
+  </script>
 
 </body>
 </html>
