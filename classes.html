@@ -5,6 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Classes & Pricing - Yoga Fest</title>
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Style Tambahan untuk Card Baru */
+    .card-status { position: absolute; top: 15px; right: 15px; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; color: #fff; }
+    .status-active { background-color: #10b981; } /* Hijau */
+    .status-inactive { background-color: #ef4444; } /* Merah */
+    
+    .card-info-row { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px; }
+    .card-info-row span { font-weight: 500; color: var(--text-main); }
+    
+    .btn-disabled { background-color: #ccc !important; cursor: not-allowed; pointer-events: none; }
+  </style>
 </head>
 <body>
 
@@ -42,37 +53,71 @@
     </div>
   </aside>
 
-  <!-- KONTEN UTAMA -->
   <main class="main-content">
-    
-    <!-- DAFTAR KELAS DINAMIS -->
     <h1 class="page-title">Classes & Pricing</h1>
-    <p class="page-subtitle">Temukan kelas yang cocok dan paket terbaik untukmu.</p>
+    <p class="page-subtitle">Temukan jadwal kelas yang cocok untukmu.</p>
 
-    <!-- Wadah untuk kartu-kartu kelas dari Firebase -->
     <div class="grid-cards" id="container-kelas" style="margin-bottom: 60px;">
       <p style="text-align:center; width: 100%; color: var(--text-muted);">Memuat kelas...</p>
     </div>
 
+    <!-- Membership Plans (Statis) -->
+    <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 10px;">Membership Plans</h2>
+    <p class="page-subtitle">Ingin rutin yoga? Pilih paket membership yang lebih hemat.</p>
+
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <h3>Single Pass</h3>
+        <div class="pricing-price">Rp 150k <span>/ kelas</span></div>
+        <ul class="pricing-features">
+          <li>Akses 1 kelas reguler</li>
+          <li>Matras & air mineral</li>
+        </ul>
+        <a href="form-booking.html?kelas=Single Pass&harga=150000" class="btn btn-outline" style="width: 100%; text-align: center;">Pilih Paket</a>
+      </div>
+      <div class="pricing-card popular">
+        <div class="popular-badge">Paling Populer</div>
+        <h3>Monthly Unlimited</h3>
+        <div class="pricing-price">Rp 800k <span>/ bulan</span></div>
+        <ul class="pricing-features">
+          <li>Kelas tak terbatas</li>
+          <li>Prioritas booking</li>
+        </ul>
+        <a href="form-booking.html?kelas=Monthly Unlimited&harga=800000" class="btn btn-primary" style="width: 100%; text-align: center;">Pilih Paket</a>
+      </div>
+      <div class="pricing-card">
+        <h3>Annual Membership</h3>
+        <div class="pricing-price">Rp 7.5jt <span>/ tahun</span></div>
+        <ul class="pricing-features">
+          <li>Semua benefit Monthly</li>
+          <li>Merchandise eksklusif</li>
+        </ul>
+        <a href="form-booking.html?kelas=Annual Membership&harga=7500000" class="btn btn-outline" style="width: 100%; text-align: center;">Pilih Paket</a>
+      </div>
+    </div>
   </main>
 
-  <!-- SCRIPT FIREBASE UNTUK USER -->
   <script type="module">
-    // Import config dari folder yang sama
     import { firebaseConfig, app } from './firebase-config.js';
-    
-    // Import library Firestore
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const db = getFirestore(app);
     const container = document.getElementById('container-kelas');
 
+    // Format tanggal agar cantik (misal: 2026-06-15 -> 15 Jun 2026)
+    function formatTanggal(tglString) {
+      if (!tglString) return '-';
+      const options = { day: 'numeric', month: 'short', year: 'numeric' };
+      return new Date(tglString).toLocaleDateString('id-ID', options);
+    }
+
     async function muatKelasUser() {
       try {
-        // Ambil data dari koleksi "classes"
-        const querySnapshot = await getDocs(collection(db, "classes"));
+        // Ambil semua kelas (termasuk non-aktif agar bisa ditampilkan badge-nya)
+        const q = query(collection(db, "classes"), orderBy("tanggal", "asc"));
+        const querySnapshot = await getDocs(q);
         
-        container.innerHTML = ''; // Hapus tulisan "Memuat kelas..."
+        container.innerHTML = '';
 
         if (querySnapshot.empty) {
           container.innerHTML = '<p style="text-align:center; width: 100%;">Belum ada kelas yang tersedia.</p>';
@@ -81,28 +126,45 @@
 
         querySnapshot.forEach((doc) => {
           const data = doc.data();
+          const id = doc.id;
           const hargaRupiah = 'Rp ' + data.harga.toLocaleString('id-ID');
           
+          // Logika Tombol & Status
+          const isActive = data.statusAktif !== false; // Jika undefined (data lama), anggap aktif
+          const isKuotaHabis = data.kuotaTersisa <= 0;
+          
+          let statusBadge = `<span class="card-status status-active">Aktif</span>`;
+          if (!isActive) statusBadge = `<span class="card-status status-inactive">Non-Aktif</span>`;
+          else if (isKuotaHabis) statusBadge = `<span class="card-status status-inactive">Kuota Habis</span>`;
+
+          let btnBook = `<a href="form-booking.html?kelas=${encodeURIComponent(data.nama)}&harga=${data.harga}&id=${id}" class="btn btn-primary" style="padding: 10px 20px; font-size: 0.9rem;">Book Now</a>`;
+          
+          if (!isActive || isKuotaHabis) {
+            btnBook = `<button class="btn btn-primary btn-disabled" style="padding: 10px 20px; font-size: 0.9rem;">Tutup</button>`;
+          }
+
           // Buat HTML Kartu
           const card = document.createElement('div');
           card.className = 'card';
           card.innerHTML = `
             <div class="card-img" style="background-image: url('${data.gambar}');">
-              <span class="card-label">${data.level}</span>
+              ${statusBadge}
             </div>
             <div class="card-content">
-              <h3>${data.nama}</h3>
-              <div class="card-info">
-                <div class="info-row"><span class="info-label">Level</span><span class="badge-level level-all">${data.level}</span></div>
-                <div class="info-row"><span class="info-label">Duration (min)</span><span class="info-val">${data.durasi}</span></div>
-              </div>
-              <div class="card-footer">
+              <h3 style="margin-bottom: 15px;">${data.nama}</h3>
+              
+              <div class="card-info-row">👤 Coach: <span>${data.coach || '-'}</span></div>
+              <div class="card-info-row">📅 Tanggal: <span>${formatTanggal(data.tanggal)}</span></div>
+              <div class="card-info-row">📍 Lokasi: <span>${data.lokasi || '-'}</span></div>
+              <div class="card-info-row">🎟️ Kuota: <span>${data.kuotaTersisa || 0} / ${data.kuotaAwal || 0} tersisa</span></div>
+
+              <div class="card-footer" style="margin-top: 20px;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                   <div>
                     <span class="price-label">Price</span>
                     <span class="price-val">${hargaRupiah}</span>
                   </div>
-                  <a href="form-booking.html?kelas=${encodeURIComponent(data.nama)}&harga=${data.harga}" class="btn btn-primary" style="padding: 10px 20px; font-size: 0.9rem;">Book Now</a>
+                  ${btnBook}
                 </div>
               </div>
             </div>
@@ -112,7 +174,7 @@
 
       } catch (error) {
         console.error("Error memuat kelas: ", error);
-        container.innerHTML = '<p style="text-align:center; width: 100%; color: red;">Gagal memuat data kelas. Cek Console (F12).</p>';
+        container.innerHTML = '<p style="text-align:center; width: 100%; color: red;">Gagal memuat data.</p>';
       }
     }
 
