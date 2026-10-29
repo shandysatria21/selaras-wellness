@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pengaturan Web - Admin</title>
   <link rel="stylesheet" href="admin-style.css">
+  <style>
+    .img-preview { width: 100px; height: 100px; object-fit: cover; border-radius: 8px; margin-top: 10px; border: 1px solid #e2e8f0; }
+  </style>
   <script>
     if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
       window.location.href = 'login.html';
@@ -19,6 +22,7 @@
       <a href="dashboard.html" class="menu-item">Dashboard</a>
       <a href="classes.html" class="menu-item">Kelola Kelas</a>
       <a href="orders.html" class="menu-item">Data Pesanan</a>
+      <a href="gallery.html" class="menu-item">Kelola Galeri</a> <!-- Menu Baru -->
       <a href="settings.html" class="menu-item active">Pengaturan Web</a>
     </div>
     <div class="menu-group" style="margin-top: auto;">
@@ -28,7 +32,7 @@
 
   <main class="main-content">
     <h1 class="page-title">Pengaturan Website</h1>
-    <p class="page-subtitle">Ubah teks dan informasi yang tampil di halaman pengunjung.</p>
+    <p class="page-subtitle">Ubah teks dan gambar yang tampil di halaman pengunjung.</p>
 
     <div class="table-wrapper" style="padding: 30px; max-width: 800px;">
       <form onsubmit="event.preventDefault(); alert('Pengaturan berhasil disimpan! (Simulasi)');">
@@ -43,6 +47,11 @@
           <label>Sub-judul (Hero)</label>
           <textarea class="form-control" rows="2">A minimalist, calming space for mindful movement. Join a class, breathe deeply, and reset your day.</textarea>
         </div>
+        <div class="form-group">
+          <label>Gambar Hero (Home)</label>
+          <input type="file" class="form-control" accept="image/*" style="background: #fff;">
+          <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=200&q=80" class="img-preview" alt="Preview">
+        </div>
 
         <!-- Section About Us -->
         <h3 style="margin: 30px 0 15px 0; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Halaman About Us</h3>
@@ -53,6 +62,11 @@
         <div class="form-group">
           <label>Deskripsi About</label>
           <textarea class="form-control" rows="4">Selaras Wellness Club didirikan pada tahun 2020 dengan satu misi sederhana: menciptakan ruang yang aman dan tenang di tengah hiruk-pikuk kota.</textarea>
+        </div>
+        <div class="form-group">
+          <label>Gambar About Us</label>
+          <input type="file" class="form-control" accept="image/*" style="background: #fff;">
+          <img src="https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?auto=format&fit=crop&w=200&q=80" class="img-preview" alt="Preview">
         </div>
 
         <!-- Section Contact -->
