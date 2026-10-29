@@ -280,6 +280,7 @@ textarea.form-control { resize: vertical; min-height: 120px; }
 @media (max-width: 768px) {
   .contact-wrapper { grid-template-columns: 1fr; }
 }
+
 /* ---------- KHUSUS HALAMAN ABOUT US ---------- */
 .about-hero {
   display: flex;
