@@ -12,11 +12,11 @@
   </script>
 </head>
 <body>
-<button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.add('active')">☰</button>
+<button id="btnHamburger" class="menu-toggle" onclick="bukaMenu()">☰</button>
   <!-- SIDEBAR ADMIN -->
   <aside class="sidebar">
-    <button class="close-menu" onclick="document.querySelector('.sidebar').classList.remove('active')">✕</button>
-    <a href="dashboard.html" class="logo">ADMIN PANEL</a>
+<button class="close-menu" onclick="tutupMenu()">✕</button>    
+<a href="dashboard.html" class="logo">ADMIN PANEL</a>
     <div class="menu-group">
       <a href="dashboard.html" class="menu-item active">Dashboard</a>
       <a href="classes.html" class="menu-item">Kelola Kelas</a>
@@ -163,6 +163,32 @@
       window.location.href = 'login.html';
     }
   </script>
+
+  <script>
+  function bukaMenu() {
+    const sidebar = document.querySelector('.sidebar');
+    const btnHamburger = document.getElementById('btnHamburger');
+    
+    sidebar.classList.add('active');
+    btnHamburger.style.display = 'none';
+    
+    // Kunci scroll body
+    document.body.style.overflow = 'hidden';
+    document.body.style.height = '100vh';
+  }
+
+  function tutupMenu() {
+    const sidebar = document.querySelector('.sidebar');
+    const btnHamburger = document.getElementById('btnHamburger');
+    
+    sidebar.classList.remove('active');
+    btnHamburger.style.display = 'block';
+    
+    // BUKA KUNCI SCROLL
+    document.body.style.overflow = 'auto';
+    document.body.style.height = 'auto';
+  }
+</script>
 
 </body>
 </html>

@@ -92,7 +92,11 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 /* Responsive */
 @media (max-width: 768px) {
-  body { display: block; height: auto; overflow-x: hidden; }
+  body { 
+    display: block !important; 
+    overflow-x: hidden !important;
+    overflow-y: auto !important; /* PAKSA SCROLL */
+    height: auto !important; }
   
   .menu-toggle { display: block; color: #1e293b; } /* Warna tombol di admin */
   
@@ -105,6 +109,8 @@ input:checked + .slider:before { transform: translateX(20px); }
     z-index: 999;
     transition: left 0.3s ease;
     box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
   }
   
   .sidebar.active { left: 0; }
