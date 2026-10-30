@@ -308,6 +308,77 @@ textarea.form-control { resize: vertical; min-height: 120px; }
 }
 
 /* KHUSUS UNTUK LAYAR HP / TABLET KECIL */
+/* KHUSUS UNTUK LAYAR HP / TABLET KECIL */
+@media (max-width: 768px) {
+  body { 
+    display: block; 
+    overflow-x: hidden;
+    height: auto;
+  }
+
+  /* Tampilkan tombol hamburger */
+  .menu-toggle {
+    display: block;
+  }
+  
+  /* Sembunyikan sidebar secara default */
+  .sidebar { 
+    position: fixed;
+    top: 0;
+    left: -100%; /* Sembunyikan ke kiri luar layar */
+    width: 100%; /* Lebar penuh di HP */
+    height: 100vh; /* Tinggi penuh */
+    z-index: 999;
+    transition: left 0.3s ease;
+    background: #fff;
+    padding-top: 60px; /* Beri ruang untuk tombol close */
+  }
+
+  /* Class aktif untuk memunculkan sidebar */
+  .sidebar.active {
+    left: 0;
+  }
+
+  /* Tombol close (X) di dalam sidebar */
+  .close-menu {
+    display: block;
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 1.8rem;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: var(--text-main);
+    z-index: 1000;
+  }
+
+  /* Menu jadi 1 kolom ke bawah */
+  .menu-group { 
+    flex-direction: column; 
+    flex-wrap: nowrap; /* Paksa jadi 1 kolom */
+    width: 100%;
+    padding: 0 20px;
+  }
+
+  .menu-item {
+    padding: 15px 20px; /* Beri jarak yang nyaman untuk jari */
+    font-size: 1.1rem;
+    width: 100%;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  /* Konten utama di HP */
+  .main-content { 
+    padding: 70px 20px 30px 20px; 
+    width: 100%;
+  }
+
+  .page-title {
+    font-size: 2rem;
+  }
+}
+
 @media (max-width: 768px) {
   body { 
     display: block; /* Ubah dari flex ke block agar konten mengalir ke bawah */

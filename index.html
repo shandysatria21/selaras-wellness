@@ -7,10 +7,10 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-   <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.add('active')">☰</button>
+   <button id="btnHamburger" class="menu-toggle" onclick="document.querySelector('.sidebar').classList.add('active'); this.style.display='none';">☰</button>
 
   <aside class="sidebar">
-    <button class="close-menu" onclick="document.querySelector('.sidebar').classList.remove('active')">✕</button>
+    <button class="close-menu" onclick="document.querySelector('.sidebar').classList.remove('active'); document.getElementById('btnHamburger').style.display='block';">✕</button>
     <a href="index.html" class="logo">
   <img src="img/SELARAS.png" alt="Selaras Logo">
 </a>
