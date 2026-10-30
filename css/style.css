@@ -341,7 +341,7 @@ textarea.form-control { resize: vertical; min-height: 120px; }
     background: #fff;
     box-shadow: 5px 0 15px rgba(0,0,0,0.1);
     padding: 60px 20px 20px 20px; /* Padding atas buat tombol Close */
-    overflow-y: auto; 
+    overflow-y: auto !important;
     -webkit-overflow-scrolling: touch;
   }
 
