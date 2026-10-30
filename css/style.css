@@ -12,22 +12,6 @@
   --card-bg: #fcfbf9;
 }
 
-/* Sembunyikan tombol hamburger di Desktop */
-.menu-toggle {
-  display: none;
-  background: none;
-  border: none;
-  font-size: 1.8rem;
-  cursor: pointer;
-  color: var(--text-main);
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  z-index: 1000;
-}
-
-.close-menu { display: none; }
-
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body { 
@@ -48,6 +32,7 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
+  flex-shrink: 0;
 }
 
 .logo {
@@ -58,7 +43,7 @@ body {
 }
 
 .logo img {
-  height: 180px; /* Dibesarkan dari 30px */
+  height: 120px; /* Ukuran logo disesuaikan */
   width: auto;
   object-fit: contain;
 }
@@ -186,7 +171,7 @@ body {
 .price-label { font-size: 0.9rem; color: var(--text-muted); display: block; margin-bottom: 4px; }
 .price-val { font-size: 1.1rem; font-weight: 600; }
 
-/* ---------- FORM & TABEL (UNTUK ADMIN / CONTACT) ---------- */
+/* ---------- FORM & TABEL ---------- */
 .form-group { margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
 .form-group label { font-weight: 500; font-size: 0.95rem; }
 .form-control {
@@ -195,21 +180,7 @@ body {
 }
 .form-control:focus { border-color: var(--primary); }
 
-/* Responsive */
-@media (max-width: 1024px) {
-  .hero { flex-direction: column; text-align: center; }
-  .hero h1 { font-size: 3rem; }
-  .btn-group { justify-content: center; }
-  .hero-image { width: 100%; height: 400px; }
-}
-@media (max-width: 768px) {
-  body { flex-direction: column; }
-  .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); padding: 20px; }
-  .menu-group { flex-direction: row; flex-wrap: wrap; }
-  .main-content { padding: 30px 20px; }
-}
-
-/* ---------- KHUSUS HALAMAN PRICING ---------- */
+/* ---------- HALAMAN PRICING ---------- */
 .pricing-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -245,7 +216,7 @@ body {
 .pricing-features li { margin-bottom: 12px; font-size: 0.95rem; display: flex; align-items: center; gap: 10px; }
 .pricing-features li::before { content: '✓'; color: var(--primary); font-weight: bold; }
 
-/* ---------- KHUSUS HALAMAN GALERI ---------- */
+/* ---------- HALAMAN GALERI ---------- */
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -265,7 +236,7 @@ body {
 }
 .gallery-item:hover img { transform: scale(1.05); }
 
-/* Lightbox Sederhana */
+/* Lightbox */
 .lightbox {
   position: fixed; inset: 0; background: rgba(0,0,0,0.85);
   display: none; justify-content: center; align-items: center; z-index: 999;
@@ -277,7 +248,7 @@ body {
   color: #fff; font-size: 2.5rem; cursor: pointer;
 }
 
-/* ---------- KHUSUS HALAMAN CONTACT ---------- */
+/* ---------- HALAMAN CONTACT ---------- */
 .contact-wrapper {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -295,7 +266,33 @@ body {
 }
 textarea.form-control { resize: vertical; min-height: 120px; }
 
-/* Responsive Perbaikan */
+/* ---------- HALAMAN ABOUT US ---------- */
+.about-hero {
+  display: flex;
+  align-items: center;
+  gap: 50px;
+  margin-bottom: 60px;
+}
+.about-text { flex: 1; }
+.about-text h1 { font-size: 3.5rem; line-height: 1.1; font-weight: 700; letter-spacing: -1.5px; margin-bottom: 20px; }
+.about-text p { font-size: 1.1rem; color: var(--text-muted); line-height: 1.8; margin-bottom: 20px; }
+.about-image { flex: 1; height: 500px; border-radius: 20px; background: #ccc center/cover; box-shadow: 0 10px 40px rgba(0,0,0,0.08); }
+
+.about-values { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 40px; margin-bottom: 60px; }
+.value-card { background: #fff; border: 1px solid var(--border); padding: 30px; border-radius: 16px; text-align: center; }
+.value-icon { font-size: 2rem; margin-bottom: 15px; display: inline-block; }
+.value-card h3 { font-size: 1.2rem; margin-bottom: 10px; font-weight: 600; }
+.value-card p { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; }
+
+.quote-section { background: var(--pink-light); padding: 50px 40px; border-radius: 20px; text-align: center; margin-bottom: 40px; }
+.quote-section blockquote { font-size: 1.8rem; font-style: italic; font-weight: 500; color: var(--primary); line-height: 1.5; max-width: 800px; margin: 0 auto; }
+
+
+/* ========================================================= */
+/* ==================== MEDIA QUERIES ====================== */
+/* ========================================================= */
+
+/* --- TABLET (1024px) --- */
 @media (max-width: 1024px) {
   .hero { flex-direction: column; text-align: center; }
   .hero h1 { font-size: 3rem; }
@@ -307,109 +304,51 @@ textarea.form-control { resize: vertical; min-height: 120px; }
   .about-image { width: 100%; height: 400px; }
 }
 
-/* KHUSUS UNTUK LAYAR HP / TABLET KECIL */
-/* KHUSUS UNTUK LAYAR HP / TABLET KECIL */
+/* --- MOBILE (768px) --- */
 @media (max-width: 768px) {
+  /* 1. Setup Dasar Body */
   body { 
     display: block; 
     overflow-x: hidden;
     height: auto;
   }
 
-  /* Tampilkan tombol hamburger */
+  /* 2. Tombol Hamburger (Cuma Muncul di HP) */
   .menu-toggle {
     display: block;
-  }
-  
-  /* Sembunyikan sidebar secara default */
-  .sidebar { 
     position: fixed;
-    top: 0;
-    left: -100%; /* Sembunyikan ke kiri luar layar */
-    width: 100%; /* Lebar penuh di HP */
-    height: 100vh; /* Tinggi penuh */
-    z-index: 999;
-    transition: left 0.3s ease;
-    background: #fff;
-    padding-top: 60px; /* Beri ruang untuk tombol close */
-  }
-
-  /* Class aktif untuk memunculkan sidebar */
-  .sidebar.active {
-    left: 0;
-  }
-
-  /* Tombol close (X) di dalam sidebar */
-  .close-menu {
-    display: block;
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    font-size: 1.8rem;
-    cursor: pointer;
-    background: none;
-    border: none;
-    color: var(--text-main);
+    top: 20px;
+    left: 20px;
     z-index: 1000;
+    font-size: 1.8rem;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 5px 12px;
+    cursor: pointer;
   }
 
-  /* Menu jadi 1 kolom ke bawah */
-  .menu-group { 
-    flex-direction: column; 
-    flex-wrap: nowrap; /* Paksa jadi 1 kolom */
-    width: 100%;
-    padding: 0 20px;
-  }
-
-  .menu-item {
-    padding: 15px 20px; /* Beri jarak yang nyaman untuk jari */
-    font-size: 1.1rem;
-    width: 100%;
-    border-bottom: 1px solid #f0f0f0;
-  }
-
-  /* Konten utama di HP */
-  .main-content { 
-    padding: 70px 20px 30px 20px; 
-    width: 100%;
-  }
-
-  .page-title {
-    font-size: 2rem;
-  }
-}
-
-@media (max-width: 768px) {
-  body { 
-    display: block; /* Ubah dari flex ke block agar konten mengalir ke bawah */
-    overflow-x: hidden;
-    height: auto;
-  }
-
-  /* Tampilkan tombol hamburger */
-  .menu-toggle {
-    display: block;
-  }
-  
-  /* Sembunyikan sidebar secara default */
+  /* 3. Sidebar Mobile (Tersembunyi) */
   .sidebar { 
     position: fixed;
     top: 0;
-    left: -280px; /* Sembunyikan ke kiri */
-    width: 260px;
+    left: -100%; /* Sembunyi di kiri luar layar */
+    width: 85%; /* Lebar sidebar 85% layar HP */
+    max-width: 320px;
     height: 100vh;
     z-index: 999;
     transition: left 0.3s ease;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
     background: #fff;
+    box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+    padding: 60px 20px 20px 20px; /* Padding atas buat tombol Close */
   }
 
-  /* Class aktif untuk memunculkan sidebar */
+  /* 4. Munculkan Sidebar jika class 'active' ditambahkan via JS */
   .sidebar.active {
     left: 0;
   }
 
-  /* Tombol close (X) di dalam sidebar */
+  /* 5. Tombol Close (X) di dalam Sidebar */
   .close-menu {
     display: block;
     position: absolute;
@@ -422,160 +361,49 @@ textarea.form-control { resize: vertical; min-height: 120px; }
     color: var(--text-main);
   }
 
-  /* Konten utama di HP */
-  .main-content { 
-    padding: 70px 20px 30px 20px; /* Padding atas dilebarkan agar tidak tertutup tombol menu */
-    width: 100%;
-    margin: 0;
-    overflow: visible;
-  }
-
-  .page-title {
-    font-size: 2rem;
-  }
-
-  /* Perbaikan Grid Card */
-  .grid-cards {
-    grid-template-columns: 1fr; /* 1 kolom penuh di HP */
-  }
-
-  /* Perbaikan Galeri di HP */
-  .gallery-grid {
-    grid-template-columns: repeat(2, 1fr); /* Bagi 2 kolom di HP */
-    gap: 10px;
-  }
-
-  .gallery-item {
-    height: 150px; 
-  }
-
-  /* Perbaikan Form Contact */
-  .contact-wrapper {
-    grid-template-columns: 1fr;
-  }
-}
-  
-  .sidebar { 
-    width: 100%; 
-    height: auto; 
-    border-right: none; 
-    border-bottom: 1px solid var(--border); 
-    padding: 20px; 
-    position: relative;
-  }
-  
+  /* 6. Menu Group di HP (1 Kolom ke bawah) */
   .menu-group { 
-    flex-direction: row; 
-    flex-wrap: wrap; 
-    gap: 10px;
+    display: flex;
+    flex-direction: column; 
+    width: 100%;
+    padding: 0;
+    margin-bottom: 20px;
   }
 
   .menu-item {
-    padding: 8px 12px;
-  }
-  
-  .main-content { 
-    padding: 30px 20px; 
+    padding: 15px 10px;
+    font-size: 1rem;
     width: 100%;
-    overflow: visible; /* Hapus scroll internal di HP */
+    border-bottom: 1px solid var(--border); /* Garis pemisah biar rapi */
+    border-radius: 0; /* Hilangkan sudut melengkung di HP */
+  }
+
+  /* 7. Konten Utama (Kasih jarak atas biar gak ketutupan tombol) */
+  .main-content { 
+    padding: 80px 20px 40px 20px; 
+    width: 100%;
+    overflow: visible; 
   }
 
   .page-title {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
 
-  /* Perbaikan Galeri di HP */
+  /* 8. Grid Card & Galeri jadi 1/2 kolom */
+  .grid-cards {
+    grid-template-columns: 1fr; 
+  }
+
   .gallery-grid {
-    grid-template-columns: repeat(2, 1fr); /* Bagi 2 kolom di HP */
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
   }
 
   .gallery-item {
-    height: 150px; /* Kecilkan tinggi gambar di HP */
+    height: 150px;
   }
 
-/* ---------- KHUSUS HALAMAN ABOUT US ---------- */
-.about-hero {
-  display: flex;
-  align-items: center;
-  gap: 50px;
-  margin-bottom: 60px;
-}
-.about-text {
-  flex: 1;
-}
-.about-text h1 {
-  font-size: 3.5rem;
-  line-height: 1.1;
-  font-weight: 700;
-  letter-spacing: -1.5px;
-  margin-bottom: 20px;
-}
-.about-text p {
-  font-size: 1.1rem;
-  color: var(--text-muted);
-  line-height: 1.8;
-  margin-bottom: 20px;
-}
-.about-image {
-  flex: 1;
-  height: 500px;
-  border-radius: 20px;
-  background: url('https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?auto=format&fit=crop&w=800&q=80') center/cover;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-}
-
-/* Value / Philosophy Section */
-.about-values {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 30px;
-  margin-top: 40px;
-  margin-bottom: 60px;
-}
-.value-card {
-  background: #fff;
-  border: 1px solid var(--border);
-  padding: 30px;
-  border-radius: 16px;
-  text-align: center;
-}
-.value-icon {
-  font-size: 2rem;
-  margin-bottom: 15px;
-  display: inline-block;
-}
-.value-card h3 {
-  font-size: 1.2rem;
-  margin-bottom: 10px;
-  font-weight: 600;
-}
-.value-card p {
-  font-size: 0.95rem;
-  color: var(--text-muted);
-  line-height: 1.6;
-}
-
-/* Quote Section */
-.quote-section {
-  background: var(--pink-light);
-  padding: 50px 40px;
-  border-radius: 20px;
-  text-align: center;
-  margin-bottom: 40px;
-}
-.quote-section blockquote {
-  font-size: 1.8rem;
-  font-style: italic;
-  font-weight: 500;
-  color: var(--primary);
-  line-height: 1.5;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-@media (max-width: 1024px) {
-  .about-hero { flex-direction: column; }
-  .about-text { text-align: center; }
-  .about-image { width: 100%; height: 400px; }
+  .contact-wrapper {
+    grid-template-columns: 1fr;
+  }
 }
