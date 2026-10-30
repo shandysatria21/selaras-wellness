@@ -7,9 +7,9 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-   <button class="menu-toggle" onclick="bukaSidebar(); this.style.display='none';">☰</button>
+   <button id="btnHamburger" class="menu-toggle" onclick="bukaMenu()">☰</button>
   <aside class="sidebar">
-<button class="close-menu" onclick="tutupSidebar(); document.querySelector('.menu-toggle').style.display='block';">✕</button>
+<button class="close-menu" onclick="tutupMenu()">✕</button>
     <a href="index.html" class="logo">
   <img src="img/SELARAS.png" alt="Selaras Logo">
 </a>
@@ -98,16 +98,30 @@
     loadHomeText();
   </script>
 <script>
-  // Fungsi untuk membuka sidebar
-  function bukaSidebar() {
-    document.querySelector('.sidebar').classList.add('active');
-    document.body.style.overflow = 'hidden'; // Kunci scroll body utama
+  function bukaMenu() {
+    const sidebar = document.querySelector('.sidebar');
+    const btnHamburger = document.getElementById('btnHamburger');
+    
+    // Buka sidebar
+    sidebar.classList.add('active');
+    btnHamburger.style.display = 'none';
+    
+    // Kunci scroll body saat menu terbuka (biar konten di belakang ga ikut geser)
+    document.body.style.overflow = 'hidden';
+    document.body.style.height = '100vh';
   }
 
-  // Fungsi untuk menutup sidebar
-  function tutupSidebar() {
-    document.querySelector('.sidebar').classList.remove('active');
-    document.body.style.overflow = 'auto'; // Kembalikan scroll body
+  function tutupMenu() {
+    const sidebar = document.querySelector('.sidebar');
+    const btnHamburger = document.getElementById('btnHamburger');
+    
+    // Tutup sidebar
+    sidebar.classList.remove('active');
+    btnHamburger.style.display = 'block';
+    
+    // BUKA KUNCI SCROLL LAGI (Kunci perbaikannya di sini)
+    document.body.style.overflow = 'auto';
+    document.body.style.height = 'auto';
   }
 </script>
 </body>

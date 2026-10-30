@@ -308,9 +308,10 @@ textarea.form-control { resize: vertical; min-height: 120px; }
 @media (max-width: 768px) {
   /* 1. Setup Dasar Body */
   body { 
-    display: block; 
-    overflow-x: hidden;
-    height: auto;
+    display: block !important; 
+    overflow-x: hidden !important;
+    overflow-y: auto !important; /* PAKSA SCROLL */
+    height: auto !important;
   }
 
   /* 2. Tombol Hamburger (Cuma Muncul di HP) */
