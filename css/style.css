@@ -23,7 +23,16 @@ body {
   overflow: hidden;
 }
 
-/* ---------- SIDEBAR ---------- */
+/* =========================================
+   ATURAN DESKTOP (Default)
+   ========================================= */
+
+/* Tombol menu disembunyikan total di Desktop */
+.menu-toggle, .close-menu {
+  display: none !important;
+}
+
+/* Sidebar Desktops */
 .sidebar {
   width: 260px;
   background: var(--bg-sidebar);
@@ -43,7 +52,7 @@ body {
 }
 
 .logo img {
-  height: 120px; /* Ukuran logo disesuaikan */
+  height: 120px;
   width: auto;
   object-fit: contain;
 }
@@ -68,96 +77,40 @@ body {
 }
 
 .menu-item:hover { background-color: var(--pink-light); }
+.menu-item.active { background-color: var(--pink-light); color: var(--primary); }
+.menu-item svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; }
 
-.menu-item.active {
-  background-color: var(--pink-light);
-  color: var(--primary);
-}
-
-.menu-item svg {
-  width: 20px; height: 20px;
-  stroke: currentColor; stroke-width: 2; fill: none;
-}
-
-/* ---------- MAIN CONTENT ---------- */
+/* Konten Utama Desktop */
 .main-content {
   flex: 1;
   overflow-y: auto;
   padding: 40px 60px;
 }
 
-.page-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 10px;
-  letter-spacing: -1px;
-}
-
-.page-subtitle {
-  color: var(--text-muted);
-  font-size: 1.1rem;
-  margin-bottom: 40px;
-}
-
-/* ---------- KOMPONEN TOMBOL ---------- */
-.btn {
-  padding: 14px 28px;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-  display: inline-block;
-}
+/* ... (Sisa CSS desain Card, Form, Hero, dll tetap sama) ... */
+.page-title { font-size: 2.5rem; font-weight: 700; margin-bottom: 10px; letter-spacing: -1px; }
+.page-subtitle { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 40px; }
+.btn { padding: 14px 28px; border-radius: 12px; font-size: 1rem; font-weight: 600; text-decoration: none; cursor: pointer; transition: all 0.2s; border: none; display: inline-block; }
 .btn-primary { background-color: var(--primary); color: #fff; }
 .btn-primary:hover { background-color: var(--primary-hover); }
 .btn-outline { background-color: transparent; color: var(--text-main); border: 1px solid var(--border); }
 .btn-outline:hover { border-color: var(--text-main); }
 
-/* ---------- HERO (KHUSUS HOME) ---------- */
-.hero {
-  display: flex; align-items: center; justify-content: space-between;
-  min-height: 80vh; gap: 40px;
-}
+.hero { display: flex; align-items: center; justify-content: space-between; min-height: 80vh; gap: 40px; }
 .hero-text { flex: 1; max-width: 550px; }
-.badge {
-  display: inline-flex; align-items: center; gap: 10px;
-  background: #fff; border: 1px solid var(--border);
-  padding: 6px 16px; border-radius: 30px;
-  font-size: 0.85rem; font-weight: 500; margin-bottom: 25px;
-}
+.badge { display: inline-flex; align-items: center; gap: 10px; background: #fff; border: 1px solid var(--border); padding: 6px 16px; border-radius: 30px; font-size: 0.85rem; font-weight: 500; margin-bottom: 25px; }
 .badge-dot { width: 8px; height: 8px; background-color: var(--primary); border-radius: 50%; }
 .badge-text { color: var(--primary); font-weight: 600; }
 .hero h1 { font-size: 4rem; line-height: 1.1; font-weight: 700; letter-spacing: -1.5px; margin-bottom: 25px; }
 .hero p { font-size: 1.15rem; color: var(--text-muted); margin-bottom: 40px; line-height: 1.6; }
 .btn-group { display: flex; gap: 15px; }
-.hero-image {
-  flex: 1; height: 600px; border-radius: 20px;
-  background: url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1000&q=80') center/cover;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-}
+.hero-image { flex: 1; height: 600px; border-radius: 20px; background: url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1000&q=80') center/cover; box-shadow: 0 10px 40px rgba(0,0,0,0.08); }
 
-/* ---------- KARTU KELAS ---------- */
-.grid-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 25px;
-}
-.card {
-  background: var(--card-bg); border: 1px solid var(--border);
-  border-radius: 16px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;
-}
+.grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
 .card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.06); }
-.card-img {
-  height: 220px; width: 100%; background-size: cover; background-position: center;
-  position: relative; padding: 15px;
-}
-.card-label {
-  background: rgba(255,255,255,0.9); padding: 5px 12px;
-  border-radius: 8px; font-size: 0.8rem; font-weight: 600; display: inline-block;
-}
+.card-img { height: 220px; width: 100%; background-size: cover; background-position: center; position: relative; padding: 15px; }
+.card-label { background: rgba(255,255,255,0.9); padding: 5px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; display: inline-block; }
 .card-content { padding: 25px; }
 .card-content h3 { font-size: 1.4rem; font-weight: 600; margin-bottom: 20px; line-height: 1.3; }
 .card-info { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; }
@@ -171,44 +124,16 @@ body {
 .price-label { font-size: 0.9rem; color: var(--text-muted); display: block; margin-bottom: 4px; }
 .price-val { font-size: 1.1rem; font-weight: 600; }
 
-/* ---------- FORM & TABEL ---------- */
 .form-group { margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
 .form-group label { font-weight: 500; font-size: 0.95rem; }
-.form-control {
-  padding: 12px 15px; border: 1px solid var(--border);
-  border-radius: 10px; font-size: 1rem; font-family: inherit; outline: none;
-}
+.form-control { padding: 12px 15px; border: 1px solid var(--border); border-radius: 10px; font-size: 1rem; font-family: inherit; outline: none; }
 .form-control:focus { border-color: var(--primary); }
 
-/* ---------- HALAMAN PRICING ---------- */
-.pricing-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 25px;
-  margin-top: 30px;
-}
-.pricing-card {
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 35px 30px;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.pricing-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-}
-.pricing-card.popular {
-  border-color: var(--primary);
-  position: relative;
-}
-.popular-badge {
-  position: absolute;
-  top: -12px; left: 50%; transform: translateX(-50%);
-  background: var(--primary); color: #fff;
-  padding: 4px 15px; border-radius: 20px;
-  font-size: 0.8rem; font-weight: 600;
-}
+.pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 30px; }
+.pricing-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 35px 30px; transition: transform 0.2s, box-shadow 0.2s; }
+.pricing-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+.pricing-card.popular { border-color: var(--primary); position: relative; }
+.popular-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--primary); color: #fff; padding: 4px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
 .pricing-card h3 { font-size: 1.2rem; margin-bottom: 10px; }
 .pricing-price { font-size: 2.5rem; font-weight: 700; margin-bottom: 20px; }
 .pricing-price span { font-size: 1rem; font-weight: 400; color: var(--text-muted); }
@@ -216,63 +141,25 @@ body {
 .pricing-features li { margin-bottom: 12px; font-size: 0.95rem; display: flex; align-items: center; gap: 10px; }
 .pricing-features li::before { content: '✓'; color: var(--primary); font-weight: bold; }
 
-/* ---------- HALAMAN GALERI ---------- */
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 15px;
-  margin-top: 30px;
-}
-.gallery-item {
-  height: 250px;
-  border-radius: 12px;
-  overflow: hidden;
-  cursor: pointer;
-  position: relative;
-}
-.gallery-item img {
-  width: 100%; height: 100%; object-fit: cover;
-  transition: transform 0.4s;
-}
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; margin-top: 30px; }
+.gallery-item { height: 250px; border-radius: 12px; overflow: hidden; cursor: pointer; position: relative; }
+.gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
 .gallery-item:hover img { transform: scale(1.05); }
 
-/* Lightbox */
-.lightbox {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-  display: none; justify-content: center; align-items: center; z-index: 999;
-}
+.lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 999; }
 .lightbox.active { display: flex; }
 .lightbox img { max-width: 90%; max-height: 90vh; border-radius: 10px; }
-.lightbox-close {
-  position: absolute; top: 20px; right: 30px;
-  color: #fff; font-size: 2.5rem; cursor: pointer;
-}
+.lightbox-close { position: absolute; top: 20px; right: 30px; color: #fff; font-size: 2.5rem; cursor: pointer; }
 
-/* ---------- HALAMAN CONTACT ---------- */
-.contact-wrapper {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  margin-top: 30px;
-}
-.contact-info-card {
-  background: #fff; padding: 30px; border-radius: 16px; border: 1px solid var(--border);
-}
+.contact-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 30px; }
+.contact-info-card { background: #fff; padding: 30px; border-radius: 16px; border: 1px solid var(--border); }
 .contact-info-item { margin-bottom: 25px; }
 .contact-info-item h4 { font-size: 1.1rem; margin-bottom: 5px; }
 .contact-info-item p { color: var(--text-muted); }
-.contact-form-card {
-  background: #fff; padding: 30px; border-radius: 16px; border: 1px solid var(--border);
-}
+.contact-form-card { background: #fff; padding: 30px; border-radius: 16px; border: 1px solid var(--border); }
 textarea.form-control { resize: vertical; min-height: 120px; }
 
-/* ---------- HALAMAN ABOUT US ---------- */
-.about-hero {
-  display: flex;
-  align-items: center;
-  gap: 50px;
-  margin-bottom: 60px;
-}
+.about-hero { display: flex; align-items: center; gap: 50px; margin-bottom: 60px; }
 .about-text { flex: 1; }
 .about-text h1 { font-size: 3.5rem; line-height: 1.1; font-weight: 700; letter-spacing: -1.5px; margin-bottom: 20px; }
 .about-text p { font-size: 1.1rem; color: var(--text-muted); line-height: 1.8; margin-bottom: 20px; }
@@ -288,11 +175,9 @@ textarea.form-control { resize: vertical; min-height: 120px; }
 .quote-section blockquote { font-size: 1.8rem; font-style: italic; font-weight: 500; color: var(--primary); line-height: 1.5; max-width: 800px; margin: 0 auto; }
 
 
-/* ========================================================= */
-/* ==================== MEDIA QUERIES ====================== */
-/* ========================================================= */
-
-/* --- TABLET (1024px) --- */
+/* =========================================
+   ATURAN TABLET (Maksimal 1024px)
+   ========================================= */
 @media (max-width: 1024px) {
   .hero { flex-direction: column; text-align: center; }
   .hero h1 { font-size: 3rem; }
@@ -304,17 +189,20 @@ textarea.form-control { resize: vertical; min-height: 120px; }
   .about-image { width: 100%; height: 400px; }
 }
 
-/* --- MOBILE (768px) --- */
+
+/* =========================================
+   ATURAN HP / MOBILE (Maksimal 768px)
+   ========================================= */
 @media (max-width: 768px) {
-  /* 1. Setup Dasar Body */
+  /* 1. Body */
   body { 
     display: block !important; 
     overflow-x: hidden !important;
-    overflow-y: auto !important; /* PAKSA SCROLL */
+    overflow-y: auto !important; 
     height: auto !important;
   }
 
-  /* 2. Tombol Hamburger (Cuma Muncul di HP) */
+  /* 2. Munculkan Tombol Hamburger */
   .menu-toggle {
     display: block !important;
     position: fixed;
@@ -329,84 +217,71 @@ textarea.form-control { resize: vertical; min-height: 120px; }
     cursor: pointer;
   }
 
-  /* 3. Sidebar Mobile (Tersembunyi) */
+  /* 3. Sembunyikan Sidebar ke Kiri */
   .sidebar { 
-    position: fixed;
+    position: fixed !important;
     top: 0;
-    left: -100%; /* Sembunyi di kiri luar layar */
-    width: 85%; /* Lebar sidebar 85% layar HP */
+    left: -100% !important; 
+    width: 85%; 
     max-width: 320px;
     height: 100vh;
     z-index: 999;
     transition: left 0.3s ease;
     background: #fff;
     box-shadow: 5px 0 15px rgba(0,0,0,0.1);
-    padding: 60px 20px 20px 20px; /* Padding atas buat tombol Close */
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch;
+    padding: 60px 20px 40px 20px !important;
+    overflow-y: auto !important; 
+    -webkit-overflow-scrolling: touch; 
   }
 
-  /* 4. Munculkan Sidebar jika class 'active' ditambahkan via JS */
+  /* 4. Class Active (Buka Sidebar) */
   .sidebar.active {
-    left: 0;
+    left: 0 !important;
   }
 
-  /* 5. Tombol Close (X) di dalam Sidebar */
+  /* 5. Munculkan Tombol Close */
   .close-menu {
     display: block !important;
-    position: absolute;
+    position: fixed;
     top: 15px;
-    right: 15px;
+    right: 20px;
     font-size: 1.5rem;
     cursor: pointer;
     background: none;
     border: none;
     color: var(--text-main);
+    z-index: 1000;
   }
 
-  /* 6. Menu Group di HP (1 Kolom ke bawah) */
+  /* 6. Menu Group */
   .menu-group { 
     display: flex;
-    flex-direction: column; 
+    flex-direction: column !important; 
     width: 100%;
-    padding: 0;
+    padding: 0 !important;
     margin-bottom: 20px;
   }
 
   .menu-item {
-    padding: 15px 10px;
+    padding: 15px 10px !important;
     font-size: 1rem;
     width: 100%;
-    border-bottom: 1px solid var(--border); /* Garis pemisah biar rapi */
-    border-radius: 0; /* Hilangkan sudut melengkung di HP */
+    border-bottom: 1px solid var(--border); 
+    border-radius: 0; 
   }
 
-  /* 7. Konten Utama (Kasih jarak atas biar gak ketutupan tombol) */
+  /* 7. Konten Utama */
   .main-content { 
-    padding: 80px 20px 40px 20px; 
+    padding: 80px 20px 40px 20px !important; 
     width: 100%;
-    overflow: visible; 
+    overflow: visible !important; 
   }
 
-  .page-title {
-    font-size: 1.8rem;
-  }
+  .page-title { font-size: 1.8rem; }
 
-  /* 8. Grid Card & Galeri jadi 1/2 kolom */
-  .grid-cards {
-    grid-template-columns: 1fr; 
-  }
-
-  .gallery-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
-
-  .gallery-item {
-    height: 150px;
-  }
-
-  .contact-wrapper {
-    grid-template-columns: 1fr;
-  }
+  /* 8. Grid & Layout Lainnya */
+  .grid-cards { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .gallery-item { height: 150px; }
+  .contact-wrapper { grid-template-columns: 1fr; }
 }
