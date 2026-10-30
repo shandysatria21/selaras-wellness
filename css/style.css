@@ -12,6 +12,22 @@
   --card-bg: #fcfbf9;
 }
 
+/* Sembunyikan tombol hamburger di Desktop */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: var(--text-main);
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 1000;
+}
+
+.close-menu { display: none; }
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body { 
@@ -294,10 +310,79 @@ textarea.form-control { resize: vertical; min-height: 120px; }
 /* KHUSUS UNTUK LAYAR HP / TABLET KECIL */
 @media (max-width: 768px) {
   body { 
-    flex-direction: column; 
-    height: auto; /* Biarkan body memanjang ke bawah */
-    overflow: auto; 
+    display: block; /* Ubah dari flex ke block agar konten mengalir ke bawah */
+    overflow-x: hidden;
+    height: auto;
   }
+
+  /* Tampilkan tombol hamburger */
+  .menu-toggle {
+    display: block;
+  }
+  
+  /* Sembunyikan sidebar secara default */
+  .sidebar { 
+    position: fixed;
+    top: 0;
+    left: -280px; /* Sembunyikan ke kiri */
+    width: 260px;
+    height: 100vh;
+    z-index: 999;
+    transition: left 0.3s ease;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    background: #fff;
+  }
+
+  /* Class aktif untuk memunculkan sidebar */
+  .sidebar.active {
+    left: 0;
+  }
+
+  /* Tombol close (X) di dalam sidebar */
+  .close-menu {
+    display: block;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: var(--text-main);
+  }
+
+  /* Konten utama di HP */
+  .main-content { 
+    padding: 70px 20px 30px 20px; /* Padding atas dilebarkan agar tidak tertutup tombol menu */
+    width: 100%;
+    margin: 0;
+    overflow: visible;
+  }
+
+  .page-title {
+    font-size: 2rem;
+  }
+
+  /* Perbaikan Grid Card */
+  .grid-cards {
+    grid-template-columns: 1fr; /* 1 kolom penuh di HP */
+  }
+
+  /* Perbaikan Galeri di HP */
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr); /* Bagi 2 kolom di HP */
+    gap: 10px;
+  }
+
+  .gallery-item {
+    height: 150px; 
+  }
+
+  /* Perbaikan Form Contact */
+  .contact-wrapper {
+    grid-template-columns: 1fr;
+  }
+}
   
   .sidebar { 
     width: 100%; 
@@ -337,7 +422,6 @@ textarea.form-control { resize: vertical; min-height: 120px; }
   .gallery-item {
     height: 150px; /* Kecilkan tinggi gambar di HP */
   }
-}
 
 /* ---------- KHUSUS HALAMAN ABOUT US ---------- */
 .about-hero {
