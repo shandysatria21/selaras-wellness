@@ -58,8 +58,9 @@ body {
 .stat-card h2 { font-size: 2rem; font-weight: 700; color: #0f172a; }
 
 /* Tabel Admin */
-.table-wrapper { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02); border: 1px solid #e2e8f0; }
-.admin-table { width: 100%; border-collapse: collapse; }
+.table-wrapper { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02); border: 1px solid #e2e8f0; width: 100%;
+  overflow-x: auto; }
+.admin-table { width: 100%; border-collapse: collapse; min-width: 800px;}
 .admin-table th, .admin-table td { padding: 15px 20px; text-align: left; border-bottom: 1px solid #e2e8f0; }
 .admin-table th { background-color: #f8fafc; font-weight: 600; color: #64748b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
 .admin-table tr:last-child td { border-bottom: none; }
