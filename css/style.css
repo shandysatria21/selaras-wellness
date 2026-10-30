@@ -316,7 +316,7 @@ textarea.form-control { resize: vertical; min-height: 120px; }
 
   /* 2. Tombol Hamburger (Cuma Muncul di HP) */
   .menu-toggle {
-    display: block;
+    display: block !important;
     position: fixed;
     top: 20px;
     left: 20px;
@@ -353,7 +353,7 @@ textarea.form-control { resize: vertical; min-height: 120px; }
 
   /* 5. Tombol Close (X) di dalam Sidebar */
   .close-menu {
-    display: block;
+    display: block !important;
     position: absolute;
     top: 15px;
     right: 15px;
