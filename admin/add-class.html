@@ -54,6 +54,12 @@
           <input type="date" id="tanggal" class="form-control" required>
         </div>
 
+        <div class="form-group" style="flex: 1;">
+            <label>Jam Kelas *</label>
+            <input type="time" id="jam" class="form-control" required>
+        </div>
+    
+
         <div class="form-group">
           <label>Lokasi *</label>
           <input type="text" id="lokasi" class="form-control" placeholder="Contoh: Studio Utama / Zoom" required>
@@ -123,6 +129,7 @@
           nama: document.getElementById('nama').value,
           coach: document.getElementById('coach').value,
           tanggal: document.getElementById('tanggal').value,
+          jam: document.getElementById('jam').value,
           lokasi: document.getElementById('lokasi').value,
           harga: parseInt(document.getElementById('harga').value),
           kuotaAwal: parseInt(document.getElementById('kuota').value),

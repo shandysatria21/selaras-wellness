@@ -65,6 +65,11 @@
           <input type="date" id="inpTanggal" class="form-control" required>
         </div>
 
+        <div class="form-group" style="flex: 1;">
+            <label>Jam Kelas *</label>
+            <input type="time" id="inpJam" class="form-control" required>
+        </div>
+
         <div class="form-group">
           <label>Lokasi *</label>
           <input type="text" id="inpLokasi" class="form-control" required>
@@ -122,6 +127,7 @@
           document.getElementById('inpNama').value = data.nama;
           document.getElementById('inpCoach').value = data.coach || '';
           document.getElementById('inpTanggal').value = data.tanggal || '';
+          document.getElementById('inpJam').value = data.jam || '';
           document.getElementById('inpLokasi').value = data.lokasi || '';
           document.getElementById('inpHarga').value = data.harga;
           document.getElementById('inpKuota').value = data.kuotaTersisa || 0;
@@ -163,6 +169,7 @@
           nama: document.getElementById('inpNama').value,
           coach: document.getElementById('inpCoach').value,
           tanggal: document.getElementById('inpTanggal').value,
+          jam: document.getElementById('inpJam').value,
           lokasi: document.getElementById('inpLokasi').value,
           harga: parseInt(document.getElementById('inpHarga').value),
           kuotaTersisa: parseInt(document.getElementById('inpKuota').value),

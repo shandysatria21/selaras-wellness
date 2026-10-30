@@ -122,7 +122,7 @@
               <h3 style="margin-bottom: 15px;">${data.nama}</h3>
               
               <div class="card-info-row">👤 Coach: <span>${data.coach || '-'}</span></div>
-              <div class="card-info-row">📅 Tanggal: <span>${formatTanggal(data.tanggal)}</span></div>
+              <div class="card-info-row">📅 Jadwal: <span>${formatTanggal(data.tanggal)} • ${data.jam || '-'} WIB</span></div>
               <div class="card-info-row">📍 Lokasi: <span>${data.lokasi || '-'}</span></div>
               <div class="card-info-row">🎟️ Kuota: <span>${data.kuotaTersisa || 0} / ${data.kuotaAwal || 0} tersisa</span></div>
 
