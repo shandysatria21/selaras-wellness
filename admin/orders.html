@@ -61,7 +61,7 @@
             <th>Kelas</th>
             <th>Total</th>
             <th>Status</th>
-            <th>Aksi</th>
+            <th style="min-width: 150px;">Aksi</th>
           </tr>
         </thead>
         <tbody id="tabelPesanan">
@@ -73,7 +73,7 @@
 
   <script type="module">
     import { firebaseConfig, app } from '../firebase-config.js';
-    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const db = getFirestore(app);
     const tabelPesanan = document.getElementById('tabelPesanan');
@@ -140,7 +140,10 @@
           <td>${hargaRupiah}</td>
           <td><span class="badge-status ${badgeClass}">${data.status}</span></td>
           <td>
-            <a href="order-detail.html?id=${data.id}" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.8rem; display: inline-block;">Detail</a>
+            <div style="display: flex; gap: 5px;">
+              <a href="order-detail.html?id=${data.id}" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.8rem; display: inline-block;">Detail</a>
+              <button onclick="hapusPesanan('${data.id}')" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.8rem; color: #ef4444; border-color: #ef4444;">Hapus</button>
+            </div>
           </td>
         `;
         tabelPesanan.appendChild(tr);
@@ -199,7 +202,19 @@
     }
 
     tampilkanPesanan();
-
+    
+    window.hapusPesanan = async function(id) {
+      if (!confirm("Yakin ingin menghapus data pesanan ini secara permanen?")) return;
+      
+      try {
+        await deleteDoc(doc(db, "orders", id));
+        alert("Data pesanan berhasil dihapus.");
+        window.location.reload(); // Refresh halaman agar data langsung hilang dari tabel
+      } catch (error) {
+        console.error("Error menghapus pesanan: ", error);
+        alert("Gagal menghapus pesanan.");
+      }
+    }
     window.logout = function() {
       localStorage.removeItem('isAdminLoggedIn');
       window.location.href = 'login.html';
