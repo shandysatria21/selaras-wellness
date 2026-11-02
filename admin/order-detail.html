@@ -6,17 +6,35 @@
   <title>Detail Pesanan - Admin</title>
   <link rel="stylesheet" href="admin-style.css">
   <style>
-    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 900px; }
+    /* CSS Grid untuk membagi 2 kolom (kiri info, kanan bukti) */
+    .detail-grid { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 30px; 
+      max-width: 1000px; 
+      align-items: start;
+    }
     .info-box { background: #fff; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0; }
     .info-row { display: flex; justify-content: space-between; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed #e2e8f0; }
     .info-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
     .info-label { color: #64748b; font-weight: 500; }
     .info-value { font-weight: 600; color: #0f172a; text-align: right; }
+    
     .proof-box { background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center; }
     .proof-img { width: 100%; max-height: 400px; object-fit: contain; border-radius: 8px; margin-bottom: 20px; background: #f8fafc; }
+    
     .action-area { display: flex; gap: 15px; margin-top: 20px; }
     .action-area button { flex: 1; }
-    @media (max-width: 768px) { .detail-grid { grid-template-columns: 1fr; } }
+
+    /* Style untuk Form WA Manual */
+    .wa-form-box { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 10px; margin-top: 20px; }
+    .wa-form-box label { font-size: 0.9rem; font-weight: 600; color: #166534; display: block; margin-bottom: 8px; }
+    .wa-form-box textarea { width: 100%; padding: 10px; border: 1px solid #86efac; border-radius: 8px; font-family: inherit; font-size: 0.9rem; margin-bottom: 10px; resize: vertical; }
+    .wa-form-box button { background: #25D366; color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; }
+
+    @media (max-width: 768px) { 
+      .detail-grid { grid-template-columns: 1fr; } 
+    }
   </style>
   <script>
     if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
@@ -53,6 +71,7 @@
       <a href="orders.html" class="btn btn-outline">Kembali</a>
     </div>
 
+    <!-- Container Grid -->
     <div class="detail-grid" id="detailContainer">
       <p>Memuat data...</p>
     </div>
@@ -80,14 +99,19 @@
         if (docSnap.exists()) {
           const data = docSnap.data();
           const hargaRupiah = 'Rp ' + data.totalHarga.toLocaleString('id-ID');
-          const waLink = 'https://wa.me/' + data.wa.replace(/^0/, '62');
+          
+          // Bersihkan nomor HP
+          let nomorWa = data.wa.replace(/[^0-9]/g, '');
+          if (nomorWa.startsWith('0')) nomorWa = '62' + nomorWa.slice(1);
 
           // Format teks matras
           let teksMatras = 'Bawa Sendiri';
           if (data.matras === 'sewa1') teksMatras = 'Sewa 1 Matras';
           if (data.matras === 'sewa2') teksMatras = 'Sewa 2 Matras';
 
+          // Tampilkan HTML
           container.innerHTML = `
+            <!-- KOLOM KIRI: Info -->
             <div class="info-box">
               <h3 style="margin-bottom: 20px; font-size: 1.2rem;">Informasi Pemesan</h3>
               
@@ -103,7 +127,6 @@
                 <span class="info-label">WhatsApp</span>
                 <span class="info-value">${data.wa}</span>
               </div>
-              
               <div class="info-row">
                 <span class="info-label">Jumlah Peserta</span>
                 <span class="info-value">${data.jumlahPeserta || 1} Orang</span>
@@ -118,7 +141,6 @@
                 <span class="info-label">Sewa Matras</span>
                 <span class="info-value">${teksMatras}</span>
               </div>
-
               <div class="info-row">
                 <span class="info-label">Kelas</span>
                 <span class="info-value">${data.kelas}</span>
@@ -127,12 +149,19 @@
                 <span class="info-label" style="color: #0f172a; font-size: 1.1rem;">Total Transfer</span>
                 <span class="info-value" style="color: #3b82f6; font-size: 1.2rem;">${hargaRupiah}</span>
               </div>
-              
-              
-            <div style="margin-top: 30px;">
-                <button onclick="hubungiWA('${data.wa}', '${data.nama}', '${data.kelas}', '${data.status}')" class="btn btn-primary" style="width: 100%; background: #25D366; display: flex; justify-content: center; border: none;">Hubungi via WhatsApp</button>
+
+              <!-- FORM WA MANUAL -->
+              <div class="wa-form-box">
+                <label>Kirim Pesan WhatsApp Manual:</label>
+                <textarea id="pesanWa" rows="4" placeholder="Ketik pesan untuk dikirim ke pelanggan..."></textarea>
+                <button onclick="kirimWA('${nomorWa}')">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                  Kirim via WhatsApp
+                </button>
+              </div>
             </div>
 
+            <!-- KOLOM KANAN: Bukti Transfer & Tombol Status -->
             <div class="proof-box">
               <h3 style="margin-bottom: 20px; font-size: 1.2rem; text-align: left;">Bukti Transfer</h3>
               ${data.buktiTransfer ? `<img src="${data.buktiTransfer}" alt="Bukti Transfer" class="proof-img">` : '<p style="color: red;">Gambar bukti transfer tidak ditemukan.</p>'}
@@ -147,6 +176,17 @@
               </div>
             </div>
           `;
+
+          // Isi pesan default di textarea setelah HTML dirender
+          const textareaPesan = document.getElementById('pesanWa');
+          if (data.status === 'Pending') {
+            textareaPesan.value = `Halo Kak ${data.nama}, terima kasih sudah mendaftar kelas ${data.kelas}. Bukti transfer kamu sedang kami verifikasi ya. Mohon tunggu sebentar.`;
+          } else if (data.status === 'Success') {
+            textareaPesan.value = `Halo Kak ${data.nama}, pembayaran untuk kelas ${data.kelas} sudah kami setujui (Approve). Sampai jumpa di studio!`;
+          } else {
+            textareaPesan.value = `Halo Kak ${data.nama}, terkait pesanan kelas ${data.kelas}, ada kendala pada pembayaran. Mohon dibantu ya.`;
+          }
+
         } else {
           container.innerHTML = '<p>Pesanan tidak ditemukan di database.</p>';
         }
@@ -156,6 +196,18 @@
       }
     }
 
+    // Fungsi Kirim WA Manual
+    window.kirimWA = function(nomor) {
+      const pesan = document.getElementById('pesanWa').value;
+      if (!pesan) {
+        alert("Pesan tidak boleh kosong!");
+        return;
+      }
+      const encodedPesan = encodeURIComponent(pesan);
+      window.open(`https://wa.me/${nomor}?text=${encodedPesan}`, '_blank');
+    }
+
+    // Fungsi untuk Approve / Reject
     window.updateStatus = async function(newStatus) {
       const konfirmasi = confirm(`Yakin ingin mengubah status pesanan menjadi ${newStatus}?`);
       if (!konfirmasi) return;
@@ -164,32 +216,11 @@
         const docRef = doc(db, "orders", idPesanan);
         await updateDoc(docRef, { status: newStatus });
         alert('Status berhasil diubah!');
-        window.location.reload();
+        window.location.reload(); // Refresh halaman
       } catch (error) {
         console.error(error);
         alert('Gagal update status.');
       }
-    }
-
-        // Fungsi untuk kirim pesan WA (Wording otomatis)
-    window.hubungiWA = function(noWa, nama, kelas, status) {
-      // Bersihkan nomor HP
-      let nomor = noWa.replace(/[^0-9]/g, '');
-      if (nomor.startsWith('0')) nomor = '62' + nomor.slice(1);
-
-      // Susun Wording
-      let pesan = '';
-      if (status === 'Pending') {
-        pesan = `Halo Kak *${nama}*,\n\nKami dari Admin Selaras Wellness Club. Terima kasih sudah mendaftar untuk kelas *${kelas}*.\n\nKami sudah menerima bukti transfer kamu. Saat ini pesanan sedang kami verifikasi. Mohon tunggu sebentar ya! 🙏`;
-      } else if (status === 'Success') {
-        pesan = `Halo Kak *${nama}*,\n\nPembayaran untuk kelas *${kelas}* sudah kami *Approve*. Tiket kamu sudah aktif ya! ✅\n\nSampai jumpa di studio! Jangan lupa bawa matras dan air minum. 🧘‍♀️`;
-      } else {
-        pesan = `Halo Kak *${nama}*,\n\nTerkait pesanan kelas *${kelas}*, ada kendala dengan pembayaran kamu. Boleh dibantu kirim ulang bukti transfernya? 🙏`;
-      }
-
-      // Encode teks agar bisa masuk ke URL
-      const pesanEncoded = encodeURIComponent(pesan);
-      window.open(`https://wa.me/${nomor}?text=${pesanEncoded}`, '_blank');
     }
 
     loadDetail();
