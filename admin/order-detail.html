@@ -80,9 +80,13 @@
         if (docSnap.exists()) {
           const data = docSnap.data();
           const hargaRupiah = 'Rp ' + data.totalHarga.toLocaleString('id-ID');
-          const waLink = 'https://wa.me/' + data.wa.replace(/^0/, '62'); // Ubah 08 jadi 628
+          const waLink = 'https://wa.me/' + data.wa.replace(/^0/, '62');
 
-          // Tampilkan HTML
+          // Format teks matras
+          let teksMatras = 'Bawa Sendiri';
+          if (data.matras === 'sewa1') teksMatras = 'Sewa 1 Matras';
+          if (data.matras === 'sewa2') teksMatras = 'Sewa 2 Matras';
+
           container.innerHTML = `
             <div class="info-box">
               <h3 style="margin-bottom: 20px; font-size: 1.2rem;">Informasi Pemesan</h3>
@@ -100,7 +104,6 @@
                 <span class="info-value">${data.wa}</span>
               </div>
               
-              <!-- BAGIAN JUMLAH PESERTA & PASANGAN -->
               <div class="info-row">
                 <span class="info-label">Jumlah Peserta</span>
                 <span class="info-value">${data.jumlahPeserta || 1} Orang</span>
@@ -111,7 +114,10 @@
                   <span class="info-value" style="color: #c44576;">${data.namaPasangan}</span>
                 </div>
               ` : ''}
-              <!-- SELESAI -->
+              <div class="info-row">
+                <span class="info-label">Sewa Matras</span>
+                <span class="info-value">${teksMatras}</span>
+              </div>
 
               <div class="info-row">
                 <span class="info-label">Kelas</span>
@@ -150,7 +156,6 @@
       }
     }
 
-    // Fungsi untuk Approve / Reject
     window.updateStatus = async function(newStatus) {
       const konfirmasi = confirm(`Yakin ingin mengubah status pesanan menjadi ${newStatus}?`);
       if (!konfirmasi) return;
@@ -159,7 +164,7 @@
         const docRef = doc(db, "orders", idPesanan);
         await updateDoc(docRef, { status: newStatus });
         alert('Status berhasil diubah!');
-        window.location.reload(); // Refresh halaman
+        window.location.reload();
       } catch (error) {
         console.error(error);
         alert('Gagal update status.');

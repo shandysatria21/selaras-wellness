@@ -56,7 +56,6 @@
           <input type="text" id="inpKelas" class="form-control readonly-input" readonly>
         </div>
         
-        <!-- Tambahan Info Peserta -->
         <div class="form-group">
           <label class="form-label">Jumlah Peserta</label>
           <input type="text" id="inpPeserta" class="form-control readonly-input" readonly>
@@ -64,6 +63,10 @@
         <div class="form-group" id="grupPasangan" style="display: none;">
           <label class="form-label">Nama Pasangan</label>
           <input type="text" id="inpPasangan" class="form-control readonly-input" readonly>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Sewa Matras</label>
+          <input type="text" id="inpMatras" class="form-control readonly-input" readonly>
         </div>
 
         <div class="form-group">
@@ -102,16 +105,23 @@
     const idKelas = urlParams.get('id') || '';
     const jumlahPeserta = urlParams.get('peserta') || '1';
     const namaPasangan = urlParams.get('pasangan') || '';
+    const jenisMatras = urlParams.get('matras') || 'bawa';
 
     // 2. Tampilkan ke Form
     document.getElementById('inpKelas').value = kelas;
     document.getElementById('inpPeserta').value = jumlahPeserta + ' Orang';
     document.getElementById('inpHarga').value = 'Rp ' + parseInt(harga).toLocaleString('id-ID');
-
+    
     if (jumlahPeserta === '2' && namaPasangan !== '') {
       document.getElementById('grupPasangan').style.display = 'block';
       document.getElementById('inpPasangan').value = namaPasangan;
     }
+
+    // Tampilkan Info Matras
+    let teksMatras = 'Bawa Sendiri';
+    if (jenisMatras === 'sewa1') teksMatras = 'Sewa 1 Matras (+Rp 10.000)';
+    if (jenisMatras === 'sewa2') teksMatras = 'Sewa 2 Matras (+Rp 20.000)';
+    document.getElementById('inpMatras').value = teksMatras;
 
     // 3. Logika Tombol Disable
     window.cekFile = function() {
@@ -137,10 +147,9 @@
       try {
         const fileBukti = document.getElementById('buktiTransfer').files[0];
         
-        // --- UPLOAD KE CLOUDINARY ---
-        const cloudName = 'd4cltmgp'; // Pastikan ini Cloud Name kamu
+        // Upload ke Cloudinary
+        const cloudName = 'd4cltmgp'; // CLOUD NAME KAMU
         const uploadPreset = 'selaras_bukti';
-
         const formData = new FormData();
         formData.append('file', fileBukti);
         formData.append('upload_preset', uploadPreset);
@@ -149,13 +158,10 @@
           method: 'POST',
           body: formData
         });
-
-        if (!response.ok) throw new Error("Gagal upload gambar ke Cloudinary");
-
         const cloudinaryData = await response.json();
         const buktiUrl = cloudinaryData.secure_url;
 
-        // --- SIMPAN KE FIRESTORE ---
+        // Simpan ke Firestore
         await addDoc(collection(db, "orders"), {
           nama: namaUser,
           email: emailUser,
@@ -164,12 +170,13 @@
           totalHarga: parseInt(harga),
           jumlahPeserta: parseInt(jumlahPeserta),
           namaPasangan: namaPasangan,
+          matras: jenisMatras, // Simpan jenis matras
           buktiTransfer: buktiUrl,
           status: "Pending",
           tanggal: new Date()
         });
 
-        // --- KURANGI KUOTA KELAS ---
+        // Kurangi kuota
         if (idKelas && idKelas !== '') {
           const kelasRef = doc(db, "classes", idKelas);
           const kelasSnap = await getDoc(kelasRef);
@@ -178,22 +185,19 @@
             const dataKelas = kelasSnap.data();
             let kuotaBaru = (dataKelas.kuotaTersisa || 0) - parseInt(jumlahPeserta);
             if (kuotaBaru < 0) kuotaBaru = 0;
-            
             await updateDoc(kelasRef, { kuotaTersisa: kuotaBaru });
           }
         }
 
-        // Jika sukses, lempar ke halaman sukses
         window.location.href = 'success.html';
-        
       } catch (error) {
-        console.error("Error booking: ", error); // LIHAT CONSOLE UNTUK DETAIL
-        alert('Gagal memproses pesanan. ' + error.message);
+        console.error("Error booking: ", error);
+        alert('Gagal memproses pesanan.');
         btnSelesai.innerText = 'Selesai';
         btnSelesai.disabled = false;
       }
     });
-  </script> 
+  </script>
 
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Form Booking</title>
+  <title>Form booking</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
     .booking-box { max-width: 550px; }
@@ -59,7 +59,7 @@
         <div class="form-group">
           <label class="form-label">Pilih Paket *</label>
           <select id="pilihPaket" class="form-control" onchange="updateForm()" required>
-            <!-- Opsi akan diisi otomatis oleh JavaScript di bawah -->
+            <!-- Opsi diisi JS -->
           </select>
         </div>
 
@@ -70,9 +70,7 @@
 
         <div class="form-group">
           <label class="form-label">Pilihan Matras *</label>
-          <div class="radio-group" id="grupMatras">
-            <!-- Opsi akan diisi otomatis oleh JavaScript -->
-          </div>
+          <div class="radio-group" id="grupMatras"></div>
         </div>
 
         <div style="background: #fff; border: 1px dashed var(--primary); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
@@ -97,35 +95,25 @@
   </main>
 
   <script>
-    // 1. Ambil Data dari URL (Dijalankan Paling Awal)
     const urlParams = new URLSearchParams(window.location.search);
     const namaKelas = urlParams.get('kelas') || 'Kelas Reguler';
     const hargaDasar = parseInt(urlParams.get('harga')) || 0;
     const hargaBundling = parseInt(urlParams.get('hargaBundling')) || 0;
     const idKelas = urlParams.get('id') || '';
 
-    // 2. Tampilkan Info Kelas
     document.getElementById('tampilKelas').innerText = namaKelas;
 
-    // 3. Isi Dropdown Paket Secara Manual (Biar formatnya rapi)
     const selectPaket = document.getElementById('pilihPaket');
-    selectPaket.innerHTML = `
-      <option value="1" data-harga="${hargaDasar}">1 Orang (Reguler) - Rp ${hargaDasar.toLocaleString('id-ID')}</option>
-    `;
-
+    selectPaket.innerHTML = `<option value="1" data-harga="${hargaDasar}">1 Orang (Reguler) - Rp ${hargaDasar.toLocaleString('id-ID')}</option>`;
     if (hargaBundling > 0) {
-      selectPaket.innerHTML += `
-        <option value="2" data-harga="${hargaBundling}">2 Orang (Bundling) - Rp ${hargaBundling.toLocaleString('id-ID')}</option>
-      `;
+      selectPaket.innerHTML += `<option value="2" data-harga="${hargaBundling}">2 Orang (Bundling) - Rp ${hargaBundling.toLocaleString('id-ID')}</option>`;
     }
 
-    // 4. Fungsi Update Form (Nama Pasangan & Matras)
     function updateForm() {
       const jumlahPeserta = parseInt(selectPaket.value);
       const grupPasangan = document.getElementById('grupNamaPasangan');
       const grupMatras = document.getElementById('grupMatras');
 
-      // Tampilkan nama pasangan jika pilih 2
       if (jumlahPeserta === 2) {
         grupPasangan.style.display = 'block';
         document.getElementById('namaPasangan').setAttribute('required', 'true');
@@ -135,7 +123,6 @@
         document.getElementById('namaPasangan').value = '';
       }
 
-      // Tampilkan pilihan matras yang sesuai
       if (jumlahPeserta === 1) {
         grupMatras.innerHTML = `
           <label><input type="radio" name="matras" value="bawa" checked onchange="hitungTotal()"> Bawa Sendiri</label>
@@ -152,11 +139,9 @@
       hitungTotal();
     }
 
-    // 5. Fungsi Hitung Harga
     function hitungTotal() {
       const opsiTerpilih = selectPaket.options[selectPaket.selectedIndex];
       const hargaPaket = parseInt(opsiTerpilih.getAttribute('data-harga')); 
-      
       const matrasTerpilih = document.querySelector('input[name="matras"]:checked');
       const nilaiMatras = matrasTerpilih ? matrasTerpilih.value : 'bawa';
       
@@ -171,24 +156,18 @@
       document.getElementById('totalAkhir').innerText = `Rp ${totalAkhir.toLocaleString('id-ID')}`;
     }
 
-    // Panggil fungsi saat halaman pertama kali dibuka
     updateForm();
 
-    // 6. Fungsi Submit ke Halaman Payment
     function prosesForm(event) {
       event.preventDefault();
-      
       const nama = document.getElementById('nama').value;
       const email = document.getElementById('email').value;
       const wa = document.getElementById('wa').value;
       const jumlahPeserta = selectPaket.value;
       const namaPasangan = jumlahPeserta === "2" ? document.getElementById('namaPasangan').value : '';
       const matrasTerpilih = document.querySelector('input[name="matras"]:checked').value;
-      
-      // Ambil angka total dari teks (buang "Rp " dan titik)
       let totalAkhir = parseInt(document.getElementById('totalAkhir').innerText.replace(/[^0-9]/g, ''));
 
-      // Buat URL untuk Payment
       const paymentUrl = `payment.html?kelas=${encodeURIComponent(namaKelas)}&harga=${totalAkhir}&nama=${encodeURIComponent(nama)}&email=${encodeURIComponent(email)}&wa=${encodeURIComponent(wa)}&id=${idKelas}&peserta=${jumlahPeserta}&pasangan=${encodeURIComponent(namaPasangan)}&matras=${matrasTerpilih}`;
       
       window.location.href = paymentUrl;
