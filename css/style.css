@@ -317,4 +317,80 @@ textarea.form-control { resize: vertical; min-height: 120px; }
   .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .gallery-item { height: 150px; }
   .contact-wrapper { grid-template-columns: 1fr; }
+
+    /* --- HERO MODE OVERLAY (HANYA DI HP) --- */
+  .hero {
+    position: relative;
+    flex-direction: column;
+    min-height: 80vh; /* Tinggi hero di HP */
+    border-radius: 20px;
+    overflow: hidden;
+    padding: 0;
+    margin-bottom: 40px;
+  }
+
+  /* Gambar Hero jadi Background Full */
+  .hero-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    z-index: 1;
+    border-radius: 20px;
+  }
+
+  /* Tambahkan lapisan gelap transparan biar teks kebaca */
+  .hero-image::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* 50% gelap */
+    border-radius: 20px;
+  }
+
+  /* Teks dan tombol ditaruh di atas gambar */
+  .hero-text {
+    position: relative;
+    z-index: 2;
+    padding: 60px 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  /* Ubah warna teks jadi putih biar kontras */
+  .hero h1, .hero p {
+    color: #ffffff !important;
+  }
+
+  .hero .badge {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: #fff;
+  }
+  .hero .badge-text { color: #fff; }
+
+  /* Tombol disusun ke bawah di HP */
+  .btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .btn-group .btn {
+    width: 100%;
+  }
+  
+  /* Tombol outline diubah jadi putih */
+  .hero .btn-outline {
+    border-color: #fff;
+    color: #fff;
+  }
 }
