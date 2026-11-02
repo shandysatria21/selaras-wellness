@@ -3,78 +3,127 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home</title>
-  <link rel="icon" type="image/png" href="img/favicon.png">
+  <title>Selaras Wellness Club</title>
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Style tambahan khusus Home */
+    .section-home { padding: 80px 0; }
+    .section-title { font-size: 2.5rem; font-weight: 700; margin-bottom: 15px; letter-spacing: -1px; text-align: center; }
+    .section-subtitle { text-align: center; color: var(--text-muted); margin-bottom: 50px; font-size: 1.1rem; }
+    
+    /* Layout About */
+    .home-about { display: flex; align-items: center; gap: 50px; }
+    .home-about-text { flex: 1; }
+    .home-about-text h2 { font-size: 2.5rem; font-weight: 700; margin-bottom: 20px; line-height: 1.1; letter-spacing: -1px; }
+    .home-about-text p { font-size: 1.1rem; color: var(--text-muted); line-height: 1.8; margin-bottom: 30px; }
+    .home-about-img { flex: 1; height: 450px; border-radius: 20px; background-size: cover; background-position: center; box-shadow: 0 10px 40px rgba(0,0,0,0.08); }
+
+    /* Layout Contact */
+    .home-contact { background: var(--pink-light); border-radius: 24px; padding: 60px 40px; text-align: center; }
+    .home-contact h2 { font-size: 2.5rem; font-weight: 700; margin-bottom: 15px; }
+    .home-contact p { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 30px; }
+    .home-contact-info { display: flex; justify-content: center; gap: 40px; margin-top: 40px; flex-wrap: wrap; }
+    .contact-item { display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 1.1rem; }
+    
+    @media (max-width: 768px) {
+      .home-about { flex-direction: column-reverse; }
+      .home-about-img { width: 100%; height: 300px; }
+      .section-title, .home-about-text h2, .home-contact h2 { font-size: 2rem; }
+    }
+  </style>
 </head>
 <body>
-   <button id="btnHamburger" class="menu-toggle" onclick="bukaMenu()">☰</button>
-  <aside class="sidebar">
-<button class="close-menu" onclick="tutupMenu()">✕</button>
-    <a href="index.html" class="logo">
-  <img src="img/SELARAS.png" alt="Selaras Logo">
-</a>
-    
-    <div class="menu-group">
-      <a href="index.html" class="menu-item">
-        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-        Home
-      </a>
-      <a href="classes.html" class="menu-item">
-        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-        Classes
-      </a>
-      <a href="galeri.html" class="menu-item">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-        Galeri
-      </a>
-      <!-- MENU ABOUT US (AKTIF) -->
-      <a href="about.html" class="menu-item">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-        About Us
-      </a>
-    </div>
 
+  <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.add('active')">☰</button>
+
+  <aside class="sidebar">
+    <button class="close-menu" onclick="document.querySelector('.sidebar').classList.remove('active')">✕</button>
+    <a href="index.html" class="logo"><img src="img/SELARAS.png" alt="Logo"></a>
     <div class="menu-group">
-      <a href="contact.html" class="menu-item">
-        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-        Contact
-      </a>
+      <a href="index.html" class="menu-item active">Home</a>
+      <a href="classes.html" class="menu-item">Classes</a>
+      <a href="galeri.html" class="menu-item">Galeri</a>
+      <a href="about.html" class="menu-item">About Us</a>
+    </div>
+    <div class="menu-group">
+      <a href="contact.html" class="menu-item">Contact</a>
     </div>
   </aside>
 
   <main class="main-content">
-    <section class="hero">
+    
+    <!-- 1. HERO SECTION -->
+    <section class="hero" style="min-height: 70vh;">
       <div class="hero-text">
         <div class="badge">
           <span class="badge-dot"></span>
-          <span class="badge-text">WELCOME</span>
+          <span class="badge-text">WELCOME</span> Selaras Wellness Club
         </div>
-        
         <h1 id="heroJudul">Memuat...</h1>
         <p id="heroSub">Memuat...</p>
-        
         <div class="btn-group">
           <a href="classes.html" class="btn btn-primary">Book Your Class</a>
-          <!-- <a href="classes.html" class="btn btn-outline">View Schedule</a> -->
+          <a href="about.html" class="btn btn-outline">Learn More</a>
         </div>
       </div>
-      
-      <!-- ID heroGambar ditambahkan di sini -->
       <div class="hero-image" id="heroGambar" style="background-image: url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1000&q=80');"></div>
     </section>
+
+    <!-- 2. ABOUT PREVIEW SECTION -->
+    <section class="section-home">
+      <div class="home-about">
+        <div class="home-about-text">
+          <h2 id="aboutJudul">Memuat...</h2>
+          <p id="aboutDesc">Memuat...</p>
+          <a href="about.html" class="btn btn-outline">Baca Selengkapnya</a>
+        </div>
+        <div class="home-about-img" id="aboutGambar"></div>
+      </div>
+    </section>
+
+    <!-- 3. FEATURED CLASSES SECTION -->
+    <section class="section-home">
+      <h2 class="section-title">Kelas Terdekat</h2>
+      <p class="section-subtitle">Jadwal kelas yang bisa kamu ikuti minggu ini.</p>
+      
+      <!-- Grid untuk 3 kelas teratas -->
+      <div class="grid-cards" id="homeKelasContainer" style="margin-bottom: 30px;">
+        <p style="text-align: center; width: 100%;">Memuat kelas...</p>
+      </div>
+      
+      <div style="text-align: center; margin-top: 20px;">
+        <a href="classes.html" class="btn btn-primary">Lihat Semua Kelas</a>
+      </div>
+    </section>
+
+    <!-- 4. CONTACT / CTA SECTION -->
+    <section class="section-home" style="padding-bottom: 40px;">
+      <div class="home-contact">
+        <h2>Mulai Perjalananmu Hari Ini</h2>
+        <p>Punya pertanyaan atau ingin konsultasi kelas? Hubungi kami langsung.</p>
+        
+        <div class="home-contact-info">
+          <div class="contact-item">📍 <span id="contactAlamat">Memuat...</span></div>
+          <div class="contact-item">📞 <span id="contactWa">Memuat...</span></div>
+        </div>
+        
+        <div style="margin-top: 40px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+          <a href="contact.html" class="btn btn-primary">Hubungi Kami</a>
+          <a href="#" id="btnWaHome" target="_blank" class="btn btn-outline" style="background: #25D366; color: white; border: none;">Chat via WhatsApp</a>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <script type="module">
     import { firebaseConfig, app } from './firebase-config.js';
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const db = getFirestore(app);
-    const heroJudul = document.getElementById('heroJudul');
-    const heroSub = document.getElementById('heroSub');
-    const heroGambar = document.getElementById('heroGambar');
 
-    async function loadHomeText() {
+    // --- 1. LOAD PENGATURAN WEB (Hero & About & Contact) ---
+    async function loadPengaturanWeb() {
       try {
         const docRef = doc(db, "pengaturan", "data-web");
         const docSnap = await getDoc(docRef);
@@ -82,48 +131,90 @@
         if (docSnap.exists()) {
           const data = docSnap.data();
           
-          // Set Teks
-          heroJudul.innerHTML = data.homeJudul || "Find Balance<br>Through Yoga";
-          heroSub.innerText = data.homeSub || "A minimalist, calming space for mindful movement.";
+          // Hero
+          document.getElementById('heroJudul').innerHTML = data.homeJudul || "Find Balance<br>Through Yoga";
+          document.getElementById('heroSub').innerText = data.homeSub || "A minimalist, calming space for mindful movement.";
+          if (data.homeGambar) document.getElementById('heroGambar').style.backgroundImage = `url('${data.homeGambar}')`;
+
+          // About
+          document.getElementById('aboutJudul').innerHTML = data.aboutJudul || "Temukan Ruang<br>Untuk Dirimu.";
+          document.getElementById('aboutDesc').innerText = data.aboutDesc || "Selaras Wellness Club didirikan pada tahun 2020...";
+          if (data.aboutGambar) document.getElementById('aboutGambar').style.backgroundImage = `url('${data.aboutGambar}')`;
+
+          // Contact
+          document.getElementById('contactAlamat').innerText = data.contactAlamat || "Jl. Ketenangan No. 88, Bandung";
+          document.getElementById('contactWa').innerText = data.contactWa || "+62 812 3456 7890";
           
-          // Set Gambar (Jika ada di database)
-          if (data.homeGambar) {
-            heroGambar.style.backgroundImage = `url('${data.homeGambar}')`;
-          }
+          // Tombol WA
+          const noWa = (data.contactWa || "").replace(/[^0-9]/g, '').replace(/^0/, '62');
+          if(noWa) document.getElementById('btnWaHome').href = `https://wa.me/${noWa}`;
         }
       } catch (error) {
-        console.error("Error load text: ", error);
+        console.error("Error load pengaturan: ", error);
       }
     }
 
-    loadHomeText();
-  </script>
-<script>
-  function bukaMenu() {
-    const sidebar = document.querySelector('.sidebar');
-    const btnHamburger = document.getElementById('btnHamburger');
-    
-    // Buka sidebar
-    sidebar.classList.add('active');
-    btnHamburger.style.display = 'none';
-    
-    // Kunci scroll body saat menu terbuka (biar konten di belakang ga ikut geser)
-    document.body.style.overflow = 'hidden';
-    document.body.style.height = '100vh';
-  }
+    // --- 2. LOAD 3 KELAS TERDEKAT ---
+    async function loadKelasTerdekat() {
+      const container = document.getElementById('homeKelasContainer');
+      try {
+        // Ambil 3 kelas yang statusnya aktif
+        const q = query(collection(db, "classes"), orderBy("tanggal", "asc"), limit(3));
+        const querySnapshot = await getDocs(q);
+        
+        container.innerHTML = '';
 
-  function tutupMenu() {
-    const sidebar = document.querySelector('.sidebar');
-    const btnHamburger = document.getElementById('btnHamburger');
-    
-    // Tutup sidebar
-    sidebar.classList.remove('active');
-    btnHamburger.style.display = 'block';
-    
-    // BUKA KUNCI SCROLL LAGI (Kunci perbaikannya di sini)
-    document.body.style.overflow = 'auto';
-    document.body.style.height = 'auto';
-  }
-</script>
+        if (querySnapshot.empty) {
+          container.innerHTML = '<p style="text-align: center; width: 100%;">Belum ada jadwal kelas.</p>';
+          return;
+        }
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const id = doc.id;
+          const hargaRupiah = 'Rp ' + data.harga.toLocaleString('id-ID');
+          const tanggalFormat = new Date(data.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+          
+          const isActive = data.statusAktif !== false;
+          const isKuotaHabis = data.kuotaTersisa <= 0;
+          
+          let btnBook = `<a href="form-booking.html?kelas=${encodeURIComponent(data.nama)}&harga=${data.harga}&hargaBundling=${data.hargaBundling || 0}&id=${id}" class="btn btn-primary" style="padding: 10px 20px; font-size: 0.9rem;">Book Now</a>`;
+          if (!isActive || isKuotaHabis) {
+            btnBook = `<button class="btn btn-primary btn-disabled" style="padding: 10px 20px; font-size: 0.9rem; background:#ccc; pointer-events:none;">Tutup</button>`;
+          }
+
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <div class="card-img" style="background-image: url('${data.gambar}'); height: 180px;">
+            </div>
+            <div class="card-content" style="padding: 20px;">
+              <h3 style="font-size: 1.2rem; margin-bottom: 10px;">${data.nama}</h3>
+              <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">
+                📅 ${tanggalFormat} • ${data.jam} WIB<br>
+                👤 ${data.coach}
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <span class="price-label">Harga</span>
+                  <span class="price-val" style="font-size: 1rem;">${hargaRupiah}</span>
+                </div>
+                ${btnBook}
+              </div>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      } catch (error) {
+        console.error("Error load kelas: ", error);
+        container.innerHTML = '<p style="text-align: center; color: red;">Gagal memuat kelas.</p>';
+      }
+    }
+
+    // Jalankan kedua fungsi
+    loadPengaturanWeb();
+    loadKelasTerdekat();
+  </script>
+
 </body>
-</html> 
+</html>
