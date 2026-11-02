@@ -97,6 +97,11 @@
         <h3 style="margin: 30px 0 15px 0; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">Lainnya</h3>
         
         <div class="form-group">
+          <label>Wording Halaman Sukses</label>
+          <textarea id="inpWordingSuccess" class="form-control" rows="3" required placeholder="Terima kasih! Pesananmu sedang diproses..."></textarea>
+        </div>
+        
+        <div class="form-group">
           <label>Link Grup WhatsApp (Halaman Sukses)</label>
           <input type="url" id="inpLinkWa" class="form-control" required>
         </div>
@@ -201,6 +206,9 @@
           contactWa: document.getElementById('inpContactWa').value,
           linkWa: document.getElementById('inpLinkWa').value
         };
+
+          document.getElementById('inpAboutQuote').value = data.aboutQuote || "Yoga is the journey of the self, through the self, to the self.";
+          document.getElementById('inpWordingSuccess').value = data.wordingSuccess || "Pesanan kamu sedang dalam peninjauan admin. Kami akan menghubungimu via WhatsApp maksimal 1x24 jam.";
 
         // Tambahkan URL gambar baru jika ada
         if (homeImageUrl) updateData.homeGambar = homeImageUrl;

@@ -36,7 +36,7 @@
     </section>
 
     <section class="quote-section">
-      <blockquote>"Yoga is the journey of the self, through the self, to the self."<br><span style="font-size: 1rem; font-weight: 400; color: var(--text-muted); font-style: normal; display: block; margin-top: 15px;">— The Bhagavad Gita</span></blockquote>
+      <blockquote id="aboutQuote">"Yoga is the journey of the self, through the self, to the self."</blockquote>
     </section>
 
     <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 10px; text-align: center;">Filosofi Kami</h2>
@@ -77,6 +77,8 @@
 
         if (docSnap.exists()) {
           const data = docSnap.data();
+
+          document.getElementById('aboutQuote').innerHTML = `"${data.aboutQuote || 'Yoga is the journey of the self...'}"<br><span style="font-size: 1rem; font-weight: 400; color: var(--text-muted); font-style: normal; display: block; margin-top: 15px;">— The Bhagavad Gita</span>`;
           
           // Set Teks
           aboutJudul.innerHTML = data.aboutJudul || "Temukan Ruang<br>Untuk Dirimu.";

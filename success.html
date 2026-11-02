@@ -71,7 +71,7 @@
     <div class="success-container">
       <div class="success-icon">🎉</div>
       <h1>Thank You!</h1>
-      <p>Pembayaran dan bukti transfer kamu berhasil dikirim.<br>Pesanan kamu sedang dalam peninjauan admin.</p>
+      <p id="teksSukses">Pembayaran dan bukti transfer kamu berhasil dikirim.<br>Pesanan kamu sedang dalam peninjauan admin.</p>
       
       <!-- Tombol WhatsApp -->
       <a href="https://chat.whatsapp.com/GANTI_DENGAN_LINK_GRUP_KAMU" target="_blank" class="btn btn-primary" style="width: 100%; margin-bottom: 15px; background-color: #25D366; border-color: #25D366;">
@@ -82,5 +82,36 @@
     </div>
   </main>
 
+    <script type="module">
+    import { firebaseConfig, app } from './firebase-config.js';
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const db = getFirestore(app);
+
+    async function loadSuccessPage() {
+      try {
+        const docRef = doc(db, "pengaturan", "data-web");
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          
+          // 1. Ubah Teks Wording
+          if (data.wordingSuccess) {
+            document.getElementById('teksSukses').innerText = data.wordingSuccess;
+          }
+
+          // 2. Ubah Link Grup WA
+          if (data.linkWa) {
+            document.getElementById('btnGrupWa').href = data.linkWa;
+          }
+        }
+      } catch (error) {
+        console.error("Error: ", error);
+      }
+    }
+
+    loadSuccessPage();
+  </script>
 </body>
 </html> 

@@ -128,9 +128,9 @@
                 <span class="info-value" style="color: #3b82f6; font-size: 1.2rem;">${hargaRupiah}</span>
               </div>
               
-              <div style="margin-top: 30px;">
-                <a href="${waLink}" target="_blank" class="btn btn-primary" style="width: 100%; background: #25D366; display: flex; justify-content: center;">Hubungi via WhatsApp</a>
-              </div>
+              
+            <div style="margin-top: 30px;">
+                <button onclick="hubungiWA('${data.wa}', '${data.nama}', '${data.kelas}', '${data.status}')" class="btn btn-primary" style="width: 100%; background: #25D366; display: flex; justify-content: center; border: none;">Hubungi via WhatsApp</button>
             </div>
 
             <div class="proof-box">
@@ -169,6 +169,27 @@
         console.error(error);
         alert('Gagal update status.');
       }
+    }
+
+        // Fungsi untuk kirim pesan WA (Wording otomatis)
+    window.hubungiWA = function(noWa, nama, kelas, status) {
+      // Bersihkan nomor HP
+      let nomor = noWa.replace(/[^0-9]/g, '');
+      if (nomor.startsWith('0')) nomor = '62' + nomor.slice(1);
+
+      // Susun Wording
+      let pesan = '';
+      if (status === 'Pending') {
+        pesan = `Halo Kak *${nama}*,\n\nKami dari Admin Selaras Wellness Club. Terima kasih sudah mendaftar untuk kelas *${kelas}*.\n\nKami sudah menerima bukti transfer kamu. Saat ini pesanan sedang kami verifikasi. Mohon tunggu sebentar ya! 🙏`;
+      } else if (status === 'Success') {
+        pesan = `Halo Kak *${nama}*,\n\nPembayaran untuk kelas *${kelas}* sudah kami *Approve*. Tiket kamu sudah aktif ya! ✅\n\nSampai jumpa di studio! Jangan lupa bawa matras dan air minum. 🧘‍♀️`;
+      } else {
+        pesan = `Halo Kak *${nama}*,\n\nTerkait pesanan kelas *${kelas}*, ada kendala dengan pembayaran kamu. Boleh dibantu kirim ulang bukti transfernya? 🙏`;
+      }
+
+      // Encode teks agar bisa masuk ke URL
+      const pesanEncoded = encodeURIComponent(pesan);
+      window.open(`https://wa.me/${nomor}?text=${pesanEncoded}`, '_blank');
     }
 
     loadDetail();
