@@ -17,46 +17,27 @@
   </style>
 </head>
 <body>
-     <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.add('active')">☰</button>
+
+  <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.add('active')">☰</button>
 
   <aside class="sidebar">
     <button class="close-menu" onclick="document.querySelector('.sidebar').classList.remove('active')">✕</button>
-    <a href="index.html" class="logo">
-  <img src="img/SELARAS.png" alt="Selaras Logo">
-</a>
-    
+    <a href="index.html" class="logo"><img src="img/SELARAS.png" alt="Logo"></a>
     <div class="menu-group">
-      <a href="index.html" class="menu-item">
-        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-        Home
-      </a>
-      <a href="classes.html" class="menu-item active">
-        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-        Classes
-      </a>
-      <a href="galeri.html" class="menu-item">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-        Galeri
-      </a>
-      <!-- MENU ABOUT US (AKTIF) -->
-      <a href="about.html" class="menu-item">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-        About Us
-      </a>
+      <a href="index.html" class="menu-item">Home</a>
+      <a href="classes.html" class="menu-item">Classes & Pricing</a>
+      <a href="galeri.html" class="menu-item">Galeri</a>
+      <a href="about.html" class="menu-item">About Us</a>
     </div>
-
     <div class="menu-group">
-      <a href="contact.html" class="menu-item">
-        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-        Contact
-      </a>
+      <a href="contact.html" class="menu-item">Contact</a>
     </div>
   </aside>
 
   <main class="main-content">
     <div class="payment-box">
       <h1 class="page-title">Payment</h1>
-      <p class="page-subtitle" style="margin-bottom: 30px;">Complete payment to submit your booking request. Your reservation will be pending approval until confirmed by the studio.</p>
+      <p class="page-subtitle" style="margin-bottom: 30px;">Complete payment to submit your booking request.</p>
 
       <form id="paymentForm">
         
@@ -75,6 +56,16 @@
           <input type="text" id="inpKelas" class="form-control readonly-input" readonly>
         </div>
         
+        <!-- Tambahan Info Peserta -->
+        <div class="form-group">
+          <label class="form-label">Jumlah Peserta</label>
+          <input type="text" id="inpPeserta" class="form-control readonly-input" readonly>
+        </div>
+        <div class="form-group" id="grupPasangan" style="display: none;">
+          <label class="form-label">Nama Pasangan</label>
+          <input type="text" id="inpPasangan" class="form-control readonly-input" readonly>
+        </div>
+
         <div class="form-group">
           <label class="form-label">Payment Amount *</label>
           <input type="text" id="inpHarga" class="form-control readonly-input" readonly>
@@ -97,7 +88,7 @@
 
   <script type="module">
     import { firebaseConfig, app } from './firebase-config.js';
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const db = getFirestore(app);
 
@@ -108,10 +99,19 @@
     const namaUser = urlParams.get('nama') || '-';
     const emailUser = urlParams.get('email') || '-';
     const waUser = urlParams.get('wa') || '-';
+    const idKelas = urlParams.get('id') || '';
+    const jumlahPeserta = urlParams.get('peserta') || '1';
+    const namaPasangan = urlParams.get('pasangan') || '';
 
     // 2. Tampilkan ke Form
     document.getElementById('inpKelas').value = kelas;
+    document.getElementById('inpPeserta').value = jumlahPeserta + ' Orang';
     document.getElementById('inpHarga').value = 'Rp ' + parseInt(harga).toLocaleString('id-ID');
+
+    if (jumlahPeserta === '2' && namaPasangan !== '') {
+      document.getElementById('grupPasangan').style.display = 'block';
+      document.getElementById('inpPasangan').value = namaPasangan;
+    }
 
     // 3. Logika Tombol Disable
     window.cekFile = function() {
@@ -127,62 +127,73 @@
       }
     }
 
-    // 4. Proses Submit (Upload Bukti & Simpan Data)
+    // 4. Proses Submit
     document.getElementById('paymentForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btnSelesai = document.getElementById('btnSelesai');
       btnSelesai.innerText = 'Memproses...';
       btnSelesai.disabled = true;
 
-            try {
+      try {
         const fileBukti = document.getElementById('buktiTransfer').files[0];
         
-        // --- PROSES UPLOAD KE CLOUDINARY ---
-        // Ganti 'CLOUD_NAME_KAMU' dan 'PRESET_KAMU' sesuai milikmu
-        const cloudName = 'd4cltmgp'; 
+        // --- UPLOAD KE CLOUDINARY ---
+        const cloudName = 'd4cltmgp'; // Pastikan ini Cloud Name kamu
         const uploadPreset = 'selaras_bukti';
 
         const formData = new FormData();
         formData.append('file', fileBukti);
         formData.append('upload_preset', uploadPreset);
 
-        // Kirim ke API Cloudinary
         const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
           method: 'POST',
           body: formData
         });
 
-        if (!response.ok) {
-          throw new Error('Gagal upload ke Cloudinary');
-        }
+        if (!response.ok) throw new Error("Gagal upload gambar ke Cloudinary");
 
         const cloudinaryData = await response.json();
-        const buktiUrl = cloudinaryData.secure_url; // Ini URL gambar dari Cloudinary
+        const buktiUrl = cloudinaryData.secure_url;
 
         // --- SIMPAN KE FIRESTORE ---
         await addDoc(collection(db, "orders"), {
-            nama: namaUser,
-            email: emailUser,
-            wa: waUser,
-            kelas: kelas,
-            totalHarga: parseInt(harga),
-            jumlahPeserta: parseInt(jumlahPeserta), // WAJIB ADA
-            namaPasangan: namaPasangan,             // WAJIB ADA
-            buktiTransfer: buktiUrl,
-            status: "Pending",
-            tanggal: new Date()
-            });
+          nama: namaUser,
+          email: emailUser,
+          wa: waUser,
+          kelas: kelas,
+          totalHarga: parseInt(harga),
+          jumlahPeserta: parseInt(jumlahPeserta),
+          namaPasangan: namaPasangan,
+          buktiTransfer: buktiUrl,
+          status: "Pending",
+          tanggal: new Date()
+        });
+
+        // --- KURANGI KUOTA KELAS ---
+        if (idKelas && idKelas !== '') {
+          const kelasRef = doc(db, "classes", idKelas);
+          const kelasSnap = await getDoc(kelasRef);
+          
+          if (kelasSnap.exists()) {
+            const dataKelas = kelasSnap.data();
+            let kuotaBaru = (dataKelas.kuotaTersisa || 0) - parseInt(jumlahPeserta);
+            if (kuotaBaru < 0) kuotaBaru = 0;
+            
+            await updateDoc(kelasRef, { kuotaTersisa: kuotaBaru });
+          }
+        }
 
         // Jika sukses, lempar ke halaman sukses
         window.location.href = 'success.html';
         
       } catch (error) {
-        console.error("Error booking: ", error);
-        alert('Gagal memproses pesanan. Cek console.');
-        // ... (kode tombol reset)
+        console.error("Error booking: ", error); // LIHAT CONSOLE UNTUK DETAIL
+        alert('Gagal memproses pesanan. ' + error.message);
+        btnSelesai.innerText = 'Selesai';
+        btnSelesai.disabled = false;
       }
     });
-  </script>
+  </script> 
 
-</body> 
+</body>
 </html>
