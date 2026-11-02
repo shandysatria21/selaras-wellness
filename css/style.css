@@ -202,6 +202,39 @@ textarea.form-control { resize: vertical; min-height: 120px; }
     height: auto !important;
   }
 
+    /* Kunci tinggi gambar Hero di HP biar nggak tipis */
+  .hero-image {
+    width: 100% !important;
+    height: 350px !important;
+    min-height: 350px !important;
+    background-size: cover !important;
+    background-position: center !important;
+    display: block !important;
+    margin-top: 20px;
+  }
+
+  /* Kunci tinggi gambar About di HP */
+  .about-image {
+    width: 100% !important;
+    height: 300px !important;
+    min-height: 300px !important;
+    background-size: cover !important;
+    background-position: center !important;
+    display: block !important;
+    margin-top: 20px;
+  }
+
+  /* Perbaiki tombol di Hero biar nggak numpuk ke bawah */
+  .btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+  .btn-group .btn {
+    width: 100%;
+  }
+
   /* 2. Munculkan Tombol Hamburger */
   .menu-toggle {
     display: block !important;
