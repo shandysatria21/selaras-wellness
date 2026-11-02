@@ -161,15 +161,17 @@
 
         // --- SIMPAN KE FIRESTORE ---
         await addDoc(collection(db, "orders"), {
-          nama: namaUser,
-          email: emailUser,
-          wa: waUser,
-          kelas: kelas,
-          totalHarga: parseInt(harga),
-          buktiTransfer: buktiUrl, // Simpan URL Cloudinary
-          status: "Pending",
-          tanggal: new Date()
-        });
+            nama: namaUser,
+            email: emailUser,
+            wa: waUser,
+            kelas: kelas,
+            totalHarga: parseInt(harga),
+            jumlahPeserta: parseInt(jumlahPeserta), // WAJIB ADA
+            namaPasangan: namaPasangan,             // WAJIB ADA
+            buktiTransfer: buktiUrl,
+            status: "Pending",
+            tanggal: new Date()
+            });
 
         // Jika sukses, lempar ke halaman sukses
         window.location.href = 'success.html';

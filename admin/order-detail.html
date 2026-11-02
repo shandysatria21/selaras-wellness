@@ -25,10 +25,12 @@
   </script>
 </head>
 <body>
-<button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.add('active')">☰</button>
+
+  <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.add('active')">☰</button>
+
   <aside class="sidebar">
-     <button class="close-menu" onclick="document.querySelector('.sidebar').classList.remove('active')">✕</button>
-    <a href="dashboard.html" class="logo">ADMIN PANEL</a>
+    <button class="close-menu" onclick="document.querySelector('.sidebar').classList.remove('active')">✕</button>
+    <a href="dashboard.html" class="logo"><img src="../img/SELARAS.png" alt="Logo"></a>
     <div class="menu-group">
       <a href="dashboard.html" class="menu-item">Dashboard</a>
       <a href="classes.html" class="menu-item">Kelola Kelas</a>
@@ -84,15 +86,42 @@
           container.innerHTML = `
             <div class="info-box">
               <h3 style="margin-bottom: 20px; font-size: 1.2rem;">Informasi Pemesan</h3>
-              <div class="info-row"><span class="info-label">Nama Lengkap</span><span class="info-value">${data.nama}</span></div>
-              <div class="info-row"><span class="info-label">Email</span><span class="info-value">${data.email}</span></div>
-              <div class="info-row"><span class="info-label">WhatsApp</span><span class="info-value">${data.wa}</span></div>
-              <div class="info-row"><span class="info-label">Jumlah Peserta</span><span class="info-value">${data.jumlahPeserta || 1} Orang</span></div>
+              
+              <div class="info-row">
+                <span class="info-label">Nama Lengkap</span>
+                <span class="info-value">${data.nama}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Email</span>
+                <span class="info-value">${data.email || '-'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">WhatsApp</span>
+                <span class="info-value">${data.wa}</span>
+              </div>
+              
+              <!-- BAGIAN JUMLAH PESERTA & PASANGAN -->
+              <div class="info-row">
+                <span class="info-label">Jumlah Peserta</span>
+                <span class="info-value">${data.jumlahPeserta || 1} Orang</span>
+              </div>
               ${data.namaPasangan ? `
-                <div class="info-row"><span class="info-label">Nama Pasangan</span><span class="info-value" style="color: var(--primary);">${data.namaPasangan}</span></div>
+                <div class="info-row">
+                  <span class="info-label">Nama Pasangan</span>
+                  <span class="info-value" style="color: #c44576;">${data.namaPasangan}</span>
+                </div>
               ` : ''}
-              <div class="info-row"><span class="info-label">Kelas</span><span class="info-value">${data.kelas}</span></div>
-              <div class="info-row"><span class="info-label" style="color: #0f172a; font-size: 1.1rem;">Total Transfer</span><span class="info-value" style="color: #3b82f6; font-size: 1.2rem;">${hargaRupiah}</span></div>
+              <!-- SELESAI -->
+
+              <div class="info-row">
+                <span class="info-label">Kelas</span>
+                <span class="info-value">${data.kelas}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label" style="color: #0f172a; font-size: 1.1rem;">Total Transfer</span>
+                <span class="info-value" style="color: #3b82f6; font-size: 1.2rem;">${hargaRupiah}</span>
+              </div>
+              
               <div style="margin-top: 30px;">
                 <a href="${waLink}" target="_blank" class="btn btn-primary" style="width: 100%; background: #25D366; display: flex; justify-content: center;">Hubungi via WhatsApp</a>
               </div>
@@ -100,7 +129,8 @@
 
             <div class="proof-box">
               <h3 style="margin-bottom: 20px; font-size: 1.2rem; text-align: left;">Bukti Transfer</h3>
-              <img src="${data.buktiTransfer}" alt="Bukti Transfer" class="proof-img">
+              ${data.buktiTransfer ? `<img src="${data.buktiTransfer}" alt="Bukti Transfer" class="proof-img">` : '<p style="color: red;">Gambar bukti transfer tidak ditemukan.</p>'}
+              
               <div class="action-area" id="actionButtons">
                 ${data.status === 'Pending' ? `
                   <button class="btn btn-danger" onclick="updateStatus('Rejected')">Tolak</button>
@@ -144,4 +174,4 @@
     }
   </script>
 </body>
-</html> 
+</html>
