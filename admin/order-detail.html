@@ -87,6 +87,10 @@
               <div class="info-row"><span class="info-label">Nama Lengkap</span><span class="info-value">${data.nama}</span></div>
               <div class="info-row"><span class="info-label">Email</span><span class="info-value">${data.email}</span></div>
               <div class="info-row"><span class="info-label">WhatsApp</span><span class="info-value">${data.wa}</span></div>
+              <div class="info-row"><span class="info-label">Jumlah Peserta</span><span class="info-value">${data.jumlahPeserta || 1} Orang</span></div>
+              ${data.namaPasangan ? `
+                <div class="info-row"><span class="info-label">Nama Pasangan</span><span class="info-value" style="color: var(--primary);">${data.namaPasangan}</span></div>
+              ` : ''}
               <div class="info-row"><span class="info-label">Kelas</span><span class="info-value">${data.kelas}</span></div>
               <div class="info-row"><span class="info-label" style="color: #0f172a; font-size: 1.1rem;">Total Transfer</span><span class="info-value" style="color: #3b82f6; font-size: 1.2rem;">${hargaRupiah}</span></div>
               <div style="margin-top: 30px;">

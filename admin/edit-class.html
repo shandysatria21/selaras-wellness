@@ -13,9 +13,11 @@
   </script>
 </head>
 <body>
-<button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.add('active')">☰</button>
+
+  <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.add('active')">☰</button>
+
   <aside class="sidebar">
-     <button class="close-menu" onclick="document.querySelector('.sidebar').classList.remove('active')">✕</button>
+    <button class="close-menu" onclick="document.querySelector('.sidebar').classList.remove('active')">✕</button>
     <a href="dashboard.html" class="logo"><img src="../img/SELARAS.png" alt="Logo"></a>
     <div class="menu-group">
       <a href="dashboard.html" class="menu-item">Dashboard</a>
@@ -60,14 +62,15 @@
           <input type="text" id="inpCoach" class="form-control" required>
         </div>
 
-        <div class="form-group">
-          <label>Tanggal Kelas *</label>
-          <input type="date" id="inpTanggal" class="form-control" required>
-        </div>
-
-        <div class="form-group" style="flex: 1;">
+        <div style="display: flex; gap: 20px;">
+          <div class="form-group" style="flex: 1;">
+            <label>Tanggal Kelas *</label>
+            <input type="date" id="inpTanggal" class="form-control" required>
+          </div>
+          <div class="form-group" style="flex: 1;">
             <label>Jam Kelas *</label>
             <input type="time" id="inpJam" class="form-control" required>
+          </div>
         </div>
 
         <div class="form-group">
@@ -77,13 +80,18 @@
 
         <div style="display: flex; gap: 20px;">
           <div class="form-group" style="flex: 1;">
-            <label>Harga (Rp) *</label>
+            <label>Harga Satuan (Rp) *</label>
             <input type="number" id="inpHarga" class="form-control" required>
           </div>
           <div class="form-group" style="flex: 1;">
-            <label>Kuota Tersisa *</label>
-            <input type="number" id="inpKuota" class="form-control" required>
+            <label>Harga Bundling (Rp) *</label>
+            <input type="number" id="inpHargaBundling" class="form-control" required>
           </div>
+        </div>
+
+        <div class="form-group">
+          <label>Kuota Tersisa *</label>
+          <input type="number" id="inpKuota" class="form-control" required>
         </div>
 
         <div class="form-group">
@@ -130,6 +138,7 @@
           document.getElementById('inpJam').value = data.jam || '';
           document.getElementById('inpLokasi').value = data.lokasi || '';
           document.getElementById('inpHarga').value = data.harga;
+          document.getElementById('inpHargaBundling').value = data.hargaBundling || 0;
           document.getElementById('inpKuota').value = data.kuotaTersisa || 0;
           document.getElementById('inpDeskripsi').value = data.deskripsi || '';
           
@@ -149,7 +158,7 @@
         const fileGambar = document.getElementById('inpGambarBaru').files[0];
 
         if (fileGambar) {
-          const cloudName = 'd4cltmgp'; // GANTI DENGAN CLOUD NAME KAMU
+          const cloudName = 'd4cltmgp'; // CLOUD NAME KAMU
           const uploadPreset = 'selaras_bukti';
 
           const formData = new FormData();
@@ -172,6 +181,7 @@
           jam: document.getElementById('inpJam').value,
           lokasi: document.getElementById('inpLokasi').value,
           harga: parseInt(document.getElementById('inpHarga').value),
+          hargaBundling: parseInt(document.getElementById('inpHargaBundling').value),
           kuotaTersisa: parseInt(document.getElementById('inpKuota').value),
           deskripsi: document.getElementById('inpDeskripsi').value
         };

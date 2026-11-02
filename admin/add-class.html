@@ -10,7 +10,9 @@
   </script>
 </head>
 <body>
-<button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.add('active')">☰</button>
+
+  <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.add('active')">☰</button>
+
   <aside class="sidebar">
     <button class="close-menu" onclick="document.querySelector('.sidebar').classList.remove('active')">✕</button>
     <a href="dashboard.html" class="logo"><img src="../img/SELARAS.png" alt="Logo"></a>
@@ -49,16 +51,16 @@
           <input type="text" id="coach" class="form-control" placeholder="Contoh: Kak Sarah" required>
         </div>
 
-        <div class="form-group">
-          <label>Tanggal Kelas *</label>
-          <input type="date" id="tanggal" class="form-control" required>
-        </div>
-
-        <div class="form-group" style="flex: 1;">
+        <div style="display: flex; gap: 20px;">
+          <div class="form-group" style="flex: 1;">
+            <label>Tanggal Kelas *</label>
+            <input type="date" id="tanggal" class="form-control" required>
+          </div>
+          <div class="form-group" style="flex: 1;">
             <label>Jam Kelas *</label>
             <input type="time" id="jam" class="form-control" required>
+          </div>
         </div>
-    
 
         <div class="form-group">
           <label>Lokasi *</label>
@@ -67,13 +69,19 @@
 
         <div style="display: flex; gap: 20px;">
           <div class="form-group" style="flex: 1;">
-            <label>Harga (Rp) *</label>
-            <input type="number" id="harga" class="form-control" placeholder="115000" required>
+            <label>Harga Satuan (Rp) *</label>
+            <input type="number" id="harga" class="form-control" placeholder="78000" required>
           </div>
           <div class="form-group" style="flex: 1;">
-            <label>Kuota (Orang) *</label>
-            <input type="number" id="kuota" class="form-control" placeholder="20" required>
+            <label>Harga Bundling (Rp) *</label>
+            <input type="number" id="hargaBundling" class="form-control" placeholder="140000" required>
+            <small style="font-size: 0.75rem; color: #64748b;">Harga untuk 2 orang</small>
           </div>
+        </div>
+
+        <div class="form-group">
+          <label>Kuota (Orang) *</label>
+          <input type="number" id="kuota" class="form-control" placeholder="20" required>
         </div>
 
         <div class="form-group">
@@ -108,7 +116,7 @@
         const fileGambar = document.getElementById('gambar').files[0];
         if (!fileGambar) { alert("Pilih gambar dulu!"); return; }
 
-        const cloudName = 'd4cltmgp'; // GANTI DENGAN CLOUD NAME KAMU
+        const cloudName = 'd4cltmgp'; // CLOUD NAME KAMU
         const uploadPreset = 'selaras_bukti';
 
         const formData = new FormData();
@@ -132,6 +140,7 @@
           jam: document.getElementById('jam').value,
           lokasi: document.getElementById('lokasi').value,
           harga: parseInt(document.getElementById('harga').value),
+          hargaBundling: parseInt(document.getElementById('hargaBundling').value),
           kuotaAwal: parseInt(document.getElementById('kuota').value),
           kuotaTersisa: parseInt(document.getElementById('kuota').value),
           gambar: imageUrl,
