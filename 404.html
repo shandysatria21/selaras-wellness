@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Halaman Tidak Ditemukan - Selaras</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Style Khusus Halaman 404 */
+    .error-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 80vh;
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .error-code {
+      font-size: 8rem;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1;
+      margin-bottom: 20px;
+      letter-spacing: -5px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .error-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 15px;
+    }
+
+    .error-desc {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 500px;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .error-image {
+      width: 200px;
+      height: 200px;
+      margin-bottom: 30px;
+      background: url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=400&q=80') center/cover;
+      border-radius: 50%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      border: 5px solid #fff;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+  </style>
+</head>
+<body>
+
+  <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.add('active')">☰</button>
+
+  <aside class="sidebar">
+    <button class="close-menu" onclick="document.querySelector('.sidebar').classList.remove('active')">✕</button>
+    <a href="index.html" class="logo"><img src="img/SELARAS.png" alt="Logo"></a>
+    <div class="menu-group">
+      <a href="index.html" class="menu-item">Home</a>
+      <a href="classes.html" class="menu-item">Classes & Pricing</a>
+      <a href="galeri.html" class="menu-item">Galeri</a>
+      <a href="about.html" class="menu-item">About Us</a>
+    </div>
+    <div class="menu-group">
+      <a href="contact.html" class="menu-item">Contact</a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="error-container">
+      <div class="error-image"></div>
+      <div class="error-code">404</div>
+      <h1 class="error-title">Ups, Kamu Tersesat!</h1>
+      <p class="error-desc">Halaman yang kamu cari mungkin sudah dipindahkan, dihapus, atau tidak pernah ada. Yuk, tarik napas dalam-dalam dan kembali ke jalur yang benar.</p>
+      
+      <a href="index.html" class="btn btn-primary" style="padding: 15px 40px; font-size: 1.1rem;">Kembali ke Home</a>
+    </div>
+  </main>
+
+</body>
+</html>
