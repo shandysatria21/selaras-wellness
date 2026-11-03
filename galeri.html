@@ -83,11 +83,11 @@
   </aside>
 
   <main class="main-content">
-    <h1 class="page-title reveal">Galeri Momen</h1>
+    <h1 class="page-title">Galeri Momen</h1>
     <p class="page-subtitle">Intip keseruan dan ketenangan di studio kami.</p>
 
     <!-- Grid Galeri -->
-    <div class="gallery-grid reveal" id="containerGaleri">
+    <div class="gallery-grid" id="containerGaleri">
       <p style="text-align: center; width: 100%;">Memuat foto...</p>
     </div>
 
@@ -149,41 +149,7 @@
     }
 
     loadGaleriUser();
-        // --- LOGIKA SCROLL REVEAL & BACK TO TOP ---
-    document.addEventListener("DOMContentLoaded", function() {
-      
-      // 1. Scroll Reveal Animation
-      const reveals = document.querySelectorAll(".reveal");
-      
-      const revealOnScroll = () => {
-        const windowHeight = window.innerHeight;
-        const elementVisible = 100; // Muncul saat elemen 100px dari bawah layar
-        
-        reveals.forEach((reveal) => {
-          const elementTop = reveal.getBoundingClientRect().top;
-          if (elementTop < windowHeight - elementVisible) {
-            reveal.classList.add("active");
-          }
-        });
-      };
-      
-      window.addEventListener("scroll", revealOnScroll);
-      revealOnScroll(); // Cek posisi saat halaman pertama dibuka
-
-      // 2. Tombol Back to Top
-      const btnBackToTop = document.getElementById("btnBackToTop");
-      
-      window.addEventListener("scroll", () => {
-        if (window.scrollY > 300) { // Muncul setelah scroll 300px
-          btnBackToTop.classList.add("show");
-        } else {
-          btnBackToTop.classList.remove("show");
-        }
-      });
-    });
   </script>
-<button class="btn-back-to-top" id="btnBackToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-  ↑
-</button>
+
 </body>
 </html>

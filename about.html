@@ -54,29 +54,29 @@
   </aside>
 
   <main class="main-content">
-    <section class="about-hero reveal">
+    <section class="about-hero">
       <div class="about-text">
         <h1 id="aboutJudul">Memuat...</h1>
         <p id="aboutDesc">Memuat...</p>
       </div>
       
       <!-- Berikan gambar default di style ini -->
-      <div class="about-image reveal" id="aboutGambar" style="background: url('https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?auto=format&fit=crop&w=800&q=80') center/cover; min-height: 400px; border-radius: 20px;"></div>
+      <div class="about-image" id="aboutGambar" style="background: url('https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?auto=format&fit=crop&w=800&q=80') center/cover; min-height: 400px; border-radius: 20px;"></div>
     </section>
 
-    <section class="quote-section reveal">
+    <section class="quote-section">
       <blockquote id="aboutQuote">"Yoga is the journey of the self, through the self, to the self."</blockquote>
     </section>
 
-    <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 10px; text-align: center reveal; ">Filosofi Kami</h2>
+    <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 10px; text-align: center;">Filosofi Kami</h2>
     <p class="page-subtitle" style="text-align: center; margin-bottom: 40px;">Tiga pilar yang menjadi fondasi setiap kelas di Selaras.</p>
 
-        <section class="about-values reveal" id="filosofiContainer">
+        <section class="about-values" id="filosofiContainer">
       <!-- Akan diisi via JS -->
     </section>
   </main>
 
-    <script type="module">
+  <script type="module">
     import { firebaseConfig, app } from './firebase-config.js';
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -85,26 +85,6 @@
     const aboutDesc = document.getElementById('aboutDesc');
     const aboutGambar = document.getElementById('aboutGambar');
 
-    // Fungsi Animasi Scroll (Dipanggil nanti setelah data siap)
-    function jalankanAnimasi() {
-      const reveals = document.querySelectorAll(".reveal");
-      
-      const revealOnScroll = () => {
-        const windowHeight = window.innerHeight;
-        const elementVisible = 50;
-        
-        reveals.forEach((reveal) => {
-          const elementTop = reveal.getBoundingClientRect().top;
-          if (elementTop < windowHeight - elementVisible) {
-            reveal.classList.add("active");
-          }
-        });
-      };
-      
-      window.addEventListener("scroll", revealOnScroll);
-      setTimeout(revealOnScroll, 100); // Cek posisi setelah data dimuat
-    }
-
     async function loadAboutText() {
       try {
         const docRef = doc(db, "pengaturan", "data-web");
@@ -112,45 +92,25 @@
 
         if (docSnap.exists()) {
           const data = docSnap.data();
+
+          document.getElementById('aboutQuote').innerHTML = `"${data.aboutQuote || 'Yoga is the journey of the self...'}"<br><span style="font-size: 1rem; font-weight: 400; color: var(--text-muted); font-style: normal; display: block; margin-top: 15px;">— The Bhagavad Gita</span>`;
           
           // Set Teks
           aboutJudul.innerHTML = data.aboutJudul || "Temukan Ruang<br>Untuk Dirimu.";
-          aboutDesc.innerText = data.aboutDesc || "Selaras Wellness Club didirikan pada tahun 2020...";
+          aboutDesc.innerText = data.aboutDesc || "Selaras Wellness Club didirikan pada tahun 2020 dengan satu misi sederhana: menciptakan ruang yang aman dan tenang di tengah hiruk-pikuk kota.";
           
-          // Set Quote
-          document.getElementById('aboutQuote').innerHTML = `"${data.aboutQuote || 'Yoga is the journey of the self...'}"<br><span style="font-size: 1rem; font-weight: 400; color: var(--text-muted); font-style: normal; display: block; margin-top: 15px;">— The Bhagavad Gita</span>`;
-
-          // Set Gambar
+          // HANYA ubah gambar JIKA di database ada datanya
           if (data.aboutGambar && data.aboutGambar !== "") {
             aboutGambar.style.backgroundImage = `url('${data.aboutGambar}')`;
           }
-
-          // Set Filosofi
-          const fContainer = document.getElementById('filosofiContainer');
-          const renderFilosofi = (ikonJudul, deskripsi) => {
-            const parts = (ikonJudul || "").split(",");
-            const ikon = parts[0] ? parts[0].trim() : "✨";
-            const judul = parts[1] ? parts[1].trim() : "Filosofi";
-            return `<div class="value-card"><span class="value-icon">${ikon}</span><h3>${judul}</h3><p>${deskripsi || "-"}</p></div>`;
-          };
-
-          fContainer.innerHTML = 
-            renderFilosofi(data.filosofi1Judul || "🧘‍♀️, Mindfulness", data.filosofi1Desc || "-") +
-            renderFilosofi(data.filosofi2Judul || "🌿, Keseimbangan", data.filosofi2Desc || "-") +
-            renderFilosofi(data.filosofi3Judul || "🤝, Komunitas", data.filosofi3Desc || "-");
         }
       } catch (error) {
         console.error("Error load text: ", error);
-      } finally {
-        // JALANKAN ANIMASI SETELAH DATA SELESAI DIMUAT (atau jika error)
-        jalankanAnimasi();
       }
     }
 
     loadAboutText();
   </script>
-<button class="btn-back-to-top" id="btnBackToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-  ↑
-</button>
+
 </body>
 </html>

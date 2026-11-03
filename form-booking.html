@@ -51,12 +51,12 @@
 
   <main class="main-content">
     <div class="booking-box">
-      <h1 class="page-title reveal">Booking Detail</h1>
+      <h1 class="page-title">Booking Detail</h1>
       <p class="page-subtitle" style="margin-bottom: 30px;">Lengkapi data dirimu sebelum melanjutkan ke pembayaran.</p>
 
       <form id="formBooking" onsubmit="prosesForm(event)">
         
-        <div class="form-group reveal" style="background: var(--pink-light); padding: 15px; border-radius: 10px; margin-bottom: 25px;">
+        <div class="form-group" style="background: var(--pink-light); padding: 15px; border-radius: 10px; margin-bottom: 25px;">
           <span style="font-size: 0.9rem; color: var(--text-muted);">Kelas yang dipilih:</span>
           <h3 id="tampilKelas" style="color: var(--primary); font-size: 1.2rem; margin-top: 5px;">Memuat...</h3>
         </div>
@@ -190,41 +190,7 @@
       
       window.location.href = paymentUrl;
     }
-        // --- LOGIKA SCROLL REVEAL & BACK TO TOP ---
-    document.addEventListener("DOMContentLoaded", function() {
-      
-      // 1. Scroll Reveal Animation
-      const reveals = document.querySelectorAll(".reveal");
-      
-      const revealOnScroll = () => {
-        const windowHeight = window.innerHeight;
-        const elementVisible = 100; // Muncul saat elemen 100px dari bawah layar
-        
-        reveals.forEach((reveal) => {
-          const elementTop = reveal.getBoundingClientRect().top;
-          if (elementTop < windowHeight - elementVisible) {
-            reveal.classList.add("active");
-          }
-        });
-      };
-      
-      window.addEventListener("scroll", revealOnScroll);
-      revealOnScroll(); // Cek posisi saat halaman pertama dibuka
-
-      // 2. Tombol Back to Top
-      const btnBackToTop = document.getElementById("btnBackToTop");
-      
-      window.addEventListener("scroll", () => {
-        if (window.scrollY > 300) { // Muncul setelah scroll 300px
-          btnBackToTop.classList.add("show");
-        } else {
-          btnBackToTop.classList.remove("show");
-        }
-      });
-    });
   </script>
-<button class="btn-back-to-top" id="btnBackToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-  ↑
-</button>
+
 </body>
 </html>

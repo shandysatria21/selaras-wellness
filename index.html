@@ -108,7 +108,7 @@
     </section>
 
     <!-- 2. ABOUT PREVIEW SECTION -->
-    <section class="section-home reveal">
+    <section class="section-home">
       <div class="home-about">
         <div class="home-about-text">
           <h2 id="aboutJudul">Memuat...</h2>
@@ -135,7 +135,7 @@
     </section>
 
     <!-- 4. CONTACT / CTA SECTION -->
-    <section class="section-home reveal" style="padding-bottom: 40px;">
+    <section class="section-home" style="padding-bottom: 40px;">
       <div class="home-contact">
         <h2>Mulai Perjalananmu Hari Ini</h2>
         <p>Punya pertanyaan atau ingin konsultasi kelas? Hubungi kami langsung.</p>
@@ -267,50 +267,7 @@
     // Jalankan kedua fungsi
     loadPengaturanWeb();
     loadKelasTerdekat();
-
-            // --- LOGIKA SCROLL REVEAL & BACK TO TOP ---
-    document.addEventListener("DOMContentLoaded", function() {
-      
-      // 1. Scroll Reveal Animation (Versi Perbaikan)
-      const reveals = document.querySelectorAll(".reveal");
-      
-      const revealOnScroll = () => {
-        const windowHeight = window.innerHeight;
-        const elementVisible = 50; // Muncul saat elemen 50px dari bawah layar
-        
-        reveals.forEach((reveal) => {
-          const elementTop = reveal.getBoundingClientRect().top;
-          
-          // Cek apakah elemen sudah masuk area layar
-          if (elementTop < windowHeight - elementVisible) {
-            reveal.classList.add("active");
-          } else {
-            // HAPUS BARIS INI jika kamu tidak ingin animasinya hilang lagi saat di-scroll ke atas
-            // reveal.classList.remove("active"); 
-          }
-        });
-      };
-      
-      // Jalankan saat di-scroll
-      window.addEventListener("scroll", revealOnScroll);
-      
-      // Jalankan saat halaman pertama kali dibuka (pakai setTimeout sedikit biar layout stabil)
-      setTimeout(revealOnScroll, 100);
-
-      // 2. Tombol Back to Top
-      const btnBackToTop = document.getElementById("btnBackToTop");
-      
-      window.addEventListener("scroll", () => {
-        if (window.scrollY > 300) { 
-          btnBackToTop.classList.add("show");
-        } else {
-          btnBackToTop.classList.remove("show");
-        }
-      });
-    });
   </script>
-<button class="btn-back-to-top" id="btnBackToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-    ↑
-  </button>
+
 </body>
 </html>
