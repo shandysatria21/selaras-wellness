@@ -17,39 +17,36 @@
       padding: 20px;
     }
     
+    .error-image {
+      width: 100%;
+      max-width: 280px;
+      height: auto;
+      margin-bottom: 20px;
+      animation: float 3s ease-in-out infinite; /* Animasi ngambang */
+    }
+
     .error-code {
-      font-size: 8rem;
+      font-size: 5rem;
       font-weight: 700;
       color: var(--primary);
       line-height: 1;
-      margin-bottom: 20px;
-      letter-spacing: -5px;
-      animation: float 3s ease-in-out infinite;
+      margin-bottom: 10px;
+      letter-spacing: -2px;
     }
 
     .error-title {
-      font-size: 2rem;
+      font-size: 1.8rem;
       font-weight: 700;
       color: var(--text-main);
       margin-bottom: 15px;
     }
 
     .error-desc {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       color: var(--text-muted);
       max-width: 500px;
       margin-bottom: 30px;
       line-height: 1.6;
-    }
-
-    .error-image {
-      width: 200px;
-      height: 200px;
-      margin-bottom: 30px;
-      background: url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=400&q=80') center/cover;
-      border-radius: 50%;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      border: 5px solid #fff;
     }
 
     @keyframes float {
@@ -79,7 +76,9 @@
 
   <main class="main-content">
     <div class="error-container">
-      <div class="error-image"></div>
+      <!-- Panggil gambar 404 yang ada di folder img -->
+      <img src="img/404.png" alt="Yoga Tersesat" class="error-image">
+      
       <div class="error-code">404</div>
       <h1 class="error-title">Ups, Kamu Tersesat!</h1>
       <p class="error-desc">Halaman yang kamu cari mungkin sudah dipindahkan, dihapus, atau tidak pernah ada. Yuk, tarik napas dalam-dalam dan kembali ke jalur yang benar.</p>
