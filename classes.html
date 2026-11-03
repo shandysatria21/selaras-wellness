@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Classes & Pricing</title>
+  <title>Classes</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" type="image/png" href="img/favicon.png">
   <style>
@@ -137,15 +137,30 @@
                 <div class="card-info-row">🎟️ Kuota: <span>${data.kuotaTersisa || 0} / ${data.kuotaAwal || 0} tersisa</span></div>
               </div>
 
-              <div class="card-footer">
-                <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div class="card-footer" style="margin-top: 20px;">
+                  <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 10px;">
+                  
+                  <!-- Bagian Kiri: Harga -->
                   <div>
                     <span class="price-label" style="display: block; font-size: 0.8rem;">Harga Satuan</span>
                     <span class="price-val" style="font-size: 1.2rem;">${hargaRupiah}</span>
                     ${hargaBundlingRupiah ? `<div style="margin-top: 4px;"><span class="price-label" style="color: #10b981; font-size: 0.85rem;">Bundling (2 Orang): ${hargaBundlingRupiah}</span></div>` : ''}
                   </div>
-                  <div style="margin-top: 10px;">
-                    ${btnBook.replace('padding: 10px 20px; font-size: 0.9rem;', 'padding: 10px; font-size: 0.9rem; width: 100%; text-align: center;')}
+
+                  <!-- Bagian Kanan: Tombol Share & Book Now -->
+                  <div style="display: flex; gap: 8px; align-items: center;">
+                    
+                    <!-- Tombol Share (Ikon) -->
+                    <button onclick="shareKelas('${data.nama}', '${id}', ${data.harga})" class="btn btn-outline" style="padding: 10px; border-radius: 8px; border-color: var(--border);" title="Bagikan Kelas">
+                      <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle>
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                      </svg>
+                    </button>
+
+                    <!-- Tombol Book Now -->
+                    ${btnBook.replace('padding: 10px 20px; font-size: 0.9rem;', 'padding: 10px 15px; font-size: 0.9rem;')}
+                  
                   </div>
                 </div>
               </div>
@@ -160,6 +175,27 @@
     }
 
     muatKelasUser();
+
+        // Fungsi Share Kelas
+    window.shareKelas = function(namaKelas, idKelas, hargaKelas) {
+      // Link yang mengarah langsung ke form booking kelas tersebut
+      const linkBooking = `${window.location.origin}/form-booking.html?kelas=${encodeURIComponent(namaKelas)}&harga=${hargaKelas}&id=${idKelas}`;
+      
+      const textShare = `Yuk ikutan kelas *${namaKelas}* di Selaras Wellness Club! 🧘‍♀️\n\nCek jadwal dan daftar di sini:\n${linkBooking}`;
+
+      // Cek apakah browser/HP mendukung fitur Share bawaan (Web Share API)
+      if (navigator.share) {
+        navigator.share({
+          title: `Kelas ${namaKelas} - Selaras`,
+          text: `Yuk ikutan kelas ${namaKelas} di Selaras Wellness Club!`,
+          url: linkBooking
+        }).catch((error) => console.log('Share dibatalkan', error));
+      } else {
+        // Jika di Laptop, otomatis buka WhatsApp Web
+        window.open(`https://wa.me/?text=${encodeURIComponent(textShare)}`, '_blank');
+      }
+    }
+    
   </script>
 
 </body>
