@@ -177,7 +177,7 @@ textarea.form-control { resize: vertical; min-height: 120px; }
 .gallery-item img { width: 100%; display: block; transition: transform 0.5s ease, filter 0.5s ease; }
 /* Ganti bagian .gallery-item::after yang lama dengan ini */
 .gallery-item::after {
-  content: '🔍 Perbesar';
+  content: '🔍';
   position: absolute;
   top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(0, 0, 0, 0.5);
