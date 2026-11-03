@@ -32,6 +32,12 @@
       color: var(--text-main); 
     }
     .btn-disabled { background-color: #ccc !important; cursor: not-allowed; pointer-events: none; }
+    .card-info-row {
+      display: flex;
+      align-items: flex-start; /* Ubah dari center ke flex-start */
+      gap: 8px;
+      line-height: 1.4;
+    }
   </style>
 </head>
 <body>
@@ -138,31 +144,30 @@
               </div>
 
                 <div class="card-footer" style="margin-top: 20px;">
-                  <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 10px;">
-                  
-                  <!-- Bagian Kiri: Harga -->
-                  <div>
+                  <!-- Baris 1: Harga -->
+                  <div style="margin-bottom: 15px;">
                     <span class="price-label" style="display: block; font-size: 0.8rem;">Harga Satuan</span>
-                    <span class="price-val" style="font-size: 1.2rem;">${hargaRupiah}</span>
-                    ${hargaBundlingRupiah ? `<div style="margin-top: 4px;"><span class="price-label" style="color: #10b981; font-size: 0.85rem;">Bundling (2 Orang): ${hargaBundlingRupiah}</span></div>` : ''}
+                    <span class="price-val" style="font-size: 1.2rem; display: block;">${hargaRupiah}</span>
+                  ${hargaBundlingRupiah ? `<span class="price-label" style="color: #10b981; font-size: 0.85rem; display: block; margin-top: 4px;">Bundling (2 Orang): ${hargaBundlingRupiah}</span>` : ''}
                   </div>
 
-                  <!-- Bagian Kanan: Tombol Share & Book Now -->
-                  <div style="display: flex; gap: 8px; align-items: center;">
-                    
-                    <!-- Tombol Share (Ikon) -->
-                    <button onclick="shareKelas('${data.nama}', '${id}', ${data.harga})" class="btn btn-outline" style="padding: 10px; border-radius: 8px; border-color: var(--border);" title="Bagikan Kelas">
+                    <!-- Baris 2: Tombol Aksi -->
+                  <div style="display: flex; gap: 8px; width: 100%;">
+                    <!-- Tombol Share -->
+                    <button onclick="shareKelas('${data.nama}', '${id}', ${data.harga})" class="btn btn-outline" style="padding: 10px; border-radius: 8px; width: 45px; flex-shrink: 0;" title="Bagikan Kelas">
                       <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle>
                         <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
                       </svg>
                     </button>
-
-                    <!-- Tombol Book Now -->
-                    ${btnBook.replace('padding: 10px 20px; font-size: 0.9rem;', 'padding: 10px 15px; font-size: 0.9rem;')}
                   
+                    <!-- Tombol Book Now -->
+                  <div style="flex: 1;">
+                    ${btnBook.replace('padding: 10px 20px; font-size: 0.9rem;', 'padding: 10px; font-size: 0.9rem; width: 100%; display: flex; justify-content: center; align-items: center;')}
                   </div>
                 </div>
+              </div>
+              </div>
               </div>
             </div>
           `;
@@ -195,7 +200,7 @@
         window.open(`https://wa.me/?text=${encodeURIComponent(textShare)}`, '_blank');
       }
     }
-    
+
   </script>
 
 </body>
