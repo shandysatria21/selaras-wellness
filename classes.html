@@ -131,12 +131,12 @@
           card.className = 'card';
           
           // PERHATIKAN STRUKTUR DIV DI BAWAH INI (SUDAH DIRAPIKAN)
-          card.innerHTML = `
+                    card.innerHTML = `
             <div class="card-img" style="background-image: url('${data.gambar}');">
               ${statusBadge}
             </div>
             
-            <div class="card-content">
+            <div class="card-content" style="display: flex; flex-direction: column; flex: 1;">
               <h3>${data.nama}</h3>
               
               <div class="card-info">
@@ -146,16 +146,19 @@
                 <div class="card-info-row">🎟️ Kuota: <span>${data.kuotaTersisa || 0} / ${data.kuotaAwal || 0} tersisa</span></div>
               </div>
 
-              <div class="card-footer" style="margin-top: auto;">
-                <!-- Baris 1: Harga -->
+              <!-- Footer (Harga & Tombol) -->
+              <div class="card-footer" style="margin-top: auto; padding-top: 15px; border-top: 1px solid var(--border);">
+                
+                <!-- Harga -->
                 <div style="margin-bottom: 15px;">
                   <span class="price-label" style="display: block; font-size: 0.8rem;">Harga Satuan</span>
                   <span class="price-val" style="font-size: 1.2rem; display: block;">${hargaRupiah}</span>
                   ${hargaBundlingRupiah ? `<span class="price-label" style="color: #10b981; font-size: 0.85rem; display: block; margin-top: 4px;">Bundling (2 Orang): ${hargaBundlingRupiah}</span>` : ''}
                 </div>
 
-                <!-- Baris 2: Tombol Aksi -->
+                <!-- Tombol Aksi -->
                 <div style="display: flex; gap: 8px; width: 100%;">
+                  <!-- Tombol Share -->
                   <button onclick="shareKelas('${data.nama}', '${id}', ${data.harga})" class="btn btn-outline" style="padding: 10px; border-radius: 8px; width: 45px; flex-shrink: 0;" title="Bagikan Kelas">
                     <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                       <circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle>
@@ -163,10 +166,12 @@
                     </svg>
                   </button>
                   
+                  <!-- Tombol Book Now -->
                   <div style="flex: 1;">
                     ${btnBook.replace('padding: 10px 20px; font-size: 0.9rem;', 'padding: 10px; font-size: 0.9rem; width: 100%; display: flex; justify-content: center; align-items: center;')}
                   </div>
                 </div>
+
               </div>
             </div>
           `;
