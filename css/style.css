@@ -386,8 +386,8 @@ textarea.form-control { resize: vertical; min-height: 120px; }
 
 /* Efek Saat Muncul (Ditambahkan via JS) */
 .reveal.active {
-  opacity: 1;
-  transform: translateY(0);
+  opacity: 1 !important;
+  transform: translateY(0) !important;
 }
 
 /* Tombol Back to Top */

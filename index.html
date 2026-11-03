@@ -268,32 +268,40 @@
     loadPengaturanWeb();
     loadKelasTerdekat();
 
-        // --- LOGIKA SCROLL REVEAL & BACK TO TOP ---
+            // --- LOGIKA SCROLL REVEAL & BACK TO TOP ---
     document.addEventListener("DOMContentLoaded", function() {
       
-      // 1. Scroll Reveal Animation
+      // 1. Scroll Reveal Animation (Versi Perbaikan)
       const reveals = document.querySelectorAll(".reveal");
       
       const revealOnScroll = () => {
         const windowHeight = window.innerHeight;
-        const elementVisible = 100; // Muncul saat elemen 100px dari bawah layar
+        const elementVisible = 50; // Muncul saat elemen 50px dari bawah layar
         
         reveals.forEach((reveal) => {
           const elementTop = reveal.getBoundingClientRect().top;
+          
+          // Cek apakah elemen sudah masuk area layar
           if (elementTop < windowHeight - elementVisible) {
             reveal.classList.add("active");
+          } else {
+            // HAPUS BARIS INI jika kamu tidak ingin animasinya hilang lagi saat di-scroll ke atas
+            // reveal.classList.remove("active"); 
           }
         });
       };
       
+      // Jalankan saat di-scroll
       window.addEventListener("scroll", revealOnScroll);
-      revealOnScroll(); // Cek posisi saat halaman pertama dibuka
+      
+      // Jalankan saat halaman pertama kali dibuka (pakai setTimeout sedikit biar layout stabil)
+      setTimeout(revealOnScroll, 100);
 
       // 2. Tombol Back to Top
       const btnBackToTop = document.getElementById("btnBackToTop");
       
       window.addEventListener("scroll", () => {
-        if (window.scrollY > 300) { // Muncul setelah scroll 300px
+        if (window.scrollY > 300) { 
           btnBackToTop.classList.add("show");
         } else {
           btnBackToTop.classList.remove("show");
