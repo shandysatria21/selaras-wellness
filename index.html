@@ -90,7 +90,7 @@
     
     <!-- HERO SECTION -->
     <section class="hero">
-      <div class="hero-text">
+      <div class="hero-text reveal">
         <div class="badge">
           <span class="badge-dot"></span>
           <span class="badge-text">WELCOME</span> Selaras Wellness Club
@@ -108,7 +108,7 @@
     </section>
 
     <!-- 2. ABOUT PREVIEW SECTION -->
-    <section class="section-home">
+    <section class="section-home reveal">
       <div class="home-about">
         <div class="home-about-text">
           <h2 id="aboutJudul">Memuat...</h2>
@@ -120,7 +120,7 @@
     </section>
 
     <!-- 3. FEATURED CLASSES SECTION -->
-    <section class="section-home">
+    <section class="section-home reveal">
       <h2 class="section-title">Kelas Terdekat</h2>
       <p class="section-subtitle">Jadwal kelas yang bisa kamu ikuti minggu ini.</p>
       
@@ -135,7 +135,7 @@
     </section>
 
     <!-- 4. CONTACT / CTA SECTION -->
-    <section class="section-home" style="padding-bottom: 40px;">
+    <section class="section-home reveal" style="padding-bottom: 40px;">
       <div class="home-contact">
         <h2>Mulai Perjalananmu Hari Ini</h2>
         <p>Punya pertanyaan atau ingin konsultasi kelas? Hubungi kami langsung.</p>
@@ -267,7 +267,42 @@
     // Jalankan kedua fungsi
     loadPengaturanWeb();
     loadKelasTerdekat();
-  </script>
 
+        // --- LOGIKA SCROLL REVEAL & BACK TO TOP ---
+    document.addEventListener("DOMContentLoaded", function() {
+      
+      // 1. Scroll Reveal Animation
+      const reveals = document.querySelectorAll(".reveal");
+      
+      const revealOnScroll = () => {
+        const windowHeight = window.innerHeight;
+        const elementVisible = 100; // Muncul saat elemen 100px dari bawah layar
+        
+        reveals.forEach((reveal) => {
+          const elementTop = reveal.getBoundingClientRect().top;
+          if (elementTop < windowHeight - elementVisible) {
+            reveal.classList.add("active");
+          }
+        });
+      };
+      
+      window.addEventListener("scroll", revealOnScroll);
+      revealOnScroll(); // Cek posisi saat halaman pertama dibuka
+
+      // 2. Tombol Back to Top
+      const btnBackToTop = document.getElementById("btnBackToTop");
+      
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 300) { // Muncul setelah scroll 300px
+          btnBackToTop.classList.add("show");
+        } else {
+          btnBackToTop.classList.remove("show");
+        }
+      });
+    });
+  </script>
+<button class="btn-back-to-top" id="btnBackToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+    ↑
+  </button>
 </body>
 </html>

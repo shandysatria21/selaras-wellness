@@ -372,3 +372,62 @@ textarea.form-control { resize: vertical; min-height: 120px; }
   .gallery-grid { column-count: 2; column-gap: 15px; }
   .gallery-item { margin-bottom: 15px; border-radius: 12px; }
 }
+
+/* =========================================
+   9. SCROLL REVEAL & BACK TO TOP
+   ========================================= */
+
+/* Efek Awal (Sebelum Muncul) */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+}
+
+/* Efek Saat Muncul (Ditambahkan via JS) */
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Tombol Back to Top */
+.btn-back-to-top {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  background-color: var(--primary);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(196, 69, 118, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 999;
+  border: none;
+}
+
+.btn-back-to-top.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.btn-back-to-top:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-3px);
+}
+
+@media (max-width: 768px) {
+  .btn-back-to-top {
+    bottom: 20px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
+  }
+}

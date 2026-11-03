@@ -70,10 +70,10 @@
   </aside>
 
   <main class="main-content">
-    <h1 class="page-title">Classes</h1>
+    <h1 class="page-title reveal">Classes</h1>
     <p class="page-subtitle">Temukan jadwal kelas yang cocok untukmu.</p>
 
-    <div class="grid-cards" id="container-kelas" style="margin-bottom: 60px;">
+    <div class="grid-cards reveal" id="container-kelas" style="margin-bottom: 60px;">
       <p style="text-align:center; width: 100%; color: var(--text-muted);">Memuat kelas...</p>
     </div>
   </main>
@@ -161,6 +161,8 @@
 
     muatKelasUser();
   </script>
-
+<button class="btn-back-to-top" id="btnBackToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+  ↑
+</button>
 </body>
 </html>
