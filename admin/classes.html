@@ -5,12 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kelola Kelas - Admin</title>
   <link rel="stylesheet" href="admin-style.css">
+  <style>
+    .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
+    .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+    input:checked + .slider { background-color: #10b981; }
+    input:checked + .slider:before { transform: translateX(20px); }
+    
+    /* Style Pagination */
+    .pagination { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 20px; }
+    .pagination button { padding: 8px 16px; border: 1px solid #cbd5e1; background: #fff; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .pagination span { font-weight: 600; color: #64748b; }
+  </style>
   <script>
     if (localStorage.getItem('isAdminLoggedIn') !== 'true') { window.location.href = 'login.html'; }
   </script>
 </head>
 <body>
-<button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.add('active')">☰</button>
+
+  <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.add('active')">☰</button>
+
   <aside class="sidebar">
     <button class="close-menu" onclick="document.querySelector('.sidebar').classList.remove('active')">✕</button>
     <a href="dashboard.html" class="logo"><img src="../img/SELARAS.png" alt="Logo"></a>
@@ -53,6 +69,13 @@
         </tbody>
       </table>
     </div>
+
+    <!-- Tombol Pagination -->
+    <div class="pagination" id="paginationContainer" style="display: none;">
+      <button id="btnPrev" onclick="prevPage()">Previous</button>
+      <span id="pageInfo">Halaman 1</span>
+      <button id="btnNext" onclick="nextPage()">Next</button>
+    </div>
   </main>
 
   <script type="module">
@@ -61,64 +84,110 @@
 
     const db = getFirestore(app);
     const tabelKelas = document.getElementById('tabelKelas');
+    
+    // Variabel Pagination
+    let allData = [];
+    let currentPage = 1;
+    const itemsPerPage = 10;
 
     function formatTanggal(tglString) {
       if (!tglString) return '-';
       return new Date(tglString).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
     }
 
+    // Ambil Data dari Database
     async function tampilkanKelas() {
       try {
         const q = query(collection(db, "classes"), orderBy("tanggal", "asc"));
         const querySnapshot = await getDocs(q);
         
-        tabelKelas.innerHTML = '';
-        
-        if (querySnapshot.empty) {
-          tabelKelas.innerHTML = '<tr><td colspan="6" style="text-align:center;">Belum ada kelas.</td></tr>';
-          return;
-        }
-
+        allData = [];
         querySnapshot.forEach((doc) => {
           const data = doc.data();
-          const id = doc.id;
-          const hargaRupiah = 'Rp ' + data.harga.toLocaleString('id-ID');
-          const tanggalFormat = formatTanggal(data.tanggal);
-          const isAktif = data.statusAktif !== false;
-
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td><img src="${data.gambar}" alt="Kelas" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;"></td>
-            <td>
-              <strong>${data.nama}</strong><br>
-              <span style="font-size: 0.85rem; color: #64748b;">
-                ${data.coach || '-'} | ${tanggalFormat} (${data.jam || '-'}) | ${data.lokasi || '-'}
-              </span>
-            </td>
-            <td>${hargaRupiah}</td>
-            <td>${data.kuotaTersisa || 0} / ${data.kuotaAwal || 0}</td>
-            <td>
-              <label class="switch">
-                <input type="checkbox" ${isAktif ? 'checked' : ''} onchange="toggleStatus('${id}', this.checked)">
-                <span class="slider"></span>
-              </label>
-            </td>
-            <td>
-              <div class="action-btns">
-                <a href="edit-class.html?id=${id}" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.8rem;">Edit</a>
-                <button class="btn btn-outline" onclick="hapusKelas('${id}')" style="padding: 5px 12px; font-size: 0.8rem; color: #ef4444; border-color: #ef4444;">Hapus</button>
-              </div>
-            </td>
-          `;
-          tabelKelas.appendChild(tr);
+          data.id = doc.id;
+          allData.push(data);
         });
+
+        renderTabel();
       } catch (error) {
         console.error("Error mengambil data: ", error);
         tabelKelas.innerHTML = '<tr><td colspan="6" style="text-align:center; color: red;">Gagal memuat data.</td></tr>';
       }
     }
 
-    tampilkanKelas();
+    // Render Tabel Berdasarkan Halaman
+    function renderTabel() {
+      tabelKelas.innerHTML = '';
+      
+      if (allData.length === 0) {
+        tabelKelas.innerHTML = '<tr><td colspan="6" style="text-align:center;">Belum ada kelas.</td></tr>';
+        document.getElementById('paginationContainer').style.display = 'none';
+        return;
+      }
+
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const pageData = allData.slice(startIndex, endIndex);
+
+      pageData.forEach((data) => {
+        const hargaRupiah = 'Rp ' + data.harga.toLocaleString('id-ID');
+        const tanggalFormat = formatTanggal(data.tanggal);
+        const isAktif = data.statusAktif !== false;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><img src="${data.gambar}" alt="Kelas" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;"></td>
+          <td>
+            <strong>${data.nama}</strong><br>
+            <span style="font-size: 0.85rem; color: #64748b;">
+              ${data.coach || '-'} | ${tanggalFormat} (${data.jam || '-'}) | ${data.lokasi || '-'}
+            </span>
+          </td>
+          <td>${hargaRupiah}</td>
+          <td>${data.kuotaTersisa || 0} / ${data.kuotaAwal || 0}</td>
+          <td>
+            <label class="switch">
+              <input type="checkbox" ${isAktif ? 'checked' : ''} onchange="toggleStatus('${data.id}', this.checked)">
+              <span class="slider"></span>
+            </label>
+          </td>
+          <td>
+            <div class="action-btns">
+              <a href="edit-class.html?id=${data.id}" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.8rem;">Edit</a>
+              <button class="btn btn-outline" onclick="hapusKelas('${data.id}')" style="padding: 5px 12px; font-size: 0.8rem; color: #ef4444; border-color: #ef4444;">Hapus</button>
+            </div>
+          </td>
+        `;
+        tabelKelas.appendChild(tr);
+      });
+
+      // Update Pagination
+      const totalPages = Math.ceil(allData.length / itemsPerPage);
+      document.getElementById('pageInfo').innerText = `Halaman ${currentPage} dari ${totalPages}`;
+      document.getElementById('btnPrev').disabled = currentPage === 1;
+      document.getElementById('btnNext').disabled = currentPage === totalPages;
+      
+      if (allData.length > itemsPerPage) {
+        document.getElementById('paginationContainer').style.display = 'flex';
+      } else {
+        document.getElementById('paginationContainer').style.display = 'none';
+      }
+    }
+
+    window.prevPage = function() {
+      if (currentPage > 1) {
+        currentPage--;
+        renderTabel();
+      }
+    }
+
+    window.nextPage = function() {
+      const totalPages = Math.ceil(allData.length / itemsPerPage);
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderTabel();
+      }
+    }
 
     window.toggleStatus = async function(id, isChecked) {
       try {
@@ -126,7 +195,7 @@
       } catch (error) {
         console.error("Gagal update status: ", error);
         alert("Gagal mengubah status kelas.");
-        tampilkanKelas(); 
+        renderTabel(); 
       }
     }
 
@@ -134,11 +203,13 @@
       if (!confirm("Yakin ingin menghapus kelas ini?")) return;
       try {
         await deleteDoc(doc(db, "classes", id));
-        tampilkanKelas();
+        tampilkanKelas(); // Reload data setelah hapus
       } catch (error) {
         console.error(error);
       }
     }
+
+    tampilkanKelas();
 
     window.logout = function() {
       localStorage.removeItem('isAdminLoggedIn');

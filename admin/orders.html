@@ -5,10 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data Pesanan - Admin</title>
   <link rel="stylesheet" href="admin-style.css">
+  <style>
+    .pagination { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 20px; }
+    .pagination button { padding: 8px 16px; border: 1px solid #cbd5e1; background: #fff; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .pagination span { font-weight: 600; color: #64748b; }
+  </style>
   <script>
-    if (localStorage.getItem('isAdminLoggedIn') !== 'true') {
-      window.location.href = 'login.html';
-    }
+    if (localStorage.getItem('isAdminLoggedIn') !== 'true') { window.location.href = 'login.html'; }
   </script>
 </head>
 <body>
@@ -38,11 +42,9 @@
         <p class="page-subtitle" style="margin-bottom: 0;">Semua riwayat pemesanan kelas yoga.</p>
       </div>
       
-      <!-- AREA FILTER & EKSPOR -->
       <div style="display: flex; gap: 10px; align-items: center;">
         <select id="filterKelas" class="form-control" style="width: auto; min-width: 200px;" onchange="filterTabel()">
           <option value="semua">Semua Kelas</option>
-          <!-- Opsi kelas akan diisi via JS -->
         </select>
         <button id="btnEkspor" class="btn btn-primary" style="background-color: #10b981; border-color: #10b981;" onclick="eksporCSV()">
           ⬇️ Ekspor CSV
@@ -61,13 +63,20 @@
             <th>Kelas</th>
             <th>Total</th>
             <th>Status</th>
-            <th style="min-width: 150px;">Aksi</th>
+            <th>Aksi</th>
           </tr>
         </thead>
         <tbody id="tabelPesanan">
           <tr><td colspan="8" style="text-align:center;">Memuat data...</td></tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- Tombol Pagination -->
+    <div class="pagination" id="paginationContainer" style="display: none;">
+      <button id="btnPrev" onclick="prevPage()">Previous</button>
+      <span id="pageInfo">Halaman 1</span>
+      <button id="btnNext" onclick="nextPage()">Next</button>
     </div>
   </main>
 
@@ -79,26 +88,28 @@
     const tabelPesanan = document.getElementById('tabelPesanan');
     const filterKelas = document.getElementById('filterKelas');
     
-    let semuaDataPesanan = []; // Menyimpan semua data asli
-    let dataTampil = [];       // Menyimpan data yang sedang difilter
+    // Variabel Pagination
+    let semuaDataPesanan = []; // Data asli
+    let dataTampil = [];       // Data yang difilter
+    let currentPage = 1;
+    const itemsPerPage = 10;
 
-    // 1. Ambil Data dari Database
     async function tampilkanPesanan() {
       try {
         const q = query(collection(db, "orders"), orderBy("tanggal", "desc"));
         const querySnapshot = await getDocs(q);
         
         semuaDataPesanan = []; 
-        const daftarKelasUnik = new Set(); // Untuk nyimpen nama kelas unik
+        const daftarKelasUnik = new Set();
         
         querySnapshot.forEach((doc) => {
           const data = doc.data();
-          data.id = doc.id; // Simpan ID doc
+          data.id = doc.id;
           semuaDataPesanan.push(data);
           if (data.kelas) daftarKelasUnik.add(data.kelas);
         });
 
-        // Isi Dropdown Filter dengan nama kelas unik
+        // Isi Dropdown Filter
         daftarKelasUnik.forEach(kelas => {
           const option = document.createElement('option');
           option.value = kelas;
@@ -106,8 +117,7 @@
           filterKelas.appendChild(option);
         });
 
-        // Tampilkan semua data awal
-        renderTabel(semuaDataPesanan);
+        filterTabel(); // Render awal
 
       } catch (error) {
         console.error("Error: ", error);
@@ -115,17 +125,31 @@
       }
     }
 
-    // 2. Fungsi Render Tabel (Bisa dipanggil ulang saat filter berubah)
-    function renderTabel(dataArray) {
+    window.filterTabel = function() {
+      const pilihan = filterKelas.value;
+      if (pilihan === 'semua') {
+        dataTampil = [...semuaDataPesanan];
+      } else {
+        dataTampil = semuaDataPesanan.filter(pesanan => pesanan.kelas === pilihan);
+      }
+      currentPage = 1; // Reset ke halaman 1 setiap ganti filter
+      renderTabel();
+    }
+
+    function renderTabel() {
       tabelPesanan.innerHTML = '';
-      dataTampil = dataArray; // Simpan data yang lagi tampil untuk diekspor
       
-      if (dataArray.length === 0) {
+      if (dataTampil.length === 0) {
         tabelPesanan.innerHTML = '<tr><td colspan="8" style="text-align:center;">Tidak ada pesanan untuk filter ini.</td></tr>';
+        document.getElementById('paginationContainer').style.display = 'none';
         return;
       }
 
-      dataArray.forEach((data) => {
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const pageData = dataTampil.slice(startIndex, endIndex);
+
+      pageData.forEach((data) => {
         const tanggal = data.tanggal ? data.tanggal.toDate().toLocaleDateString('id-ID') : '-';
         const hargaRupiah = 'Rp ' + data.totalHarga.toLocaleString('id-ID');
         const badgeClass = data.status === 'Pending' ? 'status-pending' : 'status-success';
@@ -148,20 +172,48 @@
         `;
         tabelPesanan.appendChild(tr);
       });
-    }
 
-    // 3. Fungsi Filter Tabel
-    window.filterTabel = function() {
-      const pilihan = filterKelas.value;
-      if (pilihan === 'semua') {
-        renderTabel(semuaDataPesanan);
+      // Update Pagination
+      const totalPages = Math.ceil(dataTampil.length / itemsPerPage);
+      document.getElementById('pageInfo').innerText = `Halaman ${currentPage} dari ${totalPages}`;
+      document.getElementById('btnPrev').disabled = currentPage === 1;
+      document.getElementById('btnNext').disabled = currentPage === totalPages;
+      
+      if (dataTampil.length > itemsPerPage) {
+        document.getElementById('paginationContainer').style.display = 'flex';
       } else {
-        const dataFilter = semuaDataPesanan.filter(pesanan => pesanan.kelas === pilihan);
-        renderTabel(dataFilter);
+        document.getElementById('paginationContainer').style.display = 'none';
       }
     }
 
-    // 4. Fungsi Ekspor CSV (Berdasarkan data yang sedang tampil/filter)
+    window.prevPage = function() {
+      if (currentPage > 1) {
+        currentPage--;
+        renderTabel();
+      }
+    }
+
+    window.nextPage = function() {
+      const totalPages = Math.ceil(dataTampil.length / itemsPerPage);
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderTabel();
+      }
+    }
+
+    window.hapusPesanan = async function(id) {
+      if (!confirm("Yakin ingin menghapus data pesanan ini secara permanen?")) return;
+      try {
+        await deleteDoc(doc(db, "orders", id));
+        alert("Data pesanan berhasil dihapus.");
+        tampilkanPesanan(); // Reload semua data
+      } catch (error) {
+        console.error("Error menghapus pesanan: ", error);
+        alert("Gagal menghapus pesanan.");
+      }
+    }
+
+    // --- LOGIKA EKSPOR CSV (Dipertahankan) ---
     window.eksporCSV = function() {
       if (dataTampil.length === 0) {
         alert("Tidak ada data untuk diekspor pada filter ini.");
@@ -169,17 +221,11 @@
       }
 
       const headers = ["Tanggal", "Nama", "Email", "WhatsApp", "Kelas", "Total Harga", "Status"];
-      
       const rows = dataTampil.map(data => {
         const tgl = data.tanggal ? data.tanggal.toDate().toLocaleDateString('id-ID') : '-';
         return [
-          `"${tgl}"`,
-          `"${data.nama}"`,
-          `"${data.email || '-'}"`,
-          `"${data.wa}"`,
-          `"${data.kelas}"`,
-          `"${data.totalHarga}"`,
-          `"${data.status}"`
+          `"${tgl}"`, `"${data.nama}"`, `"${data.email || '-'}"`, `"${data.wa}"`, 
+          `"${data.kelas}"`, `"${data.totalHarga}"`, `"${data.status}"`
         ].join(",");
       });
 
@@ -190,7 +236,6 @@
       const url = URL.createObjectURL(blob);
       link.setAttribute("href", url);
       
-      // Nama file disesuaikan dengan filter yang dipilih
       const namaFile = filterKelas.value === 'semua' ? 'Semua_Pesanan' : filterKelas.value.replace(/\s+/g, '_');
       const today = new Date().toISOString().slice(0, 10);
       link.setAttribute("download", `Data_${namaFile}_${today}.csv`);
@@ -202,19 +247,7 @@
     }
 
     tampilkanPesanan();
-    
-    window.hapusPesanan = async function(id) {
-      if (!confirm("Yakin ingin menghapus data pesanan ini secara permanen?")) return;
-      
-      try {
-        await deleteDoc(doc(db, "orders", id));
-        alert("Data pesanan berhasil dihapus.");
-        window.location.reload(); // Refresh halaman agar data langsung hilang dari tabel
-      } catch (error) {
-        console.error("Error menghapus pesanan: ", error);
-        alert("Gagal menghapus pesanan.");
-      }
-    }
+
     window.logout = function() {
       localStorage.removeItem('isAdminLoggedIn');
       window.location.href = 'login.html';
