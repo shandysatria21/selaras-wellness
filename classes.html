@@ -160,6 +160,38 @@
     }
 
     muatKelasUser();
+        // --- LOGIKA SCROLL REVEAL & BACK TO TOP ---
+    document.addEventListener("DOMContentLoaded", function() {
+      
+      // 1. Scroll Reveal Animation
+      const reveals = document.querySelectorAll(".reveal");
+      
+      const revealOnScroll = () => {
+        const windowHeight = window.innerHeight;
+        const elementVisible = 100; // Muncul saat elemen 100px dari bawah layar
+        
+        reveals.forEach((reveal) => {
+          const elementTop = reveal.getBoundingClientRect().top;
+          if (elementTop < windowHeight - elementVisible) {
+            reveal.classList.add("active");
+          }
+        });
+      };
+      
+      window.addEventListener("scroll", revealOnScroll);
+      revealOnScroll(); // Cek posisi saat halaman pertama dibuka
+
+      // 2. Tombol Back to Top
+      const btnBackToTop = document.getElementById("btnBackToTop");
+      
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 300) { // Muncul setelah scroll 300px
+          btnBackToTop.classList.add("show");
+        } else {
+          btnBackToTop.classList.remove("show");
+        }
+      });
+    });
   </script>
 <button class="btn-back-to-top" id="btnBackToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
   ↑
