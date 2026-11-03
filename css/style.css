@@ -175,7 +175,23 @@ textarea.form-control { resize: vertical; min-height: 120px; }
 .gallery-grid { column-count: 3; column-gap: 20px; margin-top: 30px; }
 .gallery-item { break-inside: avoid; margin-bottom: 20px; border-radius: 16px; overflow: hidden; cursor: pointer; position: relative; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
 .gallery-item img { width: 100%; display: block; transition: transform 0.5s ease, filter 0.5s ease; }
-.gallery-item::after { content: '🔍 Lihat'; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); color: #fff; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; font-weight: 600; opacity: 0; transition: opacity 0.3s ease; }
+/* Ganti bagian .gallery-item::after yang lama dengan ini */
+.gallery-item::after {
+  content: '🔍 Perbesar';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  cursor: pointer; /* Bikin kursor jadi telunjuk */
+  pointer-events: none; /* Biar klik tembus ke gambar di bawahnya */
+}
 .gallery-item:hover img { transform: scale(1.08); }
 .gallery-item:hover::after { opacity: 1; }
 
