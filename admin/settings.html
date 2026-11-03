@@ -12,7 +12,7 @@
       border-bottom: 2px solid #e2e8f0;
       margin-bottom: 25px;
       gap: 10px;
-      overflow-x: auto; /* Biar bisa digeser kalau layar sempit */
+      overflow-x: auto;
     }
     .tab-btn {
       background: none;
@@ -32,11 +32,11 @@
       border-bottom-color: #3b82f6;
     }
     .tab-content {
-      display: none; /* Sembunyikan semua konten tab secara default */
+      display: none;
       animation: fadeIn 0.3s ease;
     }
     .tab-content.active {
-      display: block; /* Tampilkan hanya yang aktif */
+      display: block;
     }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(5px); }
@@ -79,10 +79,10 @@
       
       <!-- MENU TAB -->
       <div class="tab-menu">
-        <button class="tab-btn active" onclick="openTab(event, 'tabHome')">Home</button>
-        <button class="tab-btn" onclick="openTab(event, 'tabAbout')">About Us</button>
-        <button class="tab-btn" onclick="openTab(event, 'tabContact')">Contact</button>
-        <button class="tab-btn" onclick="openTab(event, 'tabLainnya')">Lainnya</button>
+        <button type="button" class="tab-btn active" onclick="openTab(event, 'tabHome')">Home</button>
+        <button type="button" class="tab-btn" onclick="openTab(event, 'tabAbout')">About Us</button>
+        <button type="button" class="tab-btn" onclick="openTab(event, 'tabContact')">Contact</button>
+        <button type="button" class="tab-btn" onclick="openTab(event, 'tabLainnya')">Lainnya</button>
       </div>
 
       <form id="formPengaturan">
@@ -120,7 +120,7 @@
             <textarea id="inpAboutDesc" class="form-control" rows="4" required></textarea>
           </div>
           <div class="form-group">
-            <label>Quote</label>
+            <label>Quote About Us</label>
             <textarea id="inpAboutQuote" class="form-control" rows="2" required></textarea>
           </div>
           <div class="form-group">
@@ -176,7 +176,7 @@
           </div>
         </div>
 
-        <!-- TOMBOL SIMPAN (Selalu muncul di bawah) -->
+        <!-- TOMBOL SIMPAN -->
         <button type="submit" id="btnSimpan" class="btn btn-primary" style="width: 100%; margin-top: 30px;">Simpan Semua Pengaturan</button>
       </form>
     </div>
@@ -194,7 +194,7 @@
     const previewHome = document.getElementById('previewHome');
     const previewAbout = document.getElementById('previewAbout');
 
-    // Fungsi untuk ganti Tab
+    // Fungsi Ganti Tab
     window.openTab = function(evt, tabName) {
       const tabContents = document.getElementsByClassName("tab-content");
       for (let i = 0; i < tabContents.length; i++) {
@@ -224,7 +224,7 @@
           // About
           document.getElementById('inpAboutJudul').value = data.aboutJudul || '';
           document.getElementById('inpAboutDesc').value = data.aboutDesc || '';
-          document.getElementById('inpAboutQuote').value = data.aboutQuote || '';
+          document.getElementById('inpAboutQuote').value = data.aboutQuote || "Yoga is the journey of the self...";
           if (data.aboutGambar) previewAbout.src = data.aboutGambar;
 
           // Filosofi
@@ -260,7 +260,7 @@
         let homeImageUrl = null;
         let aboutImageUrl = null;
 
-        const cloudName = 'd4cltmgp'; // GANTI DENGAN CLOUD NAME KAMU
+        const cloudName = 'd4cltmgp'; // CLOUD NAME KAMU
         const uploadPreset = 'selaras_bukti';
 
         const fileHome = document.getElementById('inpHomeGambar').files[0];
