@@ -6,11 +6,30 @@
   <title>Classes & Pricing</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
-    .card-status { position: absolute; top: 15px; right: 15px; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; color: #fff; }
+    .card-status { 
+      position: absolute; 
+      top: 15px; right: 15px; 
+      padding: 5px 12px; 
+      border-radius: 20px; 
+      font-size: 0.8rem; 
+      font-weight: 600; 
+      color: #fff; 
+      z-index: 10;
+    }
     .status-active { background-color: #10b981; } 
     .status-inactive { background-color: #ef4444; } 
-    .card-info-row { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px; }
-    .card-info-row span { font-weight: 500; color: var(--text-main); }
+    .card-info-row { 
+      display: flex; 
+      align-items: flex-start; /* Biar ikon sejajar sama teks atas */
+      gap: 8px; 
+      font-size: 0.9rem; 
+      color: var(--text-muted); 
+      line-height: 1.4;
+    }
+    .card-info-row span { 
+      font-weight: 500; 
+      color: var(--text-main); 
+    }
     .btn-disabled { background-color: #ccc !important; cursor: not-allowed; pointer-events: none; }
   </style>
 </head>
@@ -86,26 +105,30 @@
 
           const card = document.createElement('div');
           card.className = 'card';
-          card.innerHTML = `
+                    card.innerHTML = `
             <div class="card-img" style="background-image: url('${data.gambar}');">
               ${statusBadge}
             </div>
             <div class="card-content">
-              <h3 style="margin-bottom: 15px;">${data.nama}</h3>
+              <h3>${data.nama}</h3>
               
-              <div class="card-info-row">👤 Coach: <span>${data.coach || '-'}</span></div>
-              <div class="card-info-row">📅 Jadwal: <span>${formatTanggal(data.tanggal)} • ${data.jam || '-'} WIB</span></div>
-              <div class="card-info-row">📍 Lokasi: <span>${data.lokasi || '-'}</span></div>
-              <div class="card-info-row">🎟️ Kuota: <span>${data.kuotaTersisa || 0} / ${data.kuotaAwal || 0} tersisa</span></div>
+              <div class="card-info">
+                <div class="card-info-row">👤 Coach: <span>${data.coach || '-'}</span></div>
+                <div class="card-info-row">📅 Jadwal: <span>${formatTanggal(data.tanggal)} • ${data.jam || '-'} WIB</span></div>
+                <div class="card-info-row">📍 Lokasi: <span>${data.lokasi || '-'}</span></div>
+                <div class="card-info-row">🎟️ Kuota: <span>${data.kuotaTersisa || 0} / ${data.kuotaAwal || 0} tersisa</span></div>
+              </div>
 
-              <div class="card-footer" style="margin-top: 20px;">
-                <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+              <div class="card-footer">
+                <div style="display: flex; flex-direction: column; gap: 10px;">
                   <div>
-                    <span class="price-label">Harga Satuan</span>
-                    <span class="price-val">${hargaRupiah}</span>
-                    ${hargaBundlingRupiah ? `<br><span class="price-label" style="color: #10b981; margin-top: 4px; display: inline-block;">Bundling (2 Orang): ${hargaBundlingRupiah}</span>` : ''}
+                    <span class="price-label" style="display: block; font-size: 0.8rem;">Harga Satuan</span>
+                    <span class="price-val" style="font-size: 1.2rem;">${hargaRupiah}</span>
+                    ${hargaBundlingRupiah ? `<div style="margin-top: 4px;"><span class="price-label" style="color: #10b981; font-size: 0.85rem;">Bundling (2 Orang): ${hargaBundlingRupiah}</span></div>` : ''}
                   </div>
-                  ${btnBook}
+                  <div style="margin-top: 10px;">
+                    ${btnBook.replace('padding: 10px 20px; font-size: 0.9rem;', 'padding: 10px; font-size: 0.9rem; width: 100%; text-align: center;')}
+                  </div>
                 </div>
               </div>
             </div>
