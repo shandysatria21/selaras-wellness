@@ -231,15 +231,22 @@
             btnBook = `<button class="btn btn-primary btn-disabled" style="padding: 10px 20px; font-size: 0.9rem; background:#ccc; pointer-events:none;">Tutup</button>`;
           }
 
-                    const card = document.createElement('div');
+          const card = document.createElement('div');
           card.className = 'card';
+          
+          // Bikin seluruh card bisa diklik
+          card.style.cursor = 'pointer';
+          card.onclick = function() {
+            window.location.href = `detail-class.html?id=${id}`;
+          };
+
           card.innerHTML = `
-            <div class="card-img" style="background-image: url('${data.gambar}'); cursor: pointer;" onclick="window.location.href='detail-class.html?id=${id}'">
+            <div class="card-img" style="background-image: url('${data.gambar}');">
               ${statusBadge}
             </div>
             
             <div class="card-content" style="display: flex; flex-direction: column; flex: 1;">
-              <h3 style="cursor: pointer;" onclick="window.location.href='detail-class.html?id=${id}'">${data.nama}</h3>
+              <h3>${data.nama}</h3>
               
               <div class="card-info">
                 <div class="card-info-row">📅 <span>${tanggalFormat} • ${jamFormat} WIB</span></div>
@@ -249,29 +256,10 @@
               </div>
 
               <div class="card-footer" style="margin-top: auto; padding-top: 15px; border-top: 1px solid var(--border);">
-                
-                <!-- Harga -->
-                <div style="margin-bottom: 15px;">
+                <div>
                   <span class="price-label" style="display: block; font-size: 0.8rem;">Harga</span>
                   <span class="price-val" style="font-size: 1.2rem; display: block;">${hargaRupiah}</span>
                 </div>
-
-                <!-- Tombol Aksi -->
-                <div style="display: flex; gap: 8px; width: 100%;">
-                  <!-- Tombol Share -->
-                  <button onclick="shareKelas('${data.nama}', '${id}', ${data.harga})" class="btn btn-outline" style="padding: 10px; border-radius: 8px; width: 45px; flex-shrink: 0;" title="Bagikan Kelas">
-                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle>
-                      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                    </svg>
-                  </button>
-                  
-                  <!-- Tombol Lihat Detail -->
-                  <div style="flex: 1;">
-                    <a href="detail-class.html?id=${id}" class="btn btn-primary" style="padding: 10px; font-size: 0.9rem; width: 100%; display: flex; justify-content: center; align-items: center;">Lihat Detail</a>
-                  </div>
-                </div>
-
               </div>
             </div>
           `;
