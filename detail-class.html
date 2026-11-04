@@ -7,59 +7,141 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" type="image/png" href="img/favicon.png">
   <style>
+    /* Style Khusus Halaman Detail */
     .detail-wrapper {
       display: flex;
-      gap: 40px;
-      margin-top: 30px;
+      gap: 50px;
+      margin-top: 20px;
+      align-items: flex-start;
     }
+    
     .detail-img {
-      flex: 1;
-      height: 400px;
-      border-radius: 20px;
+      flex: 1.2;
+      height: 500px;
+      border-radius: 24px;
       background-size: cover;
       background-position: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      position: relative;
     }
+
+    .detail-badge {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #fff;
+      color: var(--primary);
+      padding: 8px 20px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
     .detail-info {
       flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      padding-top: 10px;
     }
+
     .detail-info h1 {
-      font-size: 2.5rem;
+      font-size: 2.8rem;
       margin-bottom: 15px;
-      line-height: 1.2;
+      line-height: 1.1;
+      letter-spacing: -1px;
     }
-    .detail-badge {
-      display: inline-block;
-      background: var(--pink-light);
-      color: var(--primary);
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-weight: 600;
-      margin-bottom: 20px;
-      width: fit-content;
-    }
-    .detail-desc {
-      font-size: 1.1rem;
-      color: var(--text-muted);
-      line-height: 1.8;
-      margin-bottom: 30px;
-      white-space: pre-wrap; /* Biar enter dari admin kebaca */
-    }
-    .detail-price-box {
-      background: #fff;
-      border: 1px solid var(--border);
-      padding: 20px;
-      border-radius: 16px;
+
+    .info-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
       margin-bottom: 30px;
     }
 
+    .info-meta-item {
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .detail-desc {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 30px;
+      white-space: pre-wrap;
+      border-left: 4px solid var(--pink-light);
+      padding-left: 20px;
+    }
+
+    /* Kotak Harga Melayang */
+    .detail-price-box {
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 25px;
+      border-radius: 20px;
+      margin-bottom: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .price-row:last-child { margin-bottom: 0; }
+    
+    .price-title { font-weight: 600; color: var(--text-main); }
+    .price-amount { font-size: 1.4rem; font-weight: 700; color: var(--primary); }
+    
+    .price-bundling { color: #10b981; }
+    .price-bundling .price-amount { color: #10b981; font-size: 1.2rem; }
+
+    /* Tombol Book Now */
+    .btn-book-large {
+      display: block;
+      width: 100%;
+      background: var(--primary);
+      color: #fff;
+      padding: 18px;
+      border-radius: 16px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 10px 20px rgba(196, 69, 118, 0.3);
+    }
+
+    .btn-book-large:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 15px 25px rgba(196, 69, 118, 0.4);
+    }
+
+    .btn-book-large:disabled {
+      background: #ccc;
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    @media (max-width: 1024px) {
+      .detail-wrapper { flex-direction: column; gap: 30px; }
+      .detail-img { width: 100%; height: 400px; }
+      .detail-info h1 { font-size: 2.2rem; }
+    }
     @media (max-width: 768px) {
-      .detail-wrapper { flex-direction: column; gap: 20px; }
-      .detail-img { height: 250px; }
-      .detail-info h1 { font-size: 2rem; }
+      .detail-img { height: 300px; }
+      .detail-info h1 { font-size: 1.8rem; }
+      .detail-price-box { padding: 20px; }
     }
   </style>
 </head>
@@ -99,7 +181,7 @@
   </aside>
 
   <main class="main-content">
-    <a href="classes.html" class="btn btn-outline" style="margin-bottom: 20px;">&larr; Kembali ke Classes</a>
+    <a href="classes.html" class="btn btn-outline" style="margin-bottom: 10px; padding: 8px 20px;">&larr; Kembali ke Classes</a>
     
     <div id="containerDetail" class="detail-wrapper">
       <p>Memuat data...</p>
@@ -135,43 +217,45 @@
           
           const isActive = data.statusAktif !== false;
           const isKuotaHabis = data.kuotaTersisa <= 0;
+          let isBisaBooking = isActive && !isKuotaHabis;
           
-          let btnBook = `<a href="form-booking.html?kelas=${encodeURIComponent(data.nama)}&harga=${data.harga}&hargaBundling=${data.hargaBundling || 0}&id=${idKelas}" class="btn btn-primary" style="padding: 15px; font-size: 1.1rem; width: 100%; text-align: center;">Book Now</a>`;
+          let btnBook = `<a href="form-booking.html?kelas=${encodeURIComponent(data.nama)}&harga=${data.harga}&hargaBundling=${data.hargaBundling || 0}&id=${idKelas}" class="btn-book-large">Book Now</a>`;
           
-          if (!isActive || isKuotaHabis) {
-            btnBook = `<button class="btn btn-primary btn-disabled" style="padding: 15px; font-size: 1.1rem; width: 100%;">Kelas Ditutup / Penuh</button>`;
+          if (!isBisaBooking) {
+            btnBook = `<button class="btn-book-large" disabled>Kelas Ditutup / Penuh</button>`;
           }
 
           const hargaBundlingRupiah = data.hargaBundling ? 'Rp ' + data.hargaBundling.toLocaleString('id-ID') : null;
 
           container.innerHTML = `
-            <div class="detail-img" style="background-image: url('${data.gambar}');"></div>
+            <div class="detail-img" style="background-image: url('${data.gambar}');">
+              <div class="detail-badge">${isBisaBooking ? 'Tersedia' : 'Tutup'}</div>
+            </div>
             
             <div class="detail-info">
-              <div class="detail-badge">${data.statusAktif !== false ? 'Pendaftaran Dibuka' : 'Pendaftaran Ditutup'}</div>
               <h1>${data.nama}</h1>
               
-              <p style="font-weight: 600; margin-bottom: 5px;">👤 Coach: ${data.coach || '-'}</p>
-              <p style="margin-bottom: 5px;">📅 ${formatTanggal(data.tanggal)} • ${data.jam || '-'} WIB</p>
-              <p style="margin-bottom: 20px;">📍 ${data.lokasi || '-'}</p>
+              <div class="info-meta">
+                <div class="info-meta-item">👤 ${data.coach || '-'}</div>
+                <div class="info-meta-item">📅 ${formatTanggal(data.tanggal)} • ${data.jam || '-'} WIB</div>
+                <div class="info-meta-item">📍 ${data.lokasi || '-'}</div>
+                <div class="info-meta-item">🎟️ Sisa ${data.kuotaTersisa || 0} Kuota</div>
+              </div>
               
-              <div class="detail-desc">${data.deskripsi || 'Belum ada deskripsi untuk kelas ini.'}</div>
+              <div class="detail-desc">${data.deskripsi || 'Belum ada deskripsi detail untuk kelas ini. Silakan hubungi admin untuk informasi lebih lanjut.'}</div>
               
               <div class="detail-price-box">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                  <span>Harga Satuan:</span>
-                  <span style="font-weight: 700;">Rp ${data.harga.toLocaleString('id-ID')}</span>
+                <div class="price-row">
+                  <span class="price-title">Harga Satuan</span>
+                  <span class="price-amount">Rp ${data.harga.toLocaleString('id-ID')}</span>
                 </div>
+                
                 ${hargaBundlingRupiah ? `
-                <div style="display: flex; justify-content: space-between; color: #10b981; margin-bottom: 10px;">
-                  <span>Bundling (2 Orang):</span>
-                  <span style="font-weight: 700;">${hargaBundlingRupiah}</span>
+                <div class="price-row price-bundling">
+                  <span class="price-title">Bundling (2 Orang)</span>
+                  <span class="price-amount">${hargaBundlingRupiah}</span>
                 </div>
                 ` : ''}
-                <div style="display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--text-muted); border-top: 1px dashed var(--border); padding-top: 10px;">
-                  <span>Sisa Kuota:</span>
-                  <span>${data.kuotaTersisa || 0} / ${data.kuotaAwal || 0}</span>
-                </div>
               </div>
 
               ${btnBook}
