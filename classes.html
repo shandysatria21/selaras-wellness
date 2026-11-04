@@ -131,13 +131,13 @@
           card.className = 'card';
           
           // PERHATIKAN STRUKTUR DIV DI BAWAH INI (SUDAH DIRAPIKAN)
-          card.innerHTML = `
-            <div class="card-img" style="background-image: url('${data.gambar}');">
+                    card.innerHTML = `
+            <div class="card-img" style="background-image: url('${data.gambar}'); cursor: pointer;" onclick="window.location.href='detail-class.html?id=${id}'">
               ${statusBadge}
             </div>
             
             <div class="card-content" style="display: flex; flex-direction: column; flex: 1;">
-              <h3>${data.nama}</h3>
+              <h3 style="cursor: pointer;" onclick="window.location.href='detail-class.html?id=${id}'">${data.nama}</h3>
               
               <div class="card-info">
                 <div class="card-info-row">👤 Coach: <span>${data.coach || '-'}</span></div>
@@ -146,17 +146,13 @@
                 <div class="card-info-row">🎟️ Kuota: <span>${data.kuotaTersisa || 0} / ${data.kuotaAwal || 0} tersisa</span></div>
               </div>
 
-              <!-- Footer (Harga & Tombol) -->
               <div class="card-footer" style="margin-top: auto; padding-top: 15px; border-top: 1px solid var(--border);">
-                
-                <!-- Harga -->
                 <div style="margin-bottom: 15px;">
                   <span class="price-label" style="display: block; font-size: 0.8rem;">Harga Satuan</span>
                   <span class="price-val" style="font-size: 1.2rem; display: block;">${hargaRupiah}</span>
                   ${hargaBundlingRupiah ? `<span class="price-label" style="color: #10b981; font-size: 0.85rem; display: block; margin-top: 4px;">Bundling (2 Orang): ${hargaBundlingRupiah}</span>` : ''}
                 </div>
 
-                <!-- Tombol Aksi -->
                 <div style="display: flex; gap: 8px; width: 100%;">
                   <!-- Tombol Share -->
                   <button onclick="shareKelas('${data.nama}', '${id}', ${data.harga})" class="btn btn-outline" style="padding: 10px; border-radius: 8px; width: 45px; flex-shrink: 0;" title="Bagikan Kelas">
@@ -166,12 +162,11 @@
                     </svg>
                   </button>
                   
-                  <!-- Tombol Book Now -->
+                  <!-- Tombol Detail (Ganti Book Now) -->
                   <div style="flex: 1;">
-                    ${btnBook.replace('padding: 10px 20px; font-size: 0.9rem;', 'padding: 10px; font-size: 0.9rem; width: 100%; display: flex; justify-content: center; align-items: center;')}
+                    <a href="detail-class.html?id=${id}" class="btn btn-primary" style="padding: 10px; font-size: 0.9rem; width: 100%; display: flex; justify-content: center; align-items: center;">Lihat Detail</a>
                   </div>
                 </div>
-
               </div>
             </div>
           `;
