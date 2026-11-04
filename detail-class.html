@@ -133,15 +133,35 @@
       transform: none;
     }
 
-    @media (max-width: 1024px) {
+        @media (max-width: 1024px) {
       .detail-wrapper { flex-direction: column; gap: 30px; }
-      .detail-img { width: 100%; height: 400px; }
+      .detail-img { 
+        width: 100% !important; 
+        height: 450px !important; 
+        min-height: 450px !important; 
+        display: block !important;
+      }
       .detail-info h1 { font-size: 2.2rem; }
     }
+
     @media (max-width: 768px) {
-      .detail-img { height: 300px; }
-      .detail-info h1 { font-size: 1.8rem; }
+      .detail-img { 
+        width: 100% !important; 
+        height: 300px !important; 
+        min-height: 300px !important; 
+        display: block !important; 
+        margin-bottom: 20px;
+      }
+      .detail-info h1 { font-size: 2rem; margin-top: 10px; }
       .detail-price-box { padding: 20px; }
+      
+      /* Badge Tersedia biar nggak nabrak judul */
+      .detail-badge {
+        top: 15px;
+        right: 15px;
+        padding: 6px 15px;
+        font-size: 0.8rem;
+      }
     }
   </style>
 </head>
