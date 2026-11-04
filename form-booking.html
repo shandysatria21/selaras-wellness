@@ -100,6 +100,10 @@
             <span>Sewa Matras:</span>
             <span id="biayaMatras">Rp 0</span>
           </div>
+          <div class="form-group">
+            <label class="form-label">Catatan Tambahan (Opsional)</label>
+          <textarea id="catatan" class="form-control" rows="2" placeholder="Contoh: Pesan minuman matcha, ada cedera punggung, dll."></textarea>
+        </div>
           <hr style="border: 0; border-top: 1px solid var(--border); margin: 10px 0;">
           <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.2rem;">
             <span>Total Bayar:</span>
@@ -184,6 +188,7 @@
       const jumlahPeserta = selectPaket.value;
       const namaPasangan = jumlahPeserta === "2" ? document.getElementById('namaPasangan').value : '';
       const matrasTerpilih = document.querySelector('input[name="matras"]:checked').value;
+      const catatan = document.getElementById('catatan').value;
       let totalAkhir = parseInt(document.getElementById('totalAkhir').innerText.replace(/[^0-9]/g, ''));
 
       const paymentUrl = `payment.html?kelas=${encodeURIComponent(namaKelas)}&harga=${totalAkhir}&nama=${encodeURIComponent(nama)}&email=${encodeURIComponent(email)}&wa=${encodeURIComponent(wa)}&id=${idKelas}&peserta=${jumlahPeserta}&pasangan=${encodeURIComponent(namaPasangan)}&matras=${matrasTerpilih}`;

@@ -87,6 +87,11 @@
           <input type="text" id="inpMatras" class="form-control readonly-input" readonly>
         </div>
 
+        <div class="form-group" id="grupCatatan" style="display: none;">
+          <label class="form-label">Catatan Tambahan</label>
+          <textarea id="inpCatatan" class="form-control readonly-input" rows="2" readonly></textarea>
+        </div>
+
         <div class="form-group">
           <label class="form-label">Payment Amount *</label>
           <input type="text" id="inpHarga" class="form-control readonly-input" readonly>
@@ -124,6 +129,7 @@
     const jumlahPeserta = urlParams.get('peserta') || '1';
     const namaPasangan = urlParams.get('pasangan') || '';
     const jenisMatras = urlParams.get('matras') || 'bawa';
+    const catatanUser = urlParams.get('catatan') || '';
 
     // 2. Tampilkan ke Form
     document.getElementById('inpKelas').value = kelas;
@@ -140,6 +146,11 @@
     if (jenisMatras === 'sewa1') teksMatras = 'Sewa 1 Matras (+Rp 10.000)';
     if (jenisMatras === 'sewa2') teksMatras = 'Sewa 2 Matras (+Rp 20.000)';
     document.getElementById('inpMatras').value = teksMatras;
+
+    if (catatanUser !== '') {
+      document.getElementById('grupCatatan').style.display = 'block';
+      document.getElementById('inpCatatan').value = catatanUser;
+    }
 
     // 3. Logika Tombol Disable
     window.cekFile = function() {
@@ -189,6 +200,7 @@
           jumlahPeserta: parseInt(jumlahPeserta),
           namaPasangan: namaPasangan,
           matras: jenisMatras, // Simpan jenis matras
+          catatan: catatanUser,
           buktiTransfer: buktiUrl,
           status: "Pending",
           tanggal: new Date()

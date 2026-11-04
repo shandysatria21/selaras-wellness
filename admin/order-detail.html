@@ -141,6 +141,14 @@
                 <span class="info-label">Sewa Matras</span>
                 <span class="info-value">${teksMatras}</span>
               </div>
+
+              ${data.catatan ? `
+                <div class="info-row">
+                  <span class="info-label">Catatan</span>
+                  <span class="info-value" style="color: #c44576; font-style: italic;">"${data.catatan}"</span>
+                </div>
+              ` : ''}
+              
               <div class="info-row">
                 <span class="info-label">Kelas</span>
                 <span class="info-value">${data.kelas}</span>

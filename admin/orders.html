@@ -157,7 +157,7 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${tanggal}</td>
-          <td>${data.nama}</td>
+          <td>${data.nama} ${data.catatan ? '<span title="Ada catatan" style="cursor:help;">📝</span>' : ''}</td>
           <td>${data.email || '-'}</td>
           <td>${data.wa}</td>
           <td>${data.kelas}</td>
