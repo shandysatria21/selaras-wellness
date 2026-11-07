@@ -65,7 +65,7 @@
       </a>
       <a href="classes.html" class="menu-item">
         <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-        Classes
+        Event
       </a>
       <a href="galeri.html" class="menu-item">
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
@@ -121,16 +121,16 @@
 
     <!-- 3. FEATURED CLASSES SECTION -->
     <section class="section-home">
-      <h2 class="section-title">Kelas Terdekat</h2>
-      <p class="section-subtitle">Jadwal kelas yang bisa kamu ikuti minggu ini.</p>
+      <h2 class="section-title">Event Terdekat</h2>
+      <p class="section-subtitle">Jadwal event yang bisa kamu ikuti minggu ini.</p>
       
       <!-- Grid untuk 3 kelas teratas -->
       <div class="grid-cards" id="homeKelasContainer" style="margin-bottom: 30px;">
-        <p style="text-align: center; width: 100%;">Memuat kelas...</p>
+        <p style="text-align: center; width: 100%;">Memuat Event...</p>
       </div>
       
       <div style="text-align: center; margin-top: 20px;">
-        <a href="classes.html" class="btn btn-primary">Lihat Semua Kelas</a>
+        <a href="classes.html" class="btn btn-primary">Lihat Semua Event</a>
       </div>
     </section>
 
@@ -138,7 +138,7 @@
     <section class="section-home" style="padding-bottom: 40px;">
       <div class="home-contact">
         <h2>Mulai Perjalananmu Hari Ini</h2>
-        <p>Punya pertanyaan atau ingin konsultasi kelas? Hubungi kami langsung.</p>
+        <p>Punya pertanyaan atau ingin konsultasi Event? Hubungi kami langsung.</p>
         
         <div class="home-contact-info">
           <div class="contact-item">📍 <span id="contactAlamat">Memuat...</span></div>
@@ -202,7 +202,7 @@
         container.innerHTML = '';
 
         if (querySnapshot.empty) {
-          container.innerHTML = '<p style="text-align: center; width: 100%;">Belum ada jadwal kelas.</p>';
+          container.innerHTML = '<p style="text-align: center; width: 100%;">Belum ada jadwal event.</p>';
           return;
         }
 
@@ -267,7 +267,7 @@
         });
       } catch (error) {
         console.error("Error load kelas: ", error);
-        container.innerHTML = '<p style="text-align: center; color: red;">Gagal memuat kelas.</p>';
+        container.innerHTML = '<p style="text-align: center; color: red;">Gagal memuat Event.</p>';
       }
     }
 
@@ -279,12 +279,12 @@
     window.shareKelas = function(namaKelas, idKelas, hargaKelas) {
       const linkBooking = `${window.location.origin}/form-booking.html?kelas=${encodeURIComponent(namaKelas)}&harga=${hargaKelas}&id=${idKelas}`;
       
-      const textShare = `Yuk ikutan kelas *${namaKelas}* di Selaras Wellness Club! 🧘‍♀️\n\nCek jadwal dan daftar di sini:\n${linkBooking}`;
+      const textShare = `Yuk ikutan Event *${namaKelas}* di Selaras Wellness Club! 🧘‍♀️\n\nCek jadwal dan daftar di sini:\n${linkBooking}`;
 
       if (navigator.share) {
         navigator.share({
-          title: `Kelas ${namaKelas} - Selaras`,
-          text: `Yuk ikutan kelas ${namaKelas} di Selaras Wellness Club!`,
+          title: `Event ${namaKelas} - Selaras`,
+          text: `Yuk ikutan Event ${namaKelas} di Selaras Wellness Club!`,
           url: linkBooking
         }).catch((error) => console.log('Share dibatalkan', error));
       } else {
