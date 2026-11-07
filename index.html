@@ -59,17 +59,20 @@
       overflow: hidden;
       white-space: nowrap;
       position: relative;
-      margin-bottom: 50px;
+      width: 100vw; /* Full lebar layar */
+      margin-left: calc(-50vw + 50%); /* Trik biar tembus ke pinggir layar */
       padding: 20px 0;
-      background: #fff;
-      border-radius: 16px;
-      border: 1px solid var(--border);
+      background: transparent; /* Hapus background putih */
+      border: none; /* Hapus border */
+      margin-bottom: 50px;
     }
+    
     .marquee-track {
       display: inline-flex;
-      animation: scrollMarquee 20s linear infinite;
-      gap: 50px;
+      animation: scrollMarquee 25s linear infinite; /* Diperlambat biar enak dilihat */
+      gap: 60px;
       align-items: center;
+      padding-left: 60px;
     }
     .marquee-track img {
       height: 50px; /* Tinggi logo brand besar */
@@ -94,16 +97,13 @@
       justify-items: center;
     }
     .partner-logo-box {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      width: 100%;
-      height: 80px;
+      background: transparent; /* Hapus kotak putih */
+      border: none; /* Hapus border */
+      width: 120px;
+      height: 60px;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 15px;
-      transition: all 0.3s ease;
     }
     .partner-logo-box img {
       max-width: 100%;
