@@ -219,28 +219,17 @@
       
       <!-- Marquee Logo Brand Besar -->
       <div class="marquee-container">
-        <div class="marquee-track">
+        <div class="marquee-track" id="marqueeContainer">
           <!-- Kita duplikasi 2x biar animasi seamless -->
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Tokopedia_Logo.svg/1200px-Tokopedia_Logo.svg.png" alt="Partner 1">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Traveloka_Logo.svg/1200px-Traveloka_Logo.svg.png" alt="Partner 2">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Gojek_logo_2019.svg/1200px-Gojek_logo_2019.svg.png" alt="Partner 3">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Telkomsel_Logo.svg/1200px-Telkomsel_Logo.svg.png" alt="Partner 4">
-          <!-- Duplikasi -->
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Tokopedia_Logo.svg/1200px-Tokopedia_Logo.svg.png" alt="Partner 1">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Traveloka_Logo.svg/1200px-Traveloka_Logo.svg.png" alt="Partner 2">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Gojek_logo_2019.svg/1200px-Gojek_logo_2019.svg.png" alt="Partner 3">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Telkomsel_Logo.svg/1200px-Telkomsel_Logo.svg.png" alt="Partner 4">
+          
         </div>
       </div>
 
       <div class="sponsor-title">Supported By</div>
       
       <!-- Grid Logo Brand Pendukung -->
-      <div class="grid-partners">
-        <div class="partner-logo-box"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Logo_Universitas_Indonesia.svg/1200px-Logo_Universitas_Indonesia.svg.png" alt="Partner Grid 1"></div>
-        <div class="partner-logo-box"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Logo_Kopi_Kenangan.svg/1200px-Logo_Kopi_Kenangan.svg.png" alt="Partner Grid 2"></div>
-        <div class="partner-logo-box"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Logo_Kementerian_Kesehatan_Republik_Indonesia.svg/1200px-Logo_Kementerian_Kesehatan_Republik_Indonesia.svg.png" alt="Partner Grid 3"></div>
-        <div class="partner-logo-box"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Logo_Kementerian_Pendidikan_dan_Kebudayaan.svg/1200px-Logo_Kementerian_Pendidikan_dan_Kebudayaan.svg.png" alt="Partner Grid 4"></div>
+      <div class="grid-partners" id="gridPartnersContainer">
+        
       </div>
     </section>
 
@@ -401,6 +390,44 @@
         window.open(`https://wa.me/?text=${encodeURIComponent(textShare)}`, '_blank');
       }
     }
+
+        import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    // (Pastikan import getDocs dan collection sudah ada di atas, kalau belum tambahkan)
+
+    // ... (kode loadPengaturanWeb & loadKelasTerdekat yang sudah ada) ...
+
+    async function loadPartners() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "partners"));
+        const marqueeContainer = document.getElementById('marqueeContainer');
+        const gridContainer = document.getElementById('gridPartnersContainer');
+        
+        marqueeContainer.innerHTML = '';
+        gridContainer.innerHTML = '';
+
+        let logoUtamaHtml = '';
+        let logoPendukungHtml = '';
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (data.tipe === 'utama') {
+            logoUtamaHtml += `<img src="${data.logoUrl}" alt="Partner">`;
+          } else {
+            logoPendukungHtml += `<div class="partner-logo-box"><img src="${data.logoUrl}" alt="Partner"></div>`;
+          }
+        });
+
+        // Duplikasi logo utama biar animasinya seamless
+        marqueeContainer.innerHTML = logoUtamaHtml + logoUtamaHtml; 
+        gridContainer.innerHTML = logoPendukungHtml;
+
+      } catch (error) {
+        console.error("Error load partners: ", error);
+      }
+    }
+
+    // Panggil fungsinya
+    loadPartners();
   </script>
 
 </body>

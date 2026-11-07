@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kelola Partner - Admin</title>
+  <link rel="stylesheet" href="admin-style.css">
+  <script>
+    if (localStorage.getItem('isAdminLoggedIn') !== 'true') { window.location.href = 'login.html'; }
+  </script>
+</head>
+<body>
+
+  <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.add('active')">☰</button>
+
+  <aside class="sidebar">
+    <button class="close-menu" onclick="document.querySelector('.sidebar').classList.remove('active')">✕</button>
+    <a href="dashboard.html" class="logo"><img src="../img/SELARAS.png" alt="Logo"></a>
+    <div class="menu-group">
+      <a href="dashboard.html" class="menu-item">Dashboard</a>
+      <a href="classes.html" class="menu-item">Kelola Kelas</a>
+      <a href="orders.html" class="menu-item">Data Pesanan</a>
+      <a href="gallery.html" class="menu-item">Kelola Galeri</a>
+      <a href="partners.html" class="menu-item active">Kelola Partner</a> <!-- MENU BARU -->
+      <a href="messages.html" class="menu-item">Pesan Masuk</a>
+      <a href="settings.html" class="menu-item">Pengaturan Web</a>
+    </div>
+    <div class="menu-group" style="margin-top: auto;">
+      <a href="#" onclick="logout()" class="menu-item" style="color: #f87171;">Logout</a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <h1 class="page-title">Kelola Partner & Sponsor</h1>
+    <p class="page-subtitle">Upload logo brand yang sudah berkolaborasi dengan Selaras.</p>
+
+    <!-- Form Upload -->
+    <div class="table-wrapper" style="padding: 30px; max-width: 600px; margin-bottom: 40px;">
+      <form id="formTambahPartner">
+        <div class="form-group">
+          <label>Upload Logo *</label>
+          <input type="file" id="logoPartner" class="form-control" accept="image/*" required style="background: #fff;">
+        </div>
+        <div class="form-group">
+          <label>Tipe Partner *</label>
+          <select id="tipePartner" class="form-control" required>
+            <option value="utama">Brand Utama (Logo Berjalan)</option>
+            <option value="pendukung">Brand Pendukung (Grid)</option>
+          </select>
+        </div>
+        <button type="submit" id="btnUpload" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Upload Logo Partner</button>
+      </form>
+    </div>
+
+    <!-- Tabel Daftar Partner -->
+    <h3 style="margin-bottom: 20px;">Daftar Logo Saat Ini</h3>
+    <div class="table-wrapper">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Logo</th>
+            <th>Tipe</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tabelPartner">
+          <tr><td colspan="3" style="text-align:center;">Memuat data...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script type="module">
+    import { firebaseConfig, app } from '../firebase-config.js';
+    import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const db = getFirestore(app);
+    const form = document.getElementById('formTambahPartner');
+    const btnUpload = document.getElementById('btnUpload');
+    const tabelPartner = document.getElementById('tabelPartner');
+
+    // 1. Tampilkan Data Partner
+    async function loadPartners() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "partners"));
+        tabelPartner.innerHTML = '';
+        
+        if (querySnapshot.empty) {
+          tabelPartner.innerHTML = '<tr><td colspan="3" style="text-align:center;">Belum ada logo partner.</td></tr>';
+          return;
+        }
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const id = doc.id;
+          const tipeTeks = data.tipe === 'utama' ? 'Brand Utama' : 'Brand Pendukung';
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><img src="${data.logoUrl}" alt="Logo" style="height: 50px; max-width: 120px; object-fit: contain;"></td>
+            <td><span style="background: #e2e8f0; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">${tipeTeks}</span></td>
+            <td>
+              <button class="btn btn-outline" onclick="hapusPartner('${id}')" style="padding: 5px 12px; font-size: 0.8rem; color: #ef4444; border-color: #ef4444;">Hapus</button>
+            </td>
+          `;
+          tabelPartner.appendChild(tr);
+        });
+      } catch (error) {
+        console.error("Error load partner: ", error);
+        tabelPartner.innerHTML = '<tr><td colspan="3" style="text-align:center; color: red;">Gagal memuat data.</td></tr>';
+      }
+    }
+
+    loadPartners();
+
+    // 2. Upload & Simpan ke Database
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      btnUpload.innerText = 'Mengunggah...';
+      btnUpload.disabled = true;
+
+      try {
+        const fileLogo = document.getElementById('logoPartner').files[0];
+        const tipe = document.getElementById('tipePartner').value;
+
+        if (!fileLogo) { alert("Pilih logo dulu!"); return; }
+
+        const cloudName = 'd4cltmgp'; // CLOUD NAME KAMU
+        const uploadPreset = 'selaras_bukti';
+
+        const formData = new FormData();
+        formData.append('file', fileLogo);
+        formData.append('upload_preset', uploadPreset);
+
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+          method: 'POST',
+          body: formData
+        });
+
+        const cloudinaryData = await response.json();
+        const logoUrl = cloudinaryData.secure_url;
+
+        await addDoc(collection(db, "partners"), {
+          logoUrl: logoUrl,
+          tipe: tipe,
+          tanggal: new Date()
+        });
+
+        alert('Logo partner berhasil diupload!');
+        form.reset();
+        loadPartners(); // Refresh tabel
+        
+      } catch (error) {
+        console.error("Error upload: ", error);
+        alert('Gagal mengunggah logo.');
+      } finally {
+        btnUpload.innerText = 'Upload Logo Partner';
+        btnUpload.disabled = false;
+      }
+    });
+
+    // 3. Hapus Partner
+    window.hapusPartner = async function(id) {
+      if (!confirm("Yakin ingin menghapus logo partner ini?")) return;
+      try {
+        await deleteDoc(doc(db, "partners", id));
+        loadPartners(); // Refresh
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    window.logout = function() {
+      localStorage.removeItem('isAdminLoggedIn');
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>
