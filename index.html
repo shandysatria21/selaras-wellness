@@ -253,13 +253,14 @@
 
   </main>
 
-  <script type="module">
+    <script type="module">
+    // 1. SEMUA IMPORT HARUS DI ATAS
     import { firebaseConfig, app } from './firebase-config.js';
     import { getFirestore, doc, getDoc, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const db = getFirestore(app);
 
-    // --- 1. LOAD PENGATURAN WEB (Hero & About & Contact) ---
+    // --- LOAD PENGATURAN WEB ---
     async function loadPengaturanWeb() {
       try {
         const docRef = doc(db, "pengaturan", "data-web");
@@ -291,8 +292,8 @@
       }
     }
 
-    // --- 2. LOAD 3 KELAS TERDEKAT ---
-        async function loadKelasTerdekat() {
+    // --- LOAD 3 KELAS TERDEKAT ---
+    async function loadKelasTerdekat() {
       const container = document.getElementById('homeKelasContainer');
       try {
         const q = query(collection(db, "classes"), orderBy("tanggal", "asc"), limit(3));
@@ -310,7 +311,6 @@
           const id = doc.id;
           const hargaRupiah = 'Rp ' + data.harga.toLocaleString('id-ID');
           
-          // Format Tanggal yang aman (hindari undefined)
           let tanggalFormat = '-';
           if (data.tanggal) {
             tanggalFormat = new Date(data.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
@@ -324,16 +324,9 @@
           if (!isActive) statusBadge = `<span class="card-status status-inactive">Non-Aktif</span>`;
           else if (isKuotaHabis) statusBadge = `<span class="card-status status-inactive">Kuota Habis</span>`;
 
-          let btnBook = `<a href="form-booking.html?kelas=${encodeURIComponent(data.nama)}&harga=${data.harga}&hargaBundling=${data.hargaBundling || 0}&id=${id}" class="btn btn-primary" style="padding: 10px 20px; font-size: 0.9rem;">Book Now</a>`;
-          
-          if (!isActive || isKuotaHabis) {
-            btnBook = `<button class="btn btn-primary btn-disabled" style="padding: 10px 20px; font-size: 0.9rem; background:#ccc; pointer-events:none;">Tutup</button>`;
-          }
-
           const card = document.createElement('div');
           card.className = 'card';
           
-          // Bikin seluruh card bisa diklik
           card.style.cursor = 'pointer';
           card.onclick = function() {
             window.location.href = `detail-class.html?id=${id}`;
@@ -370,32 +363,7 @@
       }
     }
 
-    // Jalankan kedua fungsi
-    loadPengaturanWeb();
-    loadKelasTerdekat();
-
-        // Fungsi Share Kelas
-    window.shareKelas = function(namaKelas, idKelas, hargaKelas) {
-      const linkBooking = `${window.location.origin}/form-booking.html?kelas=${encodeURIComponent(namaKelas)}&harga=${hargaKelas}&id=${idKelas}`;
-      
-      const textShare = `Yuk ikutan Event *${namaKelas}* di Selaras Wellness Club! 🧘‍♀️\n\nCek jadwal dan daftar di sini:\n${linkBooking}`;
-
-      if (navigator.share) {
-        navigator.share({
-          title: `Event ${namaKelas} - Selaras`,
-          text: `Yuk ikutan Event ${namaKelas} di Selaras Wellness Club!`,
-          url: linkBooking
-        }).catch((error) => console.log('Share dibatalkan', error));
-      } else {
-        window.open(`https://wa.me/?text=${encodeURIComponent(textShare)}`, '_blank');
-      }
-    }
-
-        import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    // (Pastikan import getDocs dan collection sudah ada di atas, kalau belum tambahkan)
-
-    // ... (kode loadPengaturanWeb & loadKelasTerdekat yang sudah ada) ...
-
+    // --- LOAD PARTNERS ---
     async function loadPartners() {
       try {
         const querySnapshot = await getDocs(collection(db, "partners"));
@@ -417,7 +385,6 @@
           }
         });
 
-        // Duplikasi logo utama biar animasinya seamless
         marqueeContainer.innerHTML = logoUtamaHtml + logoUtamaHtml; 
         gridContainer.innerHTML = logoPendukungHtml;
 
@@ -426,7 +393,25 @@
       }
     }
 
-    // Panggil fungsinya
+    // --- FUNGSI SHARE (Biar tombol share di card tetap jalan) ---
+    window.shareKelas = function(namaKelas, idKelas, hargaKelas) {
+      const linkBooking = `${window.location.origin}/form-booking.html?kelas=${encodeURIComponent(namaKelas)}&harga=${hargaKelas}&id=${idKelas}`;
+      const textShare = `Yuk ikutan Event *${namaKelas}* di Selaras Wellness Club! 🧘‍♀️\n\nCek jadwal dan daftar di sini:\n${linkBooking}`;
+
+      if (navigator.share) {
+        navigator.share({
+          title: `Event ${namaKelas} - Selaras`,
+          text: `Yuk ikutan Event ${namaKelas} di Selaras Wellness Club!`,
+          url: linkBooking
+        }).catch((error) => console.log('Share dibatalkan', error));
+      } else {
+        window.open(`https://wa.me/?text=${encodeURIComponent(textShare)}`, '_blank');
+      }
+    }
+
+    // JALANKAN SEMUA FUNGSI DI SINI
+    loadPengaturanWeb();
+    loadKelasTerdekat();
     loadPartners();
   </script>
 
