@@ -3,41 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Classes</title>
+  <title>Classes - Selaras</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" type="image/png" href="img/favicon.png">
   <style>
-    .card-status { 
-      position: absolute; 
-      top: 15px; right: 15px; 
-      padding: 5px 12px; 
-      border-radius: 20px; 
-      font-size: 0.8rem; 
-      font-weight: 600; 
-      color: #fff; 
-      z-index: 10;
-    }
+    /* CSS Dasar Card */
+    .card-status { position: absolute; top: 15px; right: 15px; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; color: #fff; z-index: 10; }
     .status-active { background-color: #10b981; } 
     .status-inactive { background-color: #ef4444; } 
-    .card-info-row { 
-      display: flex; 
-      align-items: flex-start; /* Biar ikon sejajar sama teks atas */
-      gap: 8px; 
-      font-size: 0.9rem; 
-      color: var(--text-muted); 
-      line-height: 1.4;
-    }
-    .card-info-row span { 
-      font-weight: 500; 
-      color: var(--text-main); 
-    }
+    
+    .card-info-row { display: flex; align-items: flex-start; gap: 8px; font-size: 0.9rem; color: var(--text-muted); line-height: 1.4; }
+    .card-info-row span { font-weight: 500; color: var(--text-main); }
     .btn-disabled { background-color: #ccc !important; cursor: not-allowed; pointer-events: none; }
-    .card-info-row {
+
+    /* CSS Filter Pill Button */
+    #filterContainer {
       display: flex;
-      align-items: flex-start; /* Ubah dari center ke flex-start */
-      gap: 8px;
-      line-height: 1.4;
+      gap: 10px;
+      overflow-x: auto; 
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+      -webkit-overflow-scrolling: touch; 
     }
+    #filterContainer::-webkit-scrollbar { display: none; }
+
+    .pill-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background-color: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 50px; 
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-main);
+      cursor: pointer;
+      white-space: nowrap; 
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    }
+    .pill-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background-color: var(--pink-light);
+    }
+    .pill-btn.active {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(196, 69, 118, 0.3);
+    }
+    .pill-btn.active .pill-icon { filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2)); }
+    .pill-icon { font-size: 1.1rem; }
   </style>
 </head>
 <body>
@@ -60,13 +78,11 @@
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
         Galeri
       </a>
-    
       <a href="about.html" class="menu-item">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
         About Us
       </a>
     </div>
-
     <div class="menu-group">
       <a href="contact.html" class="menu-item">
         <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
@@ -76,114 +92,154 @@
   </aside>
 
   <main class="main-content">
-    <h1 class="page-title">Classes</h1>
+    <h1 class="page-title">Classes & Events</h1>
     <p class="page-subtitle">Temukan jadwal kelas yang cocok untukmu.</p>
 
+    <!-- FILTER KATEGORI PILL -->
+    <div id="filterContainer">
+      <button class="pill-btn active" onclick="filterKategori('Semua', this)">
+        <span class="pill-icon">🌟</span> Semua
+      </button>
+      <button class="pill-btn" onclick="filterKategori('Yoga', this)">
+        <span class="pill-icon">🧘‍♀️</span> Yoga
+      </button>
+      <button class="pill-btn" onclick="filterKategori('Pilates', this)">
+        <span class="pill-icon">🤸‍♀️</span> Pilates
+      </button>
+      <button class="pill-btn" onclick="filterKategori('Sound Healing', this)">
+        <span class="pill-icon">🎵</span> Sound Healing
+      </button>
+      <button class="pill-btn" onclick="filterKategori('Art & Craft', this)">
+        <span class="pill-icon">🎨</span> Art & Craft
+      </button>
+      <button class="pill-btn" onclick="filterKategori('Retreat', this)">
+        <span class="pill-icon">🌴</span> Retreat
+      </button>
+      <button class="pill-btn" onclick="filterKategori('Journaling', this)">
+        <span class="pill-icon">📝</span> Journaling
+      </button>
+    </div>
+
+    <!-- CONTAINER KELAS -->
     <div class="grid-cards" id="container-kelas" style="margin-bottom: 60px;">
       <p style="text-align:center; width: 100%; color: var(--text-muted);">Memuat kelas...</p>
     </div>
   </main>
 
-    <script type="module">
+  <script type="module">
     import { firebaseConfig, app } from './firebase-config.js';
     import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const db = getFirestore(app);
     const container = document.getElementById('container-kelas');
+    let semuaKelas = []; // Variabel untuk menyimpan data dari Firebase
 
     function formatTanggal(tglString) {
       if (!tglString) return '-';
       return new Date(tglString).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
     }
 
+    // 1. Ambil Data dari Database
     async function muatKelasUser() {
       try {
         const q = query(collection(db, "classes"), orderBy("tanggal", "asc"));
         const querySnapshot = await getDocs(q);
         
-        container.innerHTML = '';
-
-        if (querySnapshot.empty) {
-          container.innerHTML = '<p style="text-align:center; width: 100%;">Belum ada kelas yang tersedia.</p>';
-          return;
-        }
-
+        semuaKelas = [];
         querySnapshot.forEach((doc) => {
           const data = doc.data();
-          const id = doc.id;
-          const hargaRupiah = 'Rp ' + data.harga.toLocaleString('id-ID');
-          const hargaBundlingRupiah = data.hargaBundling ? 'Rp ' + data.hargaBundling.toLocaleString('id-ID') : null;
-          
-          const isActive = data.statusAktif !== false;
-          const isKuotaHabis = data.kuotaTersisa <= 0;
-          
-          let statusBadge = `<span class="card-status status-active">Aktif</span>`;
-          if (!isActive) statusBadge = `<span class="card-status status-inactive">Non-Aktif</span>`;
-          else if (isKuotaHabis) statusBadge = `<span class="card-status status-inactive">Kuota Habis</span>`;
-
-          let btnBook = `<a href="form-booking.html?kelas=${encodeURIComponent(data.nama)}&harga=${data.harga}&hargaBundling=${data.hargaBundling || 0}&id=${id}" class="btn btn-primary" style="padding: 10px 20px; font-size: 0.9rem;">Book Now</a>`;
-          
-          if (!isActive || isKuotaHabis) {
-            btnBook = `<button class="btn btn-primary btn-disabled" style="padding: 10px 20px; font-size: 0.9rem;">Tutup</button>`;
-          }
-
-          const card = document.createElement('div');
-          card.className = 'card';
-          
-          // PERHATIKAN STRUKTUR DIV DI BAWAH INI (SUDAH DIRAPIKAN)
-                    card.innerHTML = `
-            <div class="card-img" style="background-image: url('${data.gambar}'); cursor: pointer;" onclick="window.location.href='detail-class.html?id=${id}'">
-              ${statusBadge}
-            </div>
-            
-            <div class="card-content" style="display: flex; flex-direction: column; flex: 1;">
-              <h3 style="cursor: pointer;" onclick="window.location.href='detail-class.html?id=${id}'">${data.nama}</h3>
-              
-              <div class="card-info">
-                <div class="card-info-row">👤 Coach: <span>${data.coach || '-'}</span></div>
-                <div class="card-info-row">📅 Jadwal: <span>${formatTanggal(data.tanggal)} • ${data.jam || '-'} WIB</span></div>
-                <div class="card-info-row">📍 Lokasi: <span>${data.lokasi || '-'}</span></div>
-                <div class="card-info-row">🎟️ Kuota: <span>${data.kuotaTersisa || 0} / ${data.kuotaAwal || 0} tersisa</span></div>
-              </div>
-
-              <div class="card-footer" style="margin-top: auto; padding-top: 15px; border-top: 1px solid var(--border);">
-                <div style="margin-bottom: 15px;">
-                  <span class="price-label" style="display: block; font-size: 0.8rem;">Harga Satuan</span>
-                  <span class="price-val" style="font-size: 1.2rem; display: block;">${hargaRupiah}</span>
-                  ${hargaBundlingRupiah ? `<span class="price-label" style="color: #10b981; font-size: 0.85rem; display: block; margin-top: 4px;">Bundling (2 Orang): ${hargaBundlingRupiah}</span>` : ''}
-                </div>
-
-                <div style="display: flex; gap: 8px; width: 100%;">
-                  <!-- Tombol Share -->
-                  <button onclick="shareKelas('${data.nama}', '${id}', ${data.harga})" class="btn btn-outline" style="padding: 10px; border-radius: 8px; width: 45px; flex-shrink: 0;" title="Bagikan Kelas">
-                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle>
-                      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                    </svg>
-                  </button>
-                  
-                  <!-- Tombol Detail (Ganti Book Now) -->
-                  <div style="flex: 1;">
-                    <a href="detail-class.html?id=${id}" class="btn btn-primary" style="padding: 10px; font-size: 0.9rem; width: 100%; display: flex; justify-content: center; align-items: center;">Lihat Detail</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          `;
-          container.appendChild(card);
+          data.id = doc.id;
+          semuaKelas.push(data);
         });
+
+        renderKelas(semuaKelas); // Tampilkan semua di awal
       } catch (error) {
         console.error("Error memuat kelas: ", error);
         container.innerHTML = '<p style="text-align:center; width: 100%; color: red;">Gagal memuat data.</p>';
       }
     }
 
-    muatKelasUser();
+    // 2. Fungsi Render Tampilan Card
+    function renderKelas(dataArray) {
+      container.innerHTML = '';
 
-    // Fungsi Share Kelas
+      if (dataArray.length === 0) {
+        container.innerHTML = '<p style="text-align:center; width: 100%;">Belum ada kelas di kategori ini.</p>';
+        return;
+      }
+
+      dataArray.forEach((data) => {
+        const id = data.id;
+        const hargaRupiah = 'Rp ' + data.harga.toLocaleString('id-ID');
+        const hargaBundlingRupiah = data.hargaBundling ? 'Rp ' + data.hargaBundling.toLocaleString('id-ID') : null;
+        
+        const isActive = data.statusAktif !== false;
+        const isKuotaHabis = data.kuotaTersisa <= 0;
+        
+        let statusBadge = `<span class="card-status status-active">Aktif</span>`;
+        if (!isActive) statusBadge = `<span class="card-status status-inactive">Non-Aktif</span>`;
+        else if (isKuotaHabis) statusBadge = `<span class="card-status status-inactive">Kuota Habis</span>`;
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="card-img" style="background-image: url('${data.gambar}'); cursor: pointer;" onclick="window.location.href='detail-class.html?id=${id}'">
+            ${statusBadge}
+            <span class="card-label" style="position: absolute; top: 15px; left: 15px; background: var(--primary); color: white; padding: 5px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 600;">${data.kategori || 'Event'}</span>
+          </div>
+          
+          <div class="card-content" style="display: flex; flex-direction: column; flex: 1;">
+            <h3 style="cursor: pointer;" onclick="window.location.href='detail-class.html?id=${id}'">${data.nama}</h3>
+            
+            <div class="card-info">
+              <div class="card-info-row">👤 Coach: <span>${data.coach || '-'}</span></div>
+              <div class="card-info-row">📅 Jadwal: <span>${formatTanggal(data.tanggal)} • ${data.jam || '-'} WIB</span></div>
+              <div class="card-info-row">📍 Lokasi: <span>${data.lokasi || '-'}</span></div>
+              <div class="card-info-row">🎟️ Kuota: <span>${data.kuotaTersisa || 0} / ${data.kuotaAwal || 0} tersisa</span></div>
+            </div>
+
+            <div class="card-footer" style="margin-top: auto; padding-top: 15px; border-top: 1px solid var(--border);">
+              <div style="margin-bottom: 15px;">
+                <span class="price-label" style="display: block; font-size: 0.8rem;">Harga Satuan</span>
+                <span class="price-val" style="font-size: 1.2rem; display: block;">${hargaRupiah}</span>
+                ${hargaBundlingRupiah ? `<span class="price-label" style="color: #10b981; font-size: 0.85rem; display: block; margin-top: 4px;">Bundling (2 Orang): ${hargaBundlingRupiah}</span>` : ''}
+              </div>
+
+              <div style="display: flex; gap: 8px; width: 100%;">
+                <button onclick="shareKelas('${data.nama}', '${id}', ${data.harga})" class="btn btn-outline" style="padding: 10px; border-radius: 8px; width: 45px; flex-shrink: 0;" title="Bagikan Kelas">
+                  <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                  </svg>
+                </button>
+                <div style="flex: 1;">
+                  <a href="detail-class.html?id=${id}" class="btn btn-primary" style="padding: 10px; font-size: 0.9rem; width: 100%; display: flex; justify-content: center; align-items: center;">Lihat Detail</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // 3. Fungsi Filter Pill
+    window.filterKategori = function(kategori, btnElement) {
+      const tombol = document.querySelectorAll('.pill-btn');
+      tombol.forEach(btn => btn.classList.remove('active'));
+      btnElement.classList.add('active');
+
+      if (kategori === 'Semua') {
+        renderKelas(semuaKelas);
+      } else {
+        const dataFilter = semuaKelas.filter(kelas => kelas.kategori === kategori);
+        renderKelas(dataFilter);
+      }
+    }
+
+    // 4. Fungsi Share
     window.shareKelas = function(namaKelas, idKelas, hargaKelas) {
       const linkBooking = `${window.location.origin}/form-booking.html?kelas=${encodeURIComponent(namaKelas)}&harga=${hargaKelas}&id=${idKelas}`;
-      
       const textShare = `Yuk ikutan kelas *${namaKelas}* di Selaras Wellness Club! 🧘‍♀️\n\nCek jadwal dan daftar di sini:\n${linkBooking}`;
 
       if (navigator.share) {
@@ -196,7 +252,10 @@
         window.open(`https://wa.me/?text=${encodeURIComponent(textShare)}`, '_blank');
       }
     }
+
+    // Jalankan fungsi saat halaman dibuka
+    muatKelasUser();
   </script>
 
 </body>
-</html> 
+</html>

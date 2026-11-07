@@ -58,6 +58,7 @@
           <tr>
             <th>Gambar</th>
             <th>Kelas & Jadwal</th>
+             <th>Kategori</th>
             <th>Harga</th>
             <th>Kuota</th>
             <th>Status</th>
@@ -116,11 +117,11 @@
     }
 
     // Render Tabel Berdasarkan Halaman
-    function renderTabel() {
+        function renderTabel() {
       tabelKelas.innerHTML = '';
       
       if (allData.length === 0) {
-        tabelKelas.innerHTML = '<tr><td colspan="6" style="text-align:center;">Belum ada kelas.</td></tr>';
+        tabelKelas.innerHTML = '<tr><td colspan="7" style="text-align:center;">Belum ada kelas.</td></tr>';
         document.getElementById('paginationContainer').style.display = 'none';
         return;
       }
@@ -143,6 +144,12 @@
               ${data.coach || '-'} | ${tanggalFormat} (${data.jam || '-'}) | ${data.lokasi || '-'}
             </span>
           </td>
+          <!-- TAMBAHKAN KOLOM KATEGORI -->
+          <td>
+            <span style="background: #e2e8f0; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">
+              ${data.kategori || '-'}
+            </span>
+          </td>
           <td>${hargaRupiah}</td>
           <td>${data.kuotaTersisa || 0} / ${data.kuotaAwal || 0}</td>
           <td>
@@ -161,7 +168,6 @@
         tabelKelas.appendChild(tr);
       });
 
-      // Update Pagination
       const totalPages = Math.ceil(allData.length / itemsPerPage);
       document.getElementById('pageInfo').innerText = `Halaman ${currentPage} dari ${totalPages}`;
       document.getElementById('btnPrev').disabled = currentPage === 1;

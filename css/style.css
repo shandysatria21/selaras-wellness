@@ -372,3 +372,12 @@ textarea.form-control { resize: vertical; min-height: 120px; }
   .gallery-grid { column-count: 2; column-gap: 15px; }
   .gallery-item { margin-bottom: 15px; border-radius: 12px; }
 }
+
+.card-label {
+  background: rgba(255,255,255,0.9); 
+  padding: 5px 12px;
+  border-radius: 8px; 
+  font-size: 0.8rem; 
+  font-weight: 600; 
+  display: inline-block;
+}
