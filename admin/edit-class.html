@@ -131,9 +131,9 @@
     </div>
   </main>
 
-  <script type="module">
+    <script type="module">
     import { firebaseConfig, app } from '../firebase-config.js';
-    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const db = getFirestore(app);
     const urlParams = new URLSearchParams(window.location.search);
@@ -142,7 +142,6 @@
     const btnSimpan = document.getElementById('btnSimpan');
     const previewGambar = document.getElementById('previewGambar');
 
-    // Simpan data asli di variabel global
     let dataAsli = {};
 
     async function loadDataKelas() {
@@ -162,9 +161,7 @@
           document.getElementById('inpHarga').value = dataAsli.harga;
           document.getElementById('inpHargaBundling').value = dataAsli.hargaBundling || 0;
           
-          // Load Kuota Awal saja
           document.getElementById('inpKuotaAwal').value = dataAsli.kuotaAwal || 0;
-          
           document.getElementById('inpDeskripsi').value = dataAsli.deskripsi || '';
           
           if (dataAsli.gambar) previewGambar.src = dataAsli.gambar;
@@ -175,7 +172,7 @@
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      btnSimpan.innerText = 'Menyimpan...';
+      btnSimpan.innerText = 'Menghitung & Menyimpan...';
       btnSimpan.disabled = true;
 
       try {
@@ -198,20 +195,25 @@
           newImageUrl = data.secure_url;
         }
 
-        // --- LOGIKA HITUNG SISA KUOTA OTOMATIS ---
-        // 1. Ambil kuota awal lama dan baru
-        const kuotaAwalLama = parseInt(dataAsli.kuotaAwal) || 0;
+        // --- LOGIKA HITUNG ULANG SISA KUOTA DARI TABEL ORDERS ---
         const kuotaAwalBaru = parseInt(document.getElementById('inpKuotaAwal').value);
         
-        // 2. Hitung berapa orang yang udah daftar (Kuota Awal Lama - Sisa Lama)
-        const yangSudahDaftar = kuotaAwalLama - (parseInt(dataAsli.kuotaTersisa) || 0);
+        // 1. Ambil semua pesanan untuk kelas ini yang statusnya "Success"
+        const ordersRef = collection(db, "orders");
+        const q = query(ordersRef, where("kelas", "==", dataAsli.nama), where("status", "==", "Success"));
+        const querySnapshot = await getDocs(q);
         
-        // 3. Hitung sisa kuota baru (Kuota Awal Baru - Yang Sudah Daftar)
-        const kuotaTersisaBaru = kuotaAwalBaru - yangSudahDaftar;
-        
-        // 4. Validasi: Jangan sampai minus
-        let kuotaFinal = kuotaTersisaBaru < 0 ? 0 : kuotaTersisaBaru;
-        // -------------------------------------------
+        // 2. Hitung total peserta yang sudah daftar (termasuk bundling)
+        let totalPeserta = 0;
+        querySnapshot.forEach((doc) => {
+          const order = doc.data();
+          totalPeserta += (order.jumlahPeserta || 1);
+        });
+
+        // 3. Hitung sisa kuota baru
+        let kuotaFinal = kuotaAwalBaru - totalPeserta;
+        if (kuotaFinal < 0) kuotaFinal = 0; // Jangan sampai minus
+        // --------------------------------------------------------
 
         const updateData = {
           statusAktif: document.getElementById('statusAktif').value === "true",
@@ -224,9 +226,8 @@
           harga: parseInt(document.getElementById('inpHarga').value),
           hargaBundling: parseInt(document.getElementById('inpHargaBundling').value),
           
-          // Simpan kuota yang sudah dihitung sistem
           kuotaAwal: kuotaAwalBaru,
-          kuotaTersisa: kuotaFinal,
+          kuotaTersisa: kuotaFinal, // Hasil hitungan ulang yang akurat
           
           deskripsi: document.getElementById('inpDeskripsi').value
         };
@@ -234,7 +235,7 @@
         if (newImageUrl) updateData.gambar = newImageUrl;
 
         await updateDoc(doc(db, "classes", idKelas), updateData);
-        alert('Perubahan berhasil disimpan!');
+        alert(`Perubahan disimpan! Total pendaftar: ${totalPeserta} orang. Sisa kuota: ${kuotaFinal}.`);
         window.location.href = 'classes.html';
       } catch (error) {
         console.error(error);
