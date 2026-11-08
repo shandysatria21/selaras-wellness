@@ -102,16 +102,13 @@
           </div>
         </div>
 
-        <!-- BAGIAN KUOTA YANG SUDAH DIRAPIKAN -->
-        <div style="display: flex; gap: 20px;">
-          <div class="form-group" style="flex: 1;">
-            <label>Total Kuota Awal *</label>
-            <input type="number" id="inpKuotaAwal" class="form-control" required>
-          </div>
-          <div class="form-group" style="flex: 1;">
-            <label>Sisa Kuota Tersisa *</label>
-            <input type="number" id="inpKuota" class="form-control" required>
-          </div>
+        <!-- BAGIAN KUOTA (CUMA 1 KOLOM) -->
+        <div class="form-group">
+          <label>Total Kuota Awal *</label>
+          <input type="number" id="inpKuotaAwal" class="form-control" required>
+          <small style="font-size: 0.8rem; color: #64748b; margin-top: 5px; display: block;">
+            *Sisa kuota akan dihitung otomatis berdasarkan jumlah pendaftar.
+          </small>
         </div>
 
         <div class="form-group">
@@ -145,29 +142,32 @@
     const btnSimpan = document.getElementById('btnSimpan');
     const previewGambar = document.getElementById('previewGambar');
 
+    // Simpan data asli di variabel global
+    let dataAsli = {};
+
     async function loadDataKelas() {
       if (!idKelas) { window.location.href = 'classes.html'; return; }
       try {
         const docSnap = await getDoc(doc(db, "classes", idKelas));
         if (docSnap.exists()) {
-          const data = docSnap.data();
-          document.getElementById('statusAktif').value = data.statusAktif !== false ? "true" : "false";
-          document.getElementById('inpNama').value = data.nama;
-          document.getElementById('inpKategori').value = data.kategori || 'Yoga';
-          document.getElementById('inpCoach').value = data.coach || '';
-          document.getElementById('inpTanggal').value = data.tanggal || '';
-          document.getElementById('inpJam').value = data.jam || '';
-          document.getElementById('inpLokasi').value = data.lokasi || '';
-          document.getElementById('inpHarga').value = data.harga;
-          document.getElementById('inpHargaBundling').value = data.hargaBundling || 0;
+          dataAsli = docSnap.data();
           
-          // Load Kuota
-          document.getElementById('inpKuotaAwal').value = data.kuotaAwal || 0;
-          document.getElementById('inpKuota').value = data.kuotaTersisa || 0;
+          document.getElementById('statusAktif').value = dataAsli.statusAktif !== false ? "true" : "false";
+          document.getElementById('inpNama').value = dataAsli.nama;
+          document.getElementById('inpKategori').value = dataAsli.kategori || 'Yoga';
+          document.getElementById('inpCoach').value = dataAsli.coach || '';
+          document.getElementById('inpTanggal').value = dataAsli.tanggal || '';
+          document.getElementById('inpJam').value = dataAsli.jam || '';
+          document.getElementById('inpLokasi').value = dataAsli.lokasi || '';
+          document.getElementById('inpHarga').value = dataAsli.harga;
+          document.getElementById('inpHargaBundling').value = dataAsli.hargaBundling || 0;
           
-          document.getElementById('inpDeskripsi').value = data.deskripsi || '';
+          // Load Kuota Awal saja
+          document.getElementById('inpKuotaAwal').value = dataAsli.kuotaAwal || 0;
           
-          if (data.gambar) previewGambar.src = data.gambar;
+          document.getElementById('inpDeskripsi').value = dataAsli.deskripsi || '';
+          
+          if (dataAsli.gambar) previewGambar.src = dataAsli.gambar;
         }
       } catch (error) { console.error(error); }
     }
@@ -199,19 +199,19 @@
         }
 
         // --- LOGIKA HITUNG SISA KUOTA OTOMATIS ---
-        // 1. Ambil data lama dari Firebase
-        const docSnap = await getDoc(doc(db, "classes", idKelas));
-        const dataLama = docSnap.exists() ? docSnap.data() : {};
-
-        // 2. Hitung selisih kuota awal
-        const kuotaAwalLama = parseInt(dataLama.kuotaAwal) || 0;
+        // 1. Ambil kuota awal lama dan baru
+        const kuotaAwalLama = parseInt(dataAsli.kuotaAwal) || 0;
         const kuotaAwalBaru = parseInt(document.getElementById('inpKuotaAwal').value);
-        const selisih = kuotaAwalBaru - kuotaAwalLama;
-
-        // 3. Hitung sisa kuota baru
-        const kuotaTersisaLama = parseInt(dataLama.kuotaTersisa) || 0;
-        const kuotaTersisaBaru = kuotaTersisaLama + selisih;
-        // -----------------------------------------
+        
+        // 2. Hitung berapa orang yang udah daftar (Kuota Awal Lama - Sisa Lama)
+        const yangSudahDaftar = kuotaAwalLama - (parseInt(dataAsli.kuotaTersisa) || 0);
+        
+        // 3. Hitung sisa kuota baru (Kuota Awal Baru - Yang Sudah Daftar)
+        const kuotaTersisaBaru = kuotaAwalBaru - yangSudahDaftar;
+        
+        // 4. Validasi: Jangan sampai minus
+        let kuotaFinal = kuotaTersisaBaru < 0 ? 0 : kuotaTersisaBaru;
+        // -------------------------------------------
 
         const updateData = {
           statusAktif: document.getElementById('statusAktif').value === "true",
@@ -224,9 +224,9 @@
           harga: parseInt(document.getElementById('inpHarga').value),
           hargaBundling: parseInt(document.getElementById('inpHargaBundling').value),
           
-          // Simpan kuota yang sudah dihitung
+          // Simpan kuota yang sudah dihitung sistem
           kuotaAwal: kuotaAwalBaru,
-          kuotaTersisa: kuotaTersisaBaru,
+          kuotaTersisa: kuotaFinal,
           
           deskripsi: document.getElementById('inpDeskripsi').value
         };
