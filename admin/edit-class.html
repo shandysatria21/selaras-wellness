@@ -131,7 +131,7 @@
     </div>
   </main>
 
-    <script type="module">
+      <script type="module">
     import { firebaseConfig, app } from '../firebase-config.js';
     import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -195,25 +195,25 @@
           newImageUrl = data.secure_url;
         }
 
-        // --- LOGIKA HITUNG ULANG SISA KUOTA DARI TABEL ORDERS ---
+        // --- LOGIKA HITUNG ULANG DARI DATABASE ---
         const kuotaAwalBaru = parseInt(document.getElementById('inpKuotaAwal').value);
         
-        // 1. Ambil semua pesanan untuk kelas ini yang statusnya "Success"
+        // 1. Cari semua pesanan sukses untuk kelas ini
         const ordersRef = collection(db, "orders");
         const q = query(ordersRef, where("kelas", "==", dataAsli.nama), where("status", "==", "Success"));
         const querySnapshot = await getDocs(q);
         
-        // 2. Hitung total peserta yang sudah daftar (termasuk bundling)
+        // 2. Hitung total peserta (termasuk yang bundling)
         let totalPeserta = 0;
         querySnapshot.forEach((doc) => {
           const order = doc.data();
-          totalPeserta += (order.jumlahPeserta || 1);
+          totalPeserta += (order.jumlahPeserta || 1); // Default 1 jika data lama
         });
 
-        // 3. Hitung sisa kuota baru
+        // 3. Hitung sisa kuota
         let kuotaFinal = kuotaAwalBaru - totalPeserta;
-        if (kuotaFinal < 0) kuotaFinal = 0; // Jangan sampai minus
-        // --------------------------------------------------------
+        if (kuotaFinal < 0) kuotaFinal = 0; 
+        // -----------------------------------------
 
         const updateData = {
           statusAktif: document.getElementById('statusAktif').value === "true",
@@ -227,7 +227,7 @@
           hargaBundling: parseInt(document.getElementById('inpHargaBundling').value),
           
           kuotaAwal: kuotaAwalBaru,
-          kuotaTersisa: kuotaFinal, // Hasil hitungan ulang yang akurat
+          kuotaTersisa: kuotaFinal,
           
           deskripsi: document.getElementById('inpDeskripsi').value
         };
@@ -235,7 +235,7 @@
         if (newImageUrl) updateData.gambar = newImageUrl;
 
         await updateDoc(doc(db, "classes", idKelas), updateData);
-        alert(`Perubahan disimpan! Total pendaftar: ${totalPeserta} orang. Sisa kuota: ${kuotaFinal}.`);
+        alert(`Berhasil! Total pendaftar valid: ${totalPeserta} orang. Sisa kuota baru: ${kuotaFinal}.`);
         window.location.href = 'classes.html';
       } catch (error) {
         console.error(error);
