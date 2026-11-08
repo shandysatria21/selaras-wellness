@@ -60,13 +60,13 @@
 
         <div class="form-group">
           <label>Kategori Event *</label>
-            <select id="inpKategori" class="form-control" required>
-              <option value="Yoga">Yoga</option>
-              <option value="Pilates">Pilates</option>
-              <option value="Sound Healing">Sound Healing</option>
-              <option value="Art & Craft">Art & Craft</option>
-              <option value="Retreat">Retreat</option>
-              <option value="Journaling">Journaling</option>
+          <select id="inpKategori" class="form-control" required>
+            <option value="Yoga">Yoga</option>
+            <option value="Pilates">Pilates</option>
+            <option value="Sound Healing">Sound Healing</option>
+            <option value="Art & Craft">Art & Craft</option>
+            <option value="Retreat">Retreat</option>
+            <option value="Journaling">Journaling</option>
           </select>
         </div>
 
@@ -102,9 +102,16 @@
           </div>
         </div>
 
-        <div class="form-group">
-          <label>Kuota Tersisa *</label>
-          <input type="number" id="inpKuota" class="form-control" required>
+        <!-- BAGIAN KUOTA YANG SUDAH DIRAPIKAN -->
+        <div style="display: flex; gap: 20px;">
+          <div class="form-group" style="flex: 1;">
+            <label>Total Kuota Awal *</label>
+            <input type="number" id="inpKuotaAwal" class="form-control" required>
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label>Sisa Kuota Tersisa *</label>
+            <input type="number" id="inpKuota" class="form-control" required>
+          </div>
         </div>
 
         <div class="form-group">
@@ -153,7 +160,11 @@
           document.getElementById('inpLokasi').value = data.lokasi || '';
           document.getElementById('inpHarga').value = data.harga;
           document.getElementById('inpHargaBundling').value = data.hargaBundling || 0;
+          
+          // Load Kuota
+          document.getElementById('inpKuotaAwal').value = data.kuotaAwal || 0;
           document.getElementById('inpKuota').value = data.kuotaTersisa || 0;
+          
           document.getElementById('inpDeskripsi').value = data.deskripsi || '';
           
           if (data.gambar) previewGambar.src = data.gambar;
@@ -187,6 +198,21 @@
           newImageUrl = data.secure_url;
         }
 
+        // --- LOGIKA HITUNG SISA KUOTA OTOMATIS ---
+        // 1. Ambil data lama dari Firebase
+        const docSnap = await getDoc(doc(db, "classes", idKelas));
+        const dataLama = docSnap.exists() ? docSnap.data() : {};
+
+        // 2. Hitung selisih kuota awal
+        const kuotaAwalLama = parseInt(dataLama.kuotaAwal) || 0;
+        const kuotaAwalBaru = parseInt(document.getElementById('inpKuotaAwal').value);
+        const selisih = kuotaAwalBaru - kuotaAwalLama;
+
+        // 3. Hitung sisa kuota baru
+        const kuotaTersisaLama = parseInt(dataLama.kuotaTersisa) || 0;
+        const kuotaTersisaBaru = kuotaTersisaLama + selisih;
+        // -----------------------------------------
+
         const updateData = {
           statusAktif: document.getElementById('statusAktif').value === "true",
           nama: document.getElementById('inpNama').value,
@@ -197,7 +223,11 @@
           lokasi: document.getElementById('inpLokasi').value,
           harga: parseInt(document.getElementById('inpHarga').value),
           hargaBundling: parseInt(document.getElementById('inpHargaBundling').value),
-          kuotaTersisa: parseInt(document.getElementById('inpKuota').value),
+          
+          // Simpan kuota yang sudah dihitung
+          kuotaAwal: kuotaAwalBaru,
+          kuotaTersisa: kuotaTersisaBaru,
+          
           deskripsi: document.getElementById('inpDeskripsi').value
         };
 
