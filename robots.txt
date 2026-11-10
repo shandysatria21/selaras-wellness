@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Blokir halaman yang tidak perlu diindeks (admin, payment, dll)
+Disallow: /admin/
+Disallow: /payment.html
+Disallow: /success.html
+Disallow: /form-booking.html
+
+# Arahkan ke Sitemap
+Sitemap: https://selaraswellnessclub.com/sitemap.xml
