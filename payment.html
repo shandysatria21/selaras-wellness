@@ -130,6 +130,7 @@
     const namaPasangan = urlParams.get('pasangan') || '';
     const jenisMatras = urlParams.get('matras') || 'bawa';
     const catatanUser = urlParams.get('catatan') || '';
+    const kodePromo = urlParams.get('kodePromo') || '';
 
     // 2. Tampilkan ke Form
     document.getElementById('inpKelas').value = kelas;
@@ -141,7 +142,7 @@
       document.getElementById('inpPasangan').value = namaPasangan;
     }
 
-        // Tampilkan Info Matras (Hanya kalau kategori Yoga/Pilates)
+    // Tampilkan Info Matras (Hanya kalau kategori Yoga/Pilates)
     const grupMatrasPayment = document.getElementById('grupMatrasPayment');
     const kategoriEvent = urlParams.get('kategori') || 'Yoga';
     const butuhMatras = (kategoriEvent.toLowerCase() === 'yoga' || kategoriEvent.toLowerCase() === 'pilates');
@@ -153,6 +154,11 @@
       document.getElementById('inpMatras').value = teksMatras;
     } else {
       grupMatrasPayment.style.display = 'none';
+    }
+
+    if (catatanUser !== '') {
+      document.getElementById('grupCatatan').style.display = 'block';
+      document.getElementById('inpCatatan').value = catatanUser;
     }
 
     // 3. Logika Tombol Disable
@@ -202,11 +208,12 @@
           totalHarga: parseInt(harga),
           jumlahPeserta: parseInt(jumlahPeserta),
           namaPasangan: namaPasangan,
-          matras: jenisMatras, // Simpan jenis matras
+          matras: jenisMatras,
           catatan: catatanUser,
           buktiTransfer: buktiUrl,
           status: "Pending",
-          tanggal: new Date()
+          tanggal: new Date(), // <--- INI TADI YANG KURANG KOMA
+          kodePromo: kodePromo
         });
 
         // Kurangi kuota
