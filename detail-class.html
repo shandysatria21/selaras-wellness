@@ -248,7 +248,7 @@
           const isKuotaHabis = data.kuotaTersisa <= 0;
           let isBisaBooking = isActive && !isKuotaHabis;
           
-          let btnBook = `<a href="form-booking.html?kelas=${encodeURIComponent(data.nama)}&harga=${data.harga}&hargaBundling=${data.hargaBundling || 0}&id=${idKelas}" class="btn-book-large">Book Now</a>`;
+          let btnBook = `<a href="form-booking.html?kelas=${encodeURIComponent(data.nama)}&harga=${data.harga}&hargaBundling=${data.hargaBundling || 0}&id=${idKelas}&kategori=${encodeURIComponent(data.kategori || 'Yoga')}" class="btn-book-large">Book Now</a>`;
           
           if (!isBisaBooking) {
             btnBook = `<button class="btn-book-large" disabled>Event Ditutup / Penuh</button>`;
