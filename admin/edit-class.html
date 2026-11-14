@@ -102,13 +102,33 @@
           </div>
         </div>
 
-        <!-- BAGIAN KUOTA (CUMA 1 KOLOM) -->
         <div class="form-group">
           <label>Total Kuota Awal *</label>
           <input type="number" id="inpKuotaAwal" class="form-control" required>
           <small style="font-size: 0.8rem; color: #64748b; margin-top: 5px; display: block;">
             *Sisa kuota akan dihitung otomatis berdasarkan jumlah pendaftar.
           </small>
+        </div>
+
+        <!-- SECTION KODE PROMO -->
+                <!-- SECTION KODE PROMO -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+          <h4 style="margin-bottom: 10px; font-size: 0.95rem; color: #0f172a;">Promo (Opsional)</h4>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <div class="form-group" style="flex: 1; min-width: 150px;">
+              <label>Kode Promo</label>
+              <input type="text" id="kodePromo" class="form-control" placeholder="Contoh: SEPI50">
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 100px;">
+              <label>Diskon (%)</label>
+              <input type="number" id="inpDiskonPromo" class="form-control" placeholder="50" min="1" max="100">
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 100px;">
+              <label>Kuota (Orang)</label>
+              <input type="number" id="kuotaPromo" class="form-control" placeholder="5">
+            </div>
+          </div>
+          <small style="font-size: 0.75rem; color: #64748b;">Biarkan kosong jika tidak ada promo.</small>
         </div>
 
         <div class="form-group">
@@ -131,7 +151,7 @@
     </div>
   </main>
 
-      <script type="module">
+  <script type="module">
     import { firebaseConfig, app } from '../firebase-config.js';
     import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -160,10 +180,12 @@
           document.getElementById('inpLokasi').value = dataAsli.lokasi || '';
           document.getElementById('inpHarga').value = dataAsli.harga;
           document.getElementById('inpHargaBundling').value = dataAsli.hargaBundling || 0;
-          
           document.getElementById('inpKuotaAwal').value = dataAsli.kuotaAwal || 0;
-          document.getElementById('inpDeskripsi').value = dataAsli.deskripsi || '';
+          document.getElementById('inpKodePromo').value = dataAsli.kodePromo || '';
+          document.getElementById('inpDiskonPromo').value = dataAsli.diskonPromo || 0;
+          document.getElementById('inpKuotaPromo').value = dataAsli.kuotaPromo || 0;
           
+          document.getElementById('inpDeskripsi').value = dataAsli.deskripsi || '';
           if (dataAsli.gambar) previewGambar.src = dataAsli.gambar;
         }
       } catch (error) { console.error(error); }
@@ -180,40 +202,26 @@
         const fileGambar = document.getElementById('inpGambarBaru').files[0];
 
         if (fileGambar) {
-          const cloudName = 'd4cltmgp'; // CLOUD NAME KAMU
+          const cloudName = 'd4cltmgp';
           const uploadPreset = 'selaras_bukti';
-
           const formData = new FormData();
           formData.append('file', fileGambar);
           formData.append('upload_preset', uploadPreset);
-
-          const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-            method: 'POST',
-            body: formData
-          });
+          const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: 'POST', body: formData });
           const data = await response.json();
           newImageUrl = data.secure_url;
         }
 
-        // --- LOGIKA HITUNG ULANG DARI DATABASE ---
         const kuotaAwalBaru = parseInt(document.getElementById('inpKuotaAwal').value);
-        
-        // 1. Cari semua pesanan sukses untuk kelas ini
         const ordersRef = collection(db, "orders");
         const q = query(ordersRef, where("kelas", "==", dataAsli.nama), where("status", "==", "Success"));
         const querySnapshot = await getDocs(q);
         
-        // 2. Hitung total peserta (termasuk yang bundling)
         let totalPeserta = 0;
-        querySnapshot.forEach((doc) => {
-          const order = doc.data();
-          totalPeserta += (order.jumlahPeserta || 1); // Default 1 jika data lama
-        });
+        querySnapshot.forEach((doc) => { totalPeserta += (doc.data().jumlahPeserta || 1); });
 
-        // 3. Hitung sisa kuota
         let kuotaFinal = kuotaAwalBaru - totalPeserta;
         if (kuotaFinal < 0) kuotaFinal = 0; 
-        // -----------------------------------------
 
         const updateData = {
           statusAktif: document.getElementById('statusAktif').value === "true",
@@ -225,17 +233,18 @@
           lokasi: document.getElementById('inpLokasi').value,
           harga: parseInt(document.getElementById('inpHarga').value),
           hargaBundling: parseInt(document.getElementById('inpHargaBundling').value),
-          
           kuotaAwal: kuotaAwalBaru,
           kuotaTersisa: kuotaFinal,
-          
+          kodePromo: document.getElementById('inpKodePromo').value.trim().toUpperCase(),
+          diskonPromo: parseInt(document.getElementById('diskonPromo').value) || 0,
+          kuotaPromo: parseInt(document.getElementById('inpKuotaPromo').value) || 0,
           deskripsi: document.getElementById('inpDeskripsi').value
         };
 
         if (newImageUrl) updateData.gambar = newImageUrl;
 
         await updateDoc(doc(db, "classes", idKelas), updateData);
-        alert(`Berhasil! Total pendaftar valid: ${totalPeserta} orang. Sisa kuota baru: ${kuotaFinal}.`);
+        alert(`Berhasil! Total pendaftar valid: ${totalPeserta} orang. Sisa kuota: ${kuotaFinal}.`);
         window.location.href = 'classes.html';
       } catch (error) {
         console.error(error);

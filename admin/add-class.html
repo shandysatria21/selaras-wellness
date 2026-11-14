@@ -49,13 +49,13 @@
 
         <div class="form-group">
           <label>Kategori Event *</label>
-            <select id="kategori" class="form-control" required>
-              <option value="Yoga">Yoga</option>
-              <option value="Pilates">Pilates</option>
-              <option value="Sound Healing">Sound Healing</option>
-              <option value="Art & Craft">Art & Craft</option>
-              <option value="Retreat">Retreat</option>
-              <option value="Journaling">Journaling</option>
+          <select id="kategori" class="form-control" required>
+            <option value="Yoga">Yoga</option>
+            <option value="Pilates">Pilates</option>
+            <option value="Sound Healing">Sound Healing</option>
+            <option value="Art & Craft">Art & Craft</option>
+            <option value="Retreat">Retreat</option>
+            <option value="Journaling">Journaling</option>
           </select>
         </div>
 
@@ -95,6 +95,25 @@
         <div class="form-group">
           <label>Kuota (Orang) *</label>
           <input type="number" id="kuota" class="form-control" placeholder="20" required>
+        </div>
+                <!-- SECTION KODE PROMO -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+          <h4 style="margin-bottom: 10px; font-size: 0.95rem; color: #0f172a;">Promo (Opsional)</h4>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <div class="form-group" style="flex: 1; min-width: 150px;">
+              <label>Kode Promo</label>
+              <input type="text" id="kodePromo" class="form-control" placeholder="Contoh: SEPI50">
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 100px;">
+              <label>Diskon (%)</label>
+              <input type="number" id="diskonPromo" class="form-control" placeholder="50" min="1" max="100">
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 100px;">
+              <label>Kuota (Orang)</label>
+              <input type="number" id="kuotaPromo" class="form-control" placeholder="5">
+            </div>
+          </div>
+          <small style="font-size: 0.75rem; color: #64748b;">Biarkan kosong jika tidak ada promo.</small>
         </div>
 
         <div class="form-group">
@@ -157,6 +176,9 @@
           hargaBundling: parseInt(document.getElementById('hargaBundling').value),
           kuotaAwal: parseInt(document.getElementById('kuota').value),
           kuotaTersisa: parseInt(document.getElementById('kuota').value),
+          kodePromo: document.getElementById('kodePromo').value.trim().toUpperCase(),
+          diskonPromo: parseInt(document.getElementById('diskonPromo').value) || 0,
+          kuotaPromo: parseInt(document.getElementById('kuotaPromo').value) || 0,
           gambar: imageUrl,
           deskripsi: document.getElementById('deskripsi').value,
           statusAktif: true,

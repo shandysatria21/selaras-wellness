@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Form Booking - Selaras</title>
+  <title>Form Booking - Selaras Wellness Club</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" type="image/png" href="img/favicon.png">
   <style>
@@ -12,6 +12,8 @@
     .radio-group { display: flex; flex-direction: column; gap: 10px; background: #fff; padding: 15px; border-radius: 10px; border: 1px solid var(--border); }
     .radio-group label { display: flex; align-items: center; gap: 8px; font-weight: 400; cursor: pointer; margin: 0; }
     input[type="radio"] { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
+    .promo-input-group { display: flex; gap: 10px; }
+    .promo-input-group input { flex: 1; text-transform: uppercase; }
   </style>
 </head>
 <body>
@@ -39,13 +41,11 @@
 
       <form id="formBooking" onsubmit="prosesForm(event)">
         
-        <!-- Info Event -->
         <div class="form-group" style="background: var(--pink-light); padding: 15px; border-radius: 10px; margin-bottom: 25px;">
           <span style="font-size: 0.9rem; color: var(--text-muted);">Event yang dipilih:</span>
           <h3 id="tampilKelas" style="color: var(--primary); font-size: 1.2rem; margin-top: 5px;">Memuat...</h3>
         </div>
 
-        <!-- Data Diri -->
         <div class="form-group">
           <label class="form-label">Nama Lengkap (Pemesan) *</label>
           <input type="text" id="nama" class="form-control" placeholder="Masukkan nama" required>
@@ -59,7 +59,6 @@
           <input type="tel" id="wa" class="form-control" placeholder="08123456789" required>
         </div>
 
-        <!-- Pilih Paket -->
         <div class="form-group">
           <label class="form-label">Pilih Paket *</label>
           <select id="pilihPaket" class="form-control" onchange="updateForm()" required>
@@ -67,25 +66,31 @@
           </select>
         </div>
 
-        <!-- Nama Pasangan (Bundling) -->
         <div class="form-group" id="grupNamaPasangan" style="display: none;">
           <label class="form-label" style="color: var(--primary);">Nama Peserta ke-2 (Pasangan) *</label>
           <input type="text" id="namaPasangan" class="form-control" placeholder="Masukkan nama pasangan">
         </div>
 
-        <!-- Pilihan Matras (Hanya Yoga/Pilates) -->
         <div class="form-group" id="grupPilihanMatras">
           <label class="form-label">Pilihan Matras *</label>
           <div class="radio-group" id="grupMatras"></div>
         </div>
 
-        <!-- Catatan Tambahan -->
         <div class="form-group">
           <label class="form-label">Catatan Tambahan (Opsional)</label>
           <textarea id="catatan" class="form-control" rows="2" placeholder="Contoh: Pesan minuman matcha, ada cedera punggung, dll."></textarea>
         </div>
 
-        <!-- Ringkasan Harga -->
+        <!-- KODE PROMO -->
+        <div class="form-group">
+          <label class="form-label">Punya Kode Promo?</label>
+          <div class="promo-input-group">
+            <input type="text" id="inputKodePromo" class="form-control" placeholder="Ketik kode di sini...">
+            <button type="button" onclick="cekKodePromo()" class="btn btn-outline" style="padding: 10px 20px; border-radius: 10px;">Cek Kode</button>
+          </div>
+          <small id="pesanPromo" style="font-size: 0.85rem; margin-top: 5px; display: none;"></small>
+        </div>
+
         <div style="background: #fff; border: 1px dashed var(--primary); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
             <span>Harga Paket:</span>
@@ -94,6 +99,10 @@
           <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
             <span>Sewa Matras:</span>
             <span id="biayaMatras">Rp 0</span>
+          </div>
+          <div id="barisDiskon" style="display: none; justify-content: space-between; margin-bottom: 10px; color: #10b981;">
+            <span>Diskon Promo:</span>
+            <span id="nominalDiskon">- Rp 0</span>
           </div>
           <hr style="border: 0; border-top: 1px solid var(--border); margin: 10px 0;">
           <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.2rem;">
@@ -107,15 +116,23 @@
     </div>
   </main>
 
-  <script>
+  <script type="module">
+    import { firebaseConfig, app } from './firebase-config.js';
+    import { getFirestore, collection, getDocs, query, where, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const db = getFirestore(app);
+
     const urlParams = new URLSearchParams(window.location.search);
     const namaKelas = urlParams.get('kelas') || 'Event Reguler';
     const hargaDasar = parseInt(urlParams.get('harga')) || 0;
     const hargaBundling = parseInt(urlParams.get('hargaBundling')) || 0;
     const idKelas = urlParams.get('id') || '';
-    const kategoriEvent = urlParams.get('kategori') || 'Yoga'; // Ambil kategori dari URL
+    const kategoriEvent = urlParams.get('kategori') || 'Yoga';
 
     document.getElementById('tampilKelas').innerText = namaKelas;
+
+    let diskonAktif = 0; // Variabel global untuk menyimpan nominal diskon
+    let kodePromoDipakai = '';
 
     const selectPaket = document.getElementById('pilihPaket');
     selectPaket.innerHTML = `<option value="1" data-harga="${hargaDasar}">1 Orang (Reguler) - Rp ${hargaDasar.toLocaleString('id-ID')}</option>`;
@@ -129,7 +146,6 @@
       const grupPilihanMatras = document.getElementById('grupPilihanMatras');
       const grupMatras = document.getElementById('grupMatras');
 
-      // Logika Nama Pasangan
       if (jumlahPeserta === 2) {
         grupPasangan.style.display = 'block';
         document.getElementById('namaPasangan').setAttribute('required', 'true');
@@ -139,7 +155,6 @@
         document.getElementById('namaPasangan').value = '';
       }
 
-      // Logika Matras (Hanya untuk Yoga & Pilates)
       const butuhMatras = (kategoriEvent.toLowerCase() === 'yoga' || kategoriEvent.toLowerCase() === 'pilates');
       
       if (butuhMatras) {
@@ -177,36 +192,101 @@
         if (nilaiMatras === 'sewa2') biayaMatras = 20000;
       }
 
-      let totalAkhir = hargaPaket + biayaMatras;
+      let totalAkhir = hargaPaket + biayaMatras - diskonAktif;
+      if (totalAkhir < 0) totalAkhir = 0; // Jangan sampai minus
 
       document.getElementById('subtotalTiket').innerText = `Rp ${hargaPaket.toLocaleString('id-ID')}`;
       document.getElementById('biayaMatras').innerText = `Rp ${biayaMatras.toLocaleString('id-ID')}`;
+      
+      if (diskonAktif > 0) {
+        document.getElementById('barisDiskon').style.display = 'flex';
+        document.getElementById('nominalDiskon').innerText = `- Rp ${diskonAktif.toLocaleString('id-ID')}`;
+      } else {
+        document.getElementById('barisDiskon').style.display = 'none';
+      }
+
       document.getElementById('totalAkhir').innerText = `Rp ${totalAkhir.toLocaleString('id-ID')}`;
     }
 
-    updateForm(); // Panggil saat pertama kali dibuka
+    updateForm();
 
-    function prosesForm(event) {
-      event.preventDefault();
-      const nama = document.getElementById('nama').value;
-      const email = document.getElementById('email').value;
-      const wa = document.getElementById('wa').value;
-      const jumlahPeserta = selectPaket.value;
-      const namaPasangan = jumlahPeserta === "2" ? document.getElementById('namaPasangan').value : '';
-      const catatan = document.getElementById('catatan').value;
+        // FUNGSI CEK KODE PROMO
+    window.cekKodePromo = async function() {
+      const inputKode = document.getElementById('inputKodePromo').value.trim().toUpperCase();
+      const pesanEl = document.getElementById('pesanPromo');
       
-      let matrasTerpilih = 'bawa';
-      const radioMatras = document.querySelector('input[name="matras"]:checked');
-      if (radioMatras) matrasTerpilih = radioMatras.value;
+      if (!inputKode) {
+        pesanEl.style.display = 'block';
+        pesanEl.style.color = 'red';
+        pesanEl.innerText = 'Kode promo tidak boleh kosong.';
+        return;
+      }
 
-      let totalAkhir = parseInt(document.getElementById('totalAkhir').innerText.replace(/[^0-9]/g, ''));
+      try {
+        const docRef = doc(db, "classes", idKelas);
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+          const dataKelas = docSnap.data();
+          
+          if (!dataKelas.kodePromo || dataKelas.kodePromo === '') {
+            pesanEl.style.display = 'block';
+            pesanEl.style.color = 'red';
+            pesanEl.innerText = 'Event ini tidak memiliki promo.';
+            return;
+          }
 
-      // Kirim kategori ke URL Payment
-      const paymentUrl = `payment.html?kelas=${encodeURIComponent(namaKelas)}&harga=${totalAkhir}&nama=${encodeURIComponent(nama)}&email=${encodeURIComponent(email)}&wa=${encodeURIComponent(wa)}&id=${idKelas}&peserta=${jumlahPeserta}&pasangan=${encodeURIComponent(namaPasangan)}&matras=${matrasTerpilih}&catatan=${encodeURIComponent(catatan)}&kategori=${encodeURIComponent(kategoriEvent)}`;
-      
-      window.location.href = paymentUrl;
+          if (inputKode !== dataKelas.kodePromo) {
+            pesanEl.style.display = 'block';
+            pesanEl.style.color = 'red';
+            pesanEl.innerText = 'Kode promo salah. Coba cek ulang hurufnya ya!';
+            return;
+          }
+
+          // Cek kuota promo di database
+          const ordersRef = collection(db, "orders");
+          const q = query(ordersRef, where("kelas", "==", namaKelas), where("kodePromo", "==", inputKode), where("status", "==", "Success"));
+          const querySnapshot = await getDocs(q);
+          
+          let terpakai = 0;
+          querySnapshot.forEach(() => terpakai++); 
+          
+          if (terpakai >= dataKelas.kuotaPromo) {
+            pesanEl.style.display = 'block';
+            pesanEl.style.color = 'red';
+            pesanEl.innerText = 'Yah, promonya udah habis bun... 🥺';
+            return;
+          }
+
+          // --- LOGIKA HITUNG PERSENTASE ---
+          const persenDiskon = dataKelas.diskonPromo || 0; 
+          
+          if (persenDiskon <= 0) {
+            pesanEl.style.display = 'block';
+            pesanEl.style.color = 'red';
+            pesanEl.innerText = 'Kode promo ini belum diatur potongannya.';
+            return;
+          }
+
+          // Hitung diskon berdasarkan harga paket yang dipilih
+          const opsiTerpilih = selectPaket.options[selectPaket.selectedIndex];
+          const hargaPaket = parseInt(opsiTerpilih.getAttribute('data-harga')); 
+          
+          diskonAktif = Math.round(hargaPaket * (persenDiskon / 100));
+          kodePromoDipakai = inputKode;
+
+          pesanEl.style.display = 'block';
+          pesanEl.style.color = '#10b981';
+          pesanEl.style.fontWeight = 'bold';
+          pesanEl.innerText = `Yeay! Kode promo berhasil. Diskon ${persenDiskon}% (Rp ${diskonAktif.toLocaleString('id-ID')})! ✨`;
+          
+          hitungTotal();
+        }
+      } catch (error) {
+        console.error(error);
+        alert("Gagal mengecek kode promo.");
+      }
     }
-  </script>
 
 </body>
 </html>
