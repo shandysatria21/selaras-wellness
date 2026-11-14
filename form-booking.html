@@ -131,7 +131,7 @@
 
     document.getElementById('tampilKelas').innerText = namaKelas;
 
-    let diskonAktif = 0; // Variabel global untuk menyimpan nominal diskon
+    let diskonAktif = 0; 
     let kodePromoDipakai = '';
 
     const selectPaket = document.getElementById('pilihPaket');
@@ -193,7 +193,7 @@
       }
 
       let totalAkhir = hargaPaket + biayaMatras - diskonAktif;
-      if (totalAkhir < 0) totalAkhir = 0; // Jangan sampai minus
+      if (totalAkhir < 0) totalAkhir = 0;
 
       document.getElementById('subtotalTiket').innerText = `Rp ${hargaPaket.toLocaleString('id-ID')}`;
       document.getElementById('biayaMatras').innerText = `Rp ${biayaMatras.toLocaleString('id-ID')}`;
@@ -210,7 +210,6 @@
 
     updateForm();
 
-        // FUNGSI CEK KODE PROMO
     window.cekKodePromo = async function() {
       const inputKode = document.getElementById('inputKodePromo').value.trim().toUpperCase();
       const pesanEl = document.getElementById('pesanPromo');
@@ -243,7 +242,6 @@
             return;
           }
 
-          // Cek kuota promo di database
           const ordersRef = collection(db, "orders");
           const q = query(ordersRef, where("kelas", "==", namaKelas), where("kodePromo", "==", inputKode), where("status", "==", "Success"));
           const querySnapshot = await getDocs(q);
@@ -258,7 +256,6 @@
             return;
           }
 
-          // --- LOGIKA HITUNG PERSENTASE ---
           const persenDiskon = dataKelas.diskonPromo || 0; 
           
           if (persenDiskon <= 0) {
@@ -268,7 +265,6 @@
             return;
           }
 
-          // Hitung diskon berdasarkan harga paket yang dipilih
           const opsiTerpilih = selectPaket.options[selectPaket.selectedIndex];
           const hargaPaket = parseInt(opsiTerpilih.getAttribute('data-harga')); 
           
@@ -287,6 +283,27 @@
         alert("Gagal mengecek kode promo.");
       }
     }
+
+    function prosesForm(event) {
+      event.preventDefault();
+      const nama = document.getElementById('nama').value;
+      const email = document.getElementById('email').value;
+      const wa = document.getElementById('wa').value;
+      const jumlahPeserta = selectPaket.value;
+      const namaPasangan = jumlahPeserta === "2" ? document.getElementById('namaPasangan').value : '';
+      const catatan = document.getElementById('catatan').value;
+      
+      let matrasTerpilih = 'bawa';
+      const radioMatras = document.querySelector('input[name="matras"]:checked');
+      if (radioMatras) matrasTerpilih = radioMatras.value;
+
+      let totalAkhir = parseInt(document.getElementById('totalAkhir').innerText.replace(/[^0-9]/g, ''));
+
+      const paymentUrl = `payment.html?kelas=${encodeURIComponent(namaKelas)}&harga=${totalAkhir}&nama=${encodeURIComponent(nama)}&email=${encodeURIComponent(email)}&wa=${encodeURIComponent(wa)}&id=${idKelas}&peserta=${jumlahPeserta}&pasangan=${encodeURIComponent(namaPasangan)}&matras=${matrasTerpilih}&catatan=${encodeURIComponent(catatan)}&kategori=${encodeURIComponent(kategoriEvent)}&kodePromo=${encodeURIComponent(kodePromoDipakai)}`;
+      
+      window.location.href = paymentUrl;
+    }
+  </script>
 
 </body>
 </html>
