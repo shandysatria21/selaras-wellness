@@ -273,6 +273,18 @@
 
     // ==== CEK PROMO ====
     btnCekPromo.addEventListener('click', async () => {
+
+      if (parseInt(selectPaket.value) === 2) {
+        pesanEl.style.display = 'block';
+        pesanEl.style.color = 'red';
+        pesanEl.style.fontWeight = 'normal';
+        pesanEl.innerText = 'Kode promo tidak berlaku untuk paket Bundling.';
+        inputKodePromo.value = ''; // Kosongin inputnya
+        resetPromo(); // Panggil fungsi reset yang udah kita bikin
+        return; // Hentikan eksekusi
+      }
+
+      
       const inputKode = inputKodePromo.value.trim().toUpperCase();
       
       if (!inputKode) {

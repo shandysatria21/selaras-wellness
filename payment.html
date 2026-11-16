@@ -167,7 +167,7 @@
 
         // Hitung Diskon Promo
         let diskon = 0;
-        if (kodePromo && kodePromo !== '') {
+        if (kodePromo && kodePromo !== '' && jumlahPeserta === 1) {
           if (dataKelas.kodePromo === kodePromo) {
             const q = query(collection(db, "orders"), 
               where("kelas", "==", kelas), 
