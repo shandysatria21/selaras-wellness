@@ -83,7 +83,7 @@
 
   <script type="module">
     import { firebaseConfig, app } from '../firebase-config.js';
-    import { getFirestore, collection, getDocs, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, query, orderBy, deleteDoc, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const db = getFirestore(app);
     const tabelPesanan = document.getElementById('tabelPesanan');
@@ -203,16 +203,38 @@
     }
 
     window.hapusPesanan = async function(id) {
-      if (!confirm("Yakin ingin menghapus data pesanan ini secara permanen?")) return;
-      try {
-        await deleteDoc(doc(db, "orders", id));
-        alert("Data pesanan berhasil dihapus.");
-        tampilkanPesanan(); // Reload semua data
-      } catch (error) {
-        console.error("Error menghapus pesanan: ", error);
-        alert("Gagal menghapus pesanan.");
+  if (!confirm("Yakin ingin menghapus data pesanan ini secara permanen?")) return;
+  
+  try {
+    // 1. Cari data pesanan dulu buat dapetin idKelas & jumlahPeserta
+    const orderRef = doc(db, "orders", id);
+    const orderSnap = await getDocs(query(collection(db, "orders"))); // Trik cari data
+    // Sebenernya lebih rapi pake getDoc, tapi kita pake data yang udah ada di array aja biar cepet
+    
+    const dataOrder = semuaDataPesanan.find(item => item.id === id);
+    
+    if (dataOrder) {
+      // 2. Balikin kuota ke kelas (kalau idKelas-nya ada)
+      if (dataOrder.idKelas) {
+        const kelasRef = doc(db, "classes", dataOrder.idKelas);
+        await updateDoc(kelasRef, {
+          kuotaTersisa: increment(parseInt(dataOrder.jumlahPeserta) || 1)
+        });
       }
+      
+      // 3. Hapus data pesanan
+      await deleteDoc(doc(db, "orders", id));
+      
+      alert("Data pesanan berhasil dihapus dan kuota kelas telah dikembalikan.");
+      tampilkanPesanan(); // Reload semua data
+    } else {
+      alert("Data pesanan tidak ditemukan.");
     }
+  } catch (error) {
+    console.error("Error menghapus pesanan: ", error);
+    alert("Gagal menghapus pesanan.");
+  }
+}
 
     // --- LOGIKA EKSPOR CSV (Dipertahankan) ---
     window.eksporCSV = function() {
