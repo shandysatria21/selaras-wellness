@@ -140,6 +140,7 @@
 
     document.getElementById('tampilKelas').innerText = namaKelas;
 
+    // ==== STATE VARIABEL ====
     let diskonAktif = 0; 
     let kodePromoDipakai = '';
     let persenDiskonAktif = 0;
@@ -160,6 +161,14 @@
       selectPaket.innerHTML += `<option value="2" data-harga="${hargaBundling}">2 Orang (Bundling) - Rp ${hargaBundling.toLocaleString('id-ID')}</option>`;
     }
 
+    // ==== FUNGSI RESET PROMO (Biar ga nyangkut) ====
+    function resetPromo() {
+      diskonAktif = 0;
+      persenDiskonAktif = 0;
+      kodePromoDipakai = '';
+      hitungTotal();
+    }
+
     // ==== UPDATE FORM SAAT PAKET GANTI ====
     function updateForm() {
       const jumlahPeserta = parseInt(selectPaket.value);
@@ -168,27 +177,25 @@
         grupPasangan.style.display = 'block';
         inputNamaPasangan.setAttribute('required', 'true');
         
-        // --- TAMBAHAN BUAT MATIKAN PROMO DI BUNDLING ---
+        // Matikan promo jika bundling
         diskonAktif = 0;
-        persenDiskonAktif = 0; // Gak perlu pakai typeof karena udah dideklarasi di atas
+        persenDiskonAktif = 0;
         kodePromoDipakai = '';
-        inputKodePromo.value = ''; // Langsung panggil variabel globalnya
+        inputKodePromo.value = '';
         
         pesanEl.style.display = 'block';
         pesanEl.style.color = 'red';
+        pesanEl.style.fontWeight = 'normal';
         pesanEl.innerText = 'Kode promo tidak berlaku untuk paket Bundling.';
-        // -----------------------------------------------
         
       } else {
         grupPasangan.style.display = 'none';
         inputNamaPasangan.removeAttribute('required');
         inputNamaPasangan.value = '';
         
-        // --- TAMBAHAN BIAR PESAN ERROR HILANG SAAT BALIK KE 1 ORANG ---
-        if (inputKodePromo.value === '') {
+        if (inputKodePromo.value.trim() === '') {
           pesanEl.style.display = 'none';
         }
-        // --------------------------------------------------------------
       }
 
       const butuhMatras = (kategoriEvent.toLowerCase() === 'yoga' || kategoriEvent.toLowerCase() === 'pilates');
@@ -218,6 +225,7 @@
       hitungTotal();
     }
 
+    // ==== HITUNG TOTAL HARGA ====
     function hitungTotal() {
       const opsiTerpilih = selectPaket.options[selectPaket.selectedIndex];
       const hargaPaket = parseInt(opsiTerpilih.getAttribute('data-harga')); 
@@ -229,8 +237,7 @@
       if (nilaiMatras === 'sewa1') biayaMatras = 10000;
       if (nilaiMatras === 'sewa2') biayaMatras = 20000;
 
-      // --- LOGIKA BARU DISKON ---
-  // Hitung ulang nominal diskon berdasarkan persentase & harga paket terbaru
+      // Hitung ulang nominal diskon berdasarkan persentase & harga paket terbaru
       if (persenDiskonAktif > 0) {
         diskonAktif = Math.round(hargaPaket * (persenDiskonAktif / 100));
       }
@@ -249,11 +256,20 @@
       }
 
       document.getElementById('totalAkhir').innerText = `Rp ${totalAkhir.toLocaleString('id-ID')}`;
-      return totalAkhir; // biar bisa dipakai di prosesForm
+      return totalAkhir; 
     }
 
     selectPaket.addEventListener('change', updateForm);
     updateForm(); // init
+
+    // ==== FITUR TAMBAHAN: RESET PROMO SAAT USER NGEDIT TEKS ====
+    inputKodePromo.addEventListener('input', function() {
+      // Kalau user ngetik ulang atau ngehapus teks, hapus diskon yang lama
+      if (this.value.trim().toUpperCase() !== kodePromoDipakai) {
+        resetPromo();
+        pesanEl.style.display = 'none';
+      }
+    });
 
     // ==== CEK PROMO ====
     btnCekPromo.addEventListener('click', async () => {
@@ -262,7 +278,9 @@
       if (!inputKode) {
         pesanEl.style.display = 'block';
         pesanEl.style.color = 'red';
+        pesanEl.style.fontWeight = 'normal';
         pesanEl.innerText = 'Kode promo tidak boleh kosong.';
+        resetPromo(); // <--- Bersihin diskon lama
         return;
       }
 
@@ -273,7 +291,9 @@
         if (!docSnap.exists()) {
           pesanEl.style.display = 'block';
           pesanEl.style.color = 'red';
+          pesanEl.style.fontWeight = 'normal';
           pesanEl.innerText = 'Data event tidak ditemukan.';
+          resetPromo(); // <--- Bersihin diskon lama
           return;
         }
 
@@ -282,14 +302,18 @@
         if (!dataKelas.kodePromo || dataKelas.kodePromo === '') {
           pesanEl.style.display = 'block';
           pesanEl.style.color = 'red';
+          pesanEl.style.fontWeight = 'normal';
           pesanEl.innerText = 'Event ini tidak memiliki promo.';
+          resetPromo(); // <--- Bersihin diskon lama
           return;
         }
 
         if (inputKode !== dataKelas.kodePromo) {
           pesanEl.style.display = 'block';
           pesanEl.style.color = 'red';
+          pesanEl.style.fontWeight = 'normal';
           pesanEl.innerText = 'Kode promo salah. Coba cek ulang hurufnya ya!';
+          resetPromo(); // <--- Bersihin diskon lama
           return;
         }
 
@@ -308,7 +332,9 @@
         if (terpakai >= dataKelas.kuotaPromo) {
           pesanEl.style.display = 'block';
           pesanEl.style.color = 'red';
+          pesanEl.style.fontWeight = 'normal';
           pesanEl.innerText = 'Yah, promonya udah habis bun... 🥺';
+          resetPromo(); // <--- Bersihin diskon lama
           return;
         }
 
@@ -317,10 +343,13 @@
         if (persenDiskon <= 0) {
           pesanEl.style.display = 'block';
           pesanEl.style.color = 'red';
+          pesanEl.style.fontWeight = 'normal';
           pesanEl.innerText = 'Kode promo ini belum diatur potongannya.';
+          resetPromo(); // <--- Bersihin diskon lama
           return;
         }
         
+        // JIKA SEMUA VALIDASI LOLOS:
         const opsiTerpilih = selectPaket.options[selectPaket.selectedIndex];
         const hargaPaket = parseInt(opsiTerpilih.getAttribute('data-harga')); 
 
@@ -355,7 +384,6 @@
       const radioMatras = document.querySelector('input[name="matras"]:checked');
       if (radioMatras) matrasTerpilih = radioMatras.value;
 
-      // Hitung ulang total secara programatik, jangan scrape dari DOM
       const totalAkhir = hitungTotal();
 
       const paymentUrl = `payment.html?kelas=${encodeURIComponent(namaKelas)}&harga=${totalAkhir}&nama=${encodeURIComponent(nama)}&email=${encodeURIComponent(email)}&wa=${encodeURIComponent(wa)}&id=${idKelas}&peserta=${jumlahPeserta}&pasangan=${encodeURIComponent(namaPasangan)}&matras=${matrasTerpilih}&catatan=${encodeURIComponent(catatan)}&kategori=${encodeURIComponent(kategoriEvent)}&kodePromo=${encodeURIComponent(kodePromoDipakai)}`;
