@@ -142,6 +142,7 @@
 
     let diskonAktif = 0; 
     let kodePromoDipakai = '';
+    let persenDiskonAktif = 0;
 
     // ==== ELEMENT REFS ====
     const selectPaket = document.getElementById('pilihPaket');
@@ -166,10 +167,28 @@
       if (jumlahPeserta === 2) {
         grupPasangan.style.display = 'block';
         inputNamaPasangan.setAttribute('required', 'true');
+        
+        // --- TAMBAHAN BUAT MATIKAN PROMO DI BUNDLING ---
+        diskonAktif = 0;
+        persenDiskonAktif = 0; // Gak perlu pakai typeof karena udah dideklarasi di atas
+        kodePromoDipakai = '';
+        inputKodePromo.value = ''; // Langsung panggil variabel globalnya
+        
+        pesanEl.style.display = 'block';
+        pesanEl.style.color = 'red';
+        pesanEl.innerText = 'Kode promo tidak berlaku untuk paket Bundling.';
+        // -----------------------------------------------
+        
       } else {
         grupPasangan.style.display = 'none';
         inputNamaPasangan.removeAttribute('required');
         inputNamaPasangan.value = '';
+        
+        // --- TAMBAHAN BIAR PESAN ERROR HILANG SAAT BALIK KE 1 ORANG ---
+        if (inputKodePromo.value === '') {
+          pesanEl.style.display = 'none';
+        }
+        // --------------------------------------------------------------
       }
 
       const butuhMatras = (kategoriEvent.toLowerCase() === 'yoga' || kategoriEvent.toLowerCase() === 'pilates');
@@ -188,7 +207,6 @@
             <label><input type="radio" name="matras" value="sewa2"> Sewa 2 Mat (+ Rp 20.000)</label>
           `;
         }
-        // Pasang listener ke radio yang baru dibuat
         grupMatras.querySelectorAll('input[name="matras"]').forEach(r => {
           r.addEventListener('change', hitungTotal);
         });
@@ -210,6 +228,12 @@
       let biayaMatras = 0;
       if (nilaiMatras === 'sewa1') biayaMatras = 10000;
       if (nilaiMatras === 'sewa2') biayaMatras = 20000;
+
+      // --- LOGIKA BARU DISKON ---
+  // Hitung ulang nominal diskon berdasarkan persentase & harga paket terbaru
+      if (persenDiskonAktif > 0) {
+        diskonAktif = Math.round(hargaPaket * (persenDiskonAktif / 100));
+      }
 
       let totalAkhir = hargaPaket + biayaMatras - diskonAktif;
       if (totalAkhir < 0) totalAkhir = 0;
@@ -274,7 +298,7 @@
           ordersRef,
           where("kelas", "==", namaKelas),
           where("kodePromo", "==", inputKode),
-          where("status", "==", "Success")
+          where("status", "in", ["Pending", "Success"])
         );
         const querySnapshot = await getDocs(q);
         
@@ -296,10 +320,11 @@
           pesanEl.innerText = 'Kode promo ini belum diatur potongannya.';
           return;
         }
-
+        
         const opsiTerpilih = selectPaket.options[selectPaket.selectedIndex];
         const hargaPaket = parseInt(opsiTerpilih.getAttribute('data-harga')); 
-        
+
+        persenDiskonAktif = persenDiskon;
         diskonAktif = Math.round(hargaPaket * (persenDiskon / 100));
         kodePromoDipakai = inputKode;
 

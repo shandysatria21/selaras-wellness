@@ -25,30 +25,13 @@
     <button class="close-menu" onclick="document.querySelector('.sidebar').classList.remove('active')">✕</button>
     <a href="index.html" class="logo"><img src="img/SELARAS.png" alt="Logo"></a>
     <div class="menu-group">
-      <a href="index.html" class="menu-item">
-        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-        Home
-      </a>
-      <a href="classes.html" class="menu-item active">
-        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-        Event
-      </a>
-      <a href="galeri.html" class="menu-item">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-        Galeri
-      </a>
-    
-      <a href="about.html" class="menu-item">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-        About Us
-      </a>
+      <a href="index.html" class="menu-item">Home</a>
+      <a href="classes.html" class="menu-item active">Event</a>
+      <a href="galeri.html" class="menu-item">Galeri</a>
+      <a href="about.html" class="menu-item">About Us</a>
     </div>
-
     <div class="menu-group">
-      <a href="contact.html" class="menu-item">
-        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-        Contact
-      </a>
+      <a href="contact.html" class="menu-item">Contact</a>
     </div>
   </aside>
 
@@ -94,12 +77,12 @@
 
         <div class="form-group">
           <label class="form-label">Payment Amount *</label>
-          <input type="text" id="inpHarga" class="form-control readonly-input" readonly>
+          <input type="text" id="inpHarga" class="form-control readonly-input" value="Memuat harga..." readonly>
         </div>
 
         <div class="form-group">
           <label class="form-label">Upload Bukti Pembayaran *</label>
-          <input type="file" id="buktiTransfer" accept="image/*" onchange="cekFile()" required>
+          <input type="file" id="buktiTransfer" accept="image/*" required>
           <small style="color: var(--text-muted); margin-top: 5px; display: block;">Format: JPG, PNG.</small>
         </div>
 
@@ -114,43 +97,41 @@
 
   <script type="module">
     import { firebaseConfig, app } from './firebase-config.js';
-    import { getFirestore, collection, addDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, doc, getDoc, updateDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const db = getFirestore(app);
 
-    // 1. Ambil Data dari URL
+    // 1. Ambil Data dari URL (HARGA SENGAJA TIDAK DIAMBIL DARI URL)
     const urlParams = new URLSearchParams(window.location.search);
     const kelas = urlParams.get('kelas') || 'Kelas Reguler';
-    const harga = urlParams.get('harga') || '0';
     const namaUser = urlParams.get('nama') || '-';
     const emailUser = urlParams.get('email') || '-';
     const waUser = urlParams.get('wa') || '-';
     const idKelas = urlParams.get('id') || '';
-    const jumlahPeserta = urlParams.get('peserta') || '1';
+    const jumlahPeserta = parseInt(urlParams.get('peserta')) || 1;
     const namaPasangan = urlParams.get('pasangan') || '';
     const jenisMatras = urlParams.get('matras') || 'bawa';
     const catatanUser = urlParams.get('catatan') || '';
     const kodePromo = urlParams.get('kodePromo') || '';
+    const kategoriEvent = urlParams.get('kategori') || 'Yoga';
 
-    // 2. Tampilkan ke Form
+    // 2. Tampilkan Data Non-Harga ke Form
     document.getElementById('inpKelas').value = kelas;
     document.getElementById('inpPeserta').value = jumlahPeserta + ' Orang';
-    document.getElementById('inpHarga').value = 'Rp ' + parseInt(harga).toLocaleString('id-ID');
     
-    if (jumlahPeserta === '2' && namaPasangan !== '') {
+    if (jumlahPeserta === 2 && namaPasangan !== '') {
       document.getElementById('grupPasangan').style.display = 'block';
       document.getElementById('inpPasangan').value = namaPasangan;
     }
 
-    // Tampilkan Info Matras (Hanya kalau kategori Yoga/Pilates)
     const grupMatrasPayment = document.getElementById('grupMatrasPayment');
-    const kategoriEvent = urlParams.get('kategori') || 'Yoga';
     const butuhMatras = (kategoriEvent.toLowerCase() === 'yoga' || kategoriEvent.toLowerCase() === 'pilates');
 
+    let biayaMatras = 0;
     if (butuhMatras) {
       let teksMatras = 'Bawa Sendiri';
-      if (jenisMatras === 'sewa1') teksMatras = 'Sewa 1 Matras (+Rp 10.000)';
-      if (jenisMatras === 'sewa2') teksMatras = 'Sewa 2 Matras (+Rp 20.000)';
+      if (jenisMatras === 'sewa1') { teksMatras = 'Sewa 1 Matras (+Rp 10.000)'; biayaMatras = 10000; }
+      if (jenisMatras === 'sewa2') { teksMatras = 'Sewa 2 Matras (+Rp 20.000)'; biayaMatras = 20000; }
       document.getElementById('inpMatras').value = teksMatras;
     } else {
       grupMatrasPayment.style.display = 'none';
@@ -161,23 +142,88 @@
       document.getElementById('inpCatatan').value = catatanUser;
     }
 
-    // 3. Logika Tombol Disable
-    window.cekFile = function() {
-      const fileInput = document.getElementById('buktiTransfer');
-      const btnSelesai = document.getElementById('btnSelesai');
+    // 3. HITUNG HARGA AMAN DARI DATABASE (Anti-Hack)
+    let hargaFinal = 0;
 
-      if (fileInput.files.length > 0) {
+    async function hitungHargaAman() {
+      try {
+        const kelasRef = doc(db, "classes", idKelas);
+        const kelasSnap = await getDoc(kelasRef);
+
+        if (!kelasSnap.exists()) {
+          alert("Data kelas tidak ditemukan di database!");
+          window.location.href = 'classes.html';
+          return;
+        }
+
+        const dataKelas = kelasSnap.data();
+        
+        // PENTING: Pastiin field di Firestore namanya 'harga' dan 'hargaBundling'
+        let hargaDasar = dataKelas.harga || 0;
+        let hargaBundling = dataKelas.hargaBundling || 0;
+
+        // Tentukan harga paket
+        let hargaPaket = (jumlahPeserta === 2) ? hargaBundling : hargaDasar;
+
+        // Hitung Diskon Promo
+        let diskon = 0;
+        if (kodePromo && kodePromo !== '') {
+          if (dataKelas.kodePromo === kodePromo) {
+            const q = query(collection(db, "orders"), 
+              where("kelas", "==", kelas), 
+              where("kodePromo", "==", kodePromo), 
+              where("status", "in", ["Pending", "Success"])
+            );
+            const snap = await getDocs(q);
+            
+            if (snap.size < dataKelas.kuotaPromo) {
+              const persen = dataKelas.diskonPromo || 0;
+              diskon = Math.round(hargaPaket * (persen / 100));
+            } else {
+              alert("Maaf, kuota promo sudah habis. Harga akan disesuaikan tanpa promo.");
+            }
+          } else {
+            alert("Kode promo tidak valid. Harga akan disesuaikan tanpa promo.");
+          }
+        }
+
+        // Total Akhir
+        hargaFinal = hargaPaket + biayaMatras - diskon;
+        if (hargaFinal < 0) hargaFinal = 0;
+
+        // Tampilkan ke layar
+        document.getElementById('inpHarga').value = 'Rp ' + hargaFinal.toLocaleString('id-ID');
+
+      } catch (error) {
+        console.error("Gagal menghitung harga: ", error);
+        alert("Terjadi kesalahan sistem saat menghitung harga.");
+      }
+    }
+
+    // Panggil fungsi hitung harga saat halaman dimuat
+    hitungHargaAman();
+
+    // 4. Logika Tombol Disable
+    document.getElementById('buktiTransfer').addEventListener('change', function() {
+      const btnSelesai = document.getElementById('btnSelesai');
+      if (this.files.length > 0) {
         btnSelesai.classList.remove('btn-disabled');
         btnSelesai.removeAttribute('disabled');
       } else {
         btnSelesai.classList.add('btn-disabled');
         btnSelesai.setAttribute('disabled', 'true');
       }
-    }
+    });
 
-    // 4. Proses Submit
+    // 5. Proses Submit
     document.getElementById('paymentForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+      
+      if (hargaFinal <= 0) {
+        alert("Harga belum valid atau masih loading. Mohon tunggu sebentar.");
+        return;
+      }
+
       const btnSelesai = document.getElementById('btnSelesai');
       btnSelesai.innerText = 'Memproses...';
       btnSelesai.disabled = true;
@@ -186,7 +232,7 @@
         const fileBukti = document.getElementById('buktiTransfer').files[0];
         
         // Upload ke Cloudinary
-        const cloudName = 'd4cltmgp'; // CLOUD NAME KAMU
+        const cloudName = 'd4cltmgp'; 
         const uploadPreset = 'selaras_bukti';
         const formData = new FormData();
         formData.append('file', fileBukti);
@@ -196,44 +242,46 @@
           method: 'POST',
           body: formData
         });
+        
         const cloudinaryData = await response.json();
+
+        // Validasi upload Cloudinary
+        if (!response.ok || !cloudinaryData.secure_url) {
+          throw new Error("Upload bukti transfer gagal. Pastikan format gambar benar.");
+        }
+
         const buktiUrl = cloudinaryData.secure_url;
 
-        // Simpan ke Firestore
+        // Simpan ke Firestore pakai HargaFinal (yang udah aman)
         await addDoc(collection(db, "orders"), {
           idKelas: idKelas,
           nama: namaUser,
           email: emailUser,
           wa: waUser,
           kelas: kelas,
-          totalHarga: parseInt(harga),
-          jumlahPeserta: parseInt(jumlahPeserta),
+          totalHarga: hargaFinal, // <--- PAKAI HARGA AMAN DARI DATABASE
+          jumlahPeserta: jumlahPeserta,
           namaPasangan: namaPasangan,
           matras: jenisMatras,
           catatan: catatanUser,
           buktiTransfer: buktiUrl,
           status: "Pending",
-          tanggal: new Date(), // <--- INI TADI YANG KURANG KOMA
+          tanggal: new Date(),
           kodePromo: kodePromo
         });
 
-        // Kurangi kuota
+        // Kurangi kuota kelas (Aman pakai increment)
         if (idKelas && idKelas !== '') {
           const kelasRef = doc(db, "classes", idKelas);
-          const kelasSnap = await getDoc(kelasRef);
-          
-          if (kelasSnap.exists()) {
-            const dataKelas = kelasSnap.data();
-            let kuotaBaru = (dataKelas.kuotaTersisa || 0) - parseInt(jumlahPeserta);
-            if (kuotaBaru < 0) kuotaBaru = 0;
-            await updateDoc(kelasRef, { kuotaTersisa: kuotaBaru });
-          }
+          await updateDoc(kelasRef, {
+            kuotaTersisa: increment(-jumlahPeserta)
+          });
         }
 
         window.location.href = 'success.html';
       } catch (error) {
         console.error("Error booking: ", error);
-        alert('Gagal memproses pesanan.');
+        alert(error.message || 'Gagal memproses pesanan.');
         btnSelesai.innerText = 'Selesai';
         btnSelesai.disabled = false;
       }
