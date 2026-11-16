@@ -166,6 +166,7 @@
         btnSimpan.innerText = 'Menyimpan data...';
 
         await addDoc(collection(db, "classes"), {
+          adminKey: 'SELARAS_ADMIN_2026', // TAMBAHKAN INI
           nama: document.getElementById('nama').value,
           kategori: document.getElementById('kategori').value,
           coach: document.getElementById('coach').value,

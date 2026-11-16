@@ -254,6 +254,7 @@
 
         // Simpan ke Firestore pakai HargaFinal (yang udah aman)
         await addDoc(collection(db, "orders"), {
+          adminKey: 'SELARAS_ADMIN_2026', // TAMBAHKAN INI
           idKelas: idKelas,
           nama: namaUser,
           email: emailUser,
