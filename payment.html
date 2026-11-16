@@ -201,6 +201,7 @@
 
         // Simpan ke Firestore
         await addDoc(collection(db, "orders"), {
+          idKelas: idKelas,
           nama: namaUser,
           email: emailUser,
           wa: waUser,
