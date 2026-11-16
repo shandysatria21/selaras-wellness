@@ -181,9 +181,9 @@
           document.getElementById('inpHarga').value = dataAsli.harga;
           document.getElementById('inpHargaBundling').value = dataAsli.hargaBundling || 0;
           document.getElementById('inpKuotaAwal').value = dataAsli.kuotaAwal || 0;
-          document.getElementById('inpKodePromo').value = dataAsli.kodePromo || '';
+          document.getElementById('kodePromo').value = dataAsli.kodePromo || '';
           document.getElementById('inpDiskonPromo').value = dataAsli.diskonPromo || 0;
-          document.getElementById('inpKuotaPromo').value = dataAsli.kuotaPromo || 0;
+          document.getElementById('kuotaPromo').value = dataAsli.kuotaPromo || 0;
           
           document.getElementById('inpDeskripsi').value = dataAsli.deskripsi || '';
           if (dataAsli.gambar) previewGambar.src = dataAsli.gambar;
@@ -235,9 +235,9 @@
           hargaBundling: parseInt(document.getElementById('inpHargaBundling').value),
           kuotaAwal: kuotaAwalBaru,
           kuotaTersisa: kuotaFinal,
-          kodePromo: document.getElementById('inpKodePromo').value.trim().toUpperCase(),
-          diskonPromo: parseInt(document.getElementById('diskonPromo').value) || 0,
-          kuotaPromo: parseInt(document.getElementById('inpKuotaPromo').value) || 0,
+          kodePromo: document.getElementById('kodePromo').value.trim().toUpperCase(),
+          diskonPromo: parseInt(document.getElementById('inpDiskonPromo').value) || 0,
+          kuotaPromo: parseInt(document.getElementById('kuotaPromo').value) || 0,
           deskripsi: document.getElementById('inpDeskripsi').value
         };
 
