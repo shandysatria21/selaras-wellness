@@ -18,10 +18,10 @@
 </head>
 <body>
 
-  <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.add('active')">☰</button>
+  <button class="menu-toggle" id="menuToggle">☰</button>
 
-  <aside class="sidebar">
-    <button class="close-menu" onclick="document.querySelector('.sidebar').classList.remove('active')">✕</button>
+  <aside class="sidebar" id="sidebar">
+    <button class="close-menu" id="closeMenu">✕</button>
     <a href="index.html" class="logo"><img src="img/SELARAS.png" alt="Logo"></a>
     <div class="menu-group">
       <a href="index.html" class="menu-item">Home</a>
@@ -39,7 +39,7 @@
       <h1 class="page-title">Booking Detail</h1>
       <p class="page-subtitle" style="margin-bottom: 30px;">Lengkapi data dirimu sebelum melanjutkan ke pembayaran.</p>
 
-      <form id="formBooking" onsubmit="prosesForm(event)">
+      <form id="formBooking">
         
         <div class="form-group" style="background: var(--pink-light); padding: 15px; border-radius: 10px; margin-bottom: 25px;">
           <span style="font-size: 0.9rem; color: var(--text-muted);">Event yang dipilih:</span>
@@ -61,7 +61,7 @@
 
         <div class="form-group">
           <label class="form-label">Pilih Paket *</label>
-          <select id="pilihPaket" class="form-control" onchange="updateForm()" required>
+          <select id="pilihPaket" class="form-control" required>
             <!-- Opsi diisi JS -->
           </select>
         </div>
@@ -86,7 +86,7 @@
           <label class="form-label">Punya Kode Promo?</label>
           <div class="promo-input-group">
             <input type="text" id="inputKodePromo" class="form-control" placeholder="Ketik kode di sini...">
-            <button type="button" onclick="cekKodePromo()" class="btn btn-outline" style="padding: 10px 20px; border-radius: 10px;">Cek Kode</button>
+            <button type="button" id="btnCekPromo" class="btn btn-outline" style="padding: 10px 20px; border-radius: 10px;">Cek Kode</button>
           </div>
           <small id="pesanPromo" style="font-size: 0.85rem; margin-top: 5px; display: none;"></small>
         </div>
@@ -122,6 +122,15 @@
 
     const db = getFirestore(app);
 
+    // ==== UI SIDEBAR ====
+    document.getElementById('menuToggle').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.add('active');
+    });
+    document.getElementById('closeMenu').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.remove('active');
+    });
+
+    // ==== URL PARAMS ====
     const urlParams = new URLSearchParams(window.location.search);
     const namaKelas = urlParams.get('kelas') || 'Event Reguler';
     const hargaDasar = parseInt(urlParams.get('harga')) || 0;
@@ -134,25 +143,33 @@
     let diskonAktif = 0; 
     let kodePromoDipakai = '';
 
+    // ==== ELEMENT REFS ====
     const selectPaket = document.getElementById('pilihPaket');
+    const grupPasangan = document.getElementById('grupNamaPasangan');
+    const inputNamaPasangan = document.getElementById('namaPasangan');
+    const grupPilihanMatras = document.getElementById('grupPilihanMatras');
+    const grupMatras = document.getElementById('grupMatras');
+    const inputKodePromo = document.getElementById('inputKodePromo');
+    const btnCekPromo = document.getElementById('btnCekPromo');
+    const pesanEl = document.getElementById('pesanPromo');
+
+    // ==== ISI PAKET ====
     selectPaket.innerHTML = `<option value="1" data-harga="${hargaDasar}">1 Orang (Reguler) - Rp ${hargaDasar.toLocaleString('id-ID')}</option>`;
     if (hargaBundling > 0) {
       selectPaket.innerHTML += `<option value="2" data-harga="${hargaBundling}">2 Orang (Bundling) - Rp ${hargaBundling.toLocaleString('id-ID')}</option>`;
     }
 
+    // ==== UPDATE FORM SAAT PAKET GANTI ====
     function updateForm() {
       const jumlahPeserta = parseInt(selectPaket.value);
-      const grupPasangan = document.getElementById('grupNamaPasangan');
-      const grupPilihanMatras = document.getElementById('grupPilihanMatras');
-      const grupMatras = document.getElementById('grupMatras');
 
       if (jumlahPeserta === 2) {
         grupPasangan.style.display = 'block';
-        document.getElementById('namaPasangan').setAttribute('required', 'true');
+        inputNamaPasangan.setAttribute('required', 'true');
       } else {
         grupPasangan.style.display = 'none';
-        document.getElementById('namaPasangan').removeAttribute('required');
-        document.getElementById('namaPasangan').value = '';
+        inputNamaPasangan.removeAttribute('required');
+        inputNamaPasangan.value = '';
       }
 
       const butuhMatras = (kategoriEvent.toLowerCase() === 'yoga' || kategoriEvent.toLowerCase() === 'pilates');
@@ -161,16 +178,20 @@
         grupPilihanMatras.style.display = 'block';
         if (jumlahPeserta === 1) {
           grupMatras.innerHTML = `
-            <label><input type="radio" name="matras" value="bawa" checked onchange="hitungTotal()"> Bawa Sendiri</label>
-            <label><input type="radio" name="matras" value="sewa1" onchange="hitungTotal()"> Sewa 1 Mat (+ Rp 10.000)</label>
+            <label><input type="radio" name="matras" value="bawa" checked> Bawa Sendiri</label>
+            <label><input type="radio" name="matras" value="sewa1"> Sewa 1 Mat (+ Rp 10.000)</label>
           `;
         } else {
           grupMatras.innerHTML = `
-            <label><input type="radio" name="matras" value="bawa" checked onchange="hitungTotal()"> Bawa Sendiri Semua</label>
-            <label><input type="radio" name="matras" value="sewa1" onchange="hitungTotal()"> Sewa 1 Mat (+ Rp 10.000)</label>
-            <label><input type="radio" name="matras" value="sewa2" onchange="hitungTotal()"> Sewa 2 Mat (+ Rp 20.000)</label>
+            <label><input type="radio" name="matras" value="bawa" checked> Bawa Sendiri Semua</label>
+            <label><input type="radio" name="matras" value="sewa1"> Sewa 1 Mat (+ Rp 10.000)</label>
+            <label><input type="radio" name="matras" value="sewa2"> Sewa 2 Mat (+ Rp 20.000)</label>
           `;
         }
+        // Pasang listener ke radio yang baru dibuat
+        grupMatras.querySelectorAll('input[name="matras"]').forEach(r => {
+          r.addEventListener('change', hitungTotal);
+        });
       } else {
         grupPilihanMatras.style.display = 'none';
         grupMatras.innerHTML = ''; 
@@ -187,10 +208,8 @@
       const nilaiMatras = matrasTerpilih ? matrasTerpilih.value : 'bawa';
       
       let biayaMatras = 0;
-      if (matrasTerpilih) {
-        if (nilaiMatras === 'sewa1') biayaMatras = 10000;
-        if (nilaiMatras === 'sewa2') biayaMatras = 20000;
-      }
+      if (nilaiMatras === 'sewa1') biayaMatras = 10000;
+      if (nilaiMatras === 'sewa2') biayaMatras = 20000;
 
       let totalAkhir = hargaPaket + biayaMatras - diskonAktif;
       if (totalAkhir < 0) totalAkhir = 0;
@@ -206,13 +225,15 @@
       }
 
       document.getElementById('totalAkhir').innerText = `Rp ${totalAkhir.toLocaleString('id-ID')}`;
+      return totalAkhir; // biar bisa dipakai di prosesForm
     }
 
-    updateForm();
+    selectPaket.addEventListener('change', updateForm);
+    updateForm(); // init
 
-    window.cekKodePromo = async function() {
-      const inputKode = document.getElementById('inputKodePromo').value.trim().toUpperCase();
-      const pesanEl = document.getElementById('pesanPromo');
+    // ==== CEK PROMO ====
+    btnCekPromo.addEventListener('click', async () => {
+      const inputKode = inputKodePromo.value.trim().toUpperCase();
       
       if (!inputKode) {
         pesanEl.style.display = 'block';
@@ -225,84 +246,97 @@
         const docRef = doc(db, "classes", idKelas);
         const docSnap = await getDoc(docRef);
         
-        if (docSnap.exists()) {
-          const dataKelas = docSnap.data();
-          
-          if (!dataKelas.kodePromo || dataKelas.kodePromo === '') {
-            pesanEl.style.display = 'block';
-            pesanEl.style.color = 'red';
-            pesanEl.innerText = 'Event ini tidak memiliki promo.';
-            return;
-          }
-
-          if (inputKode !== dataKelas.kodePromo) {
-            pesanEl.style.display = 'block';
-            pesanEl.style.color = 'red';
-            pesanEl.innerText = 'Kode promo salah. Coba cek ulang hurufnya ya!';
-            return;
-          }
-
-          const ordersRef = collection(db, "orders");
-          const q = query(ordersRef, where("kelas", "==", namaKelas), where("kodePromo", "==", inputKode), where("status", "==", "Success"));
-          const querySnapshot = await getDocs(q);
-          
-          let terpakai = 0;
-          querySnapshot.forEach(() => terpakai++); 
-          
-          if (terpakai >= dataKelas.kuotaPromo) {
-            pesanEl.style.display = 'block';
-            pesanEl.style.color = 'red';
-            pesanEl.innerText = 'Yah, promonya udah habis bun... 🥺';
-            return;
-          }
-
-          const persenDiskon = dataKelas.diskonPromo || 0; 
-          
-          if (persenDiskon <= 0) {
-            pesanEl.style.display = 'block';
-            pesanEl.style.color = 'red';
-            pesanEl.innerText = 'Kode promo ini belum diatur potongannya.';
-            return;
-          }
-
-          const opsiTerpilih = selectPaket.options[selectPaket.selectedIndex];
-          const hargaPaket = parseInt(opsiTerpilih.getAttribute('data-harga')); 
-          
-          diskonAktif = Math.round(hargaPaket * (persenDiskon / 100));
-          kodePromoDipakai = inputKode;
-
+        if (!docSnap.exists()) {
           pesanEl.style.display = 'block';
-          pesanEl.style.color = '#10b981';
-          pesanEl.style.fontWeight = 'bold';
-          pesanEl.innerText = `Yeay! Kode promo berhasil. Diskon ${persenDiskon}% (Rp ${diskonAktif.toLocaleString('id-ID')})! ✨`;
-          
-          hitungTotal();
+          pesanEl.style.color = 'red';
+          pesanEl.innerText = 'Data event tidak ditemukan.';
+          return;
         }
+
+        const dataKelas = docSnap.data();
+
+        if (!dataKelas.kodePromo || dataKelas.kodePromo === '') {
+          pesanEl.style.display = 'block';
+          pesanEl.style.color = 'red';
+          pesanEl.innerText = 'Event ini tidak memiliki promo.';
+          return;
+        }
+
+        if (inputKode !== dataKelas.kodePromo) {
+          pesanEl.style.display = 'block';
+          pesanEl.style.color = 'red';
+          pesanEl.innerText = 'Kode promo salah. Coba cek ulang hurufnya ya!';
+          return;
+        }
+
+        const ordersRef = collection(db, "orders");
+        const q = query(
+          ordersRef,
+          where("kelas", "==", namaKelas),
+          where("kodePromo", "==", inputKode),
+          where("status", "==", "Success")
+        );
+        const querySnapshot = await getDocs(q);
+        
+        let terpakai = 0;
+        querySnapshot.forEach(() => terpakai++); 
+
+        if (terpakai >= dataKelas.kuotaPromo) {
+          pesanEl.style.display = 'block';
+          pesanEl.style.color = 'red';
+          pesanEl.innerText = 'Yah, promonya udah habis bun... 🥺';
+          return;
+        }
+
+        const persenDiskon = dataKelas.diskonPromo || 0; 
+        
+        if (persenDiskon <= 0) {
+          pesanEl.style.display = 'block';
+          pesanEl.style.color = 'red';
+          pesanEl.innerText = 'Kode promo ini belum diatur potongannya.';
+          return;
+        }
+
+        const opsiTerpilih = selectPaket.options[selectPaket.selectedIndex];
+        const hargaPaket = parseInt(opsiTerpilih.getAttribute('data-harga')); 
+        
+        diskonAktif = Math.round(hargaPaket * (persenDiskon / 100));
+        kodePromoDipakai = inputKode;
+
+        pesanEl.style.display = 'block';
+        pesanEl.style.color = '#10b981';
+        pesanEl.style.fontWeight = 'bold';
+        pesanEl.innerText = `Yeay! Kode promo berhasil. Diskon ${persenDiskon}% (Rp ${diskonAktif.toLocaleString('id-ID')})! ✨`;
+        
+        hitungTotal();
       } catch (error) {
         console.error(error);
         alert("Gagal mengecek kode promo.");
       }
-    }
+    });
 
-    function prosesForm(event) {
+    // ==== SUBMIT FORM (redirect ke pembayaran) ====
+    document.getElementById('formBooking').addEventListener('submit', (event) => {
       event.preventDefault();
+
       const nama = document.getElementById('nama').value;
       const email = document.getElementById('email').value;
       const wa = document.getElementById('wa').value;
       const jumlahPeserta = selectPaket.value;
-      const namaPasangan = jumlahPeserta === "2" ? document.getElementById('namaPasangan').value : '';
+      const namaPasangan = jumlahPeserta === "2" ? inputNamaPasangan.value : '';
       const catatan = document.getElementById('catatan').value;
       
       let matrasTerpilih = 'bawa';
       const radioMatras = document.querySelector('input[name="matras"]:checked');
       if (radioMatras) matrasTerpilih = radioMatras.value;
 
-      let totalAkhir = parseInt(document.getElementById('totalAkhir').innerText.replace(/[^0-9]/g, ''));
+      // Hitung ulang total secara programatik, jangan scrape dari DOM
+      const totalAkhir = hitungTotal();
 
       const paymentUrl = `payment.html?kelas=${encodeURIComponent(namaKelas)}&harga=${totalAkhir}&nama=${encodeURIComponent(nama)}&email=${encodeURIComponent(email)}&wa=${encodeURIComponent(wa)}&id=${idKelas}&peserta=${jumlahPeserta}&pasangan=${encodeURIComponent(namaPasangan)}&matras=${matrasTerpilih}&catatan=${encodeURIComponent(catatan)}&kategori=${encodeURIComponent(kategoriEvent)}&kodePromo=${encodeURIComponent(kodePromoDipakai)}`;
       
       window.location.href = paymentUrl;
-    }
+    });
   </script>
 
 </body>
