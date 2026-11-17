@@ -58,7 +58,7 @@
 
   <script type="module">
     import { firebaseConfig, app } from '../firebase-config.js';
-    import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const db = getFirestore(app);
     const galeriContainer = document.getElementById('galeriContainer');
@@ -140,13 +140,20 @@
       }
     });
 
-    // 3. Proses Hapus
+        // 3. Proses Hapus
     window.hapusFoto = async function(id) {
       const konfirmasi = confirm("Yakin ingin menghapus foto ini?");
       if (!konfirmasi) return;
 
       try {
-        await deleteDoc(doc(db, "galeri", id));
+        const fotoRef = doc(db, "galeri", id);
+        
+        // LANGKAH 1: Tempelin adminKey dulu pakai updateDoc
+        await updateDoc(fotoRef, { adminKey: 'SELARAS_ADMIN_2026' });
+        
+        // LANGKAH 2: Baru hapus datanya
+        await deleteDoc(fotoRef);
+        
         alert('Foto berhasil dihapus!');
         loadGaleri(); // Refresh
       } catch (error) {

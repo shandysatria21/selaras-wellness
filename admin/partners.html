@@ -72,7 +72,7 @@
 
   <script type="module">
     import { firebaseConfig, app } from '../firebase-config.js';
-    import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const db = getFirestore(app);
     const form = document.getElementById('formTambahPartner');
@@ -159,14 +159,23 @@
       }
     });
 
-    // 3. Hapus Partner
-    window.hapusPartner = async function(id) {
+        window.hapusPartner = async function(id) {
       if (!confirm("Yakin ingin menghapus logo partner ini?")) return;
+      
       try {
-        await deleteDoc(doc(db, "partners", id));
-        loadPartners(); // Refresh
+        const partnerRef = doc(db, "partners", id);
+        
+        // LANGKAH 1: Tempelin adminKey dulu
+        await updateDoc(partnerRef, { adminKey: 'SELARAS_ADMIN_2026' });
+        
+        // LANGKAH 2: Baru hapus
+        await deleteDoc(partnerRef);
+        
+        alert("Logo partner berhasil dihapus!");
+        loadPartners(); // Refresh tabel
       } catch (error) {
-        console.error(error);
+        console.error("Error hapus partner: ", error);
+        alert("Gagal menghapus partner.");
       }
     }
 

@@ -82,7 +82,7 @@
 
   <script type="module">
     import { firebaseConfig, app } from '../firebase-config.js';
-    import { getFirestore, collection, getDocs, deleteDoc, doc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const db = getFirestore(app);
     const tabelKelas = document.getElementById('tabelKelas');
@@ -206,13 +206,23 @@
       }
     }
 
-    window.hapusKelas = async function(id) {
+        window.hapusKelas = async function(id) {
       if (!confirm("Yakin ingin menghapus kelas ini?")) return;
+      
       try {
-        await deleteDoc(doc(db, "classes", id));
-        tampilkanKelas(); // Reload data setelah hapus
+        const kelasRef = doc(db, "classes", id);
+        
+        // LANGKAH 1: Tempelin adminKey dulu
+        await updateDoc(kelasRef, { adminKey: 'SELARAS_ADMIN_2026' });
+        
+        // LANGKAH 2: Baru hapus
+        await deleteDoc(kelasRef);
+        
+        alert("Kelas berhasil dihapus!");
+        tampilkanKelas(); // Refresh tabel
       } catch (error) {
-        console.error(error);
+        console.error("Error hapus kelas: ", error);
+        alert("Gagal menghapus kelas.");
       }
     }
 
