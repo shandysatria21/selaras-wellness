@@ -140,25 +140,17 @@
       }
     });
 
-        // 3. Proses Hapus
-    window.hapusFoto = async function(id) {
-      const konfirmasi = confirm("Yakin ingin menghapus foto ini?");
-      if (!konfirmasi) return;
-
+        window.hapusFoto = async function(id) {
+      if (!confirm("Yakin ingin menghapus foto ini?")) return;
+      
       try {
-        const fotoRef = doc(db, "galeri", id);
-        
-        // LANGKAH 1: Tempelin adminKey dulu pakai updateDoc
-        await updateDoc(fotoRef, { adminKey: 'SELARAS_ADMIN_2026' });
-        
-        // LANGKAH 2: Baru hapus datanya
-        await deleteDoc(fotoRef);
-        
+        // Langsung hapus, Firebase yang bakal ngecek adminKey di datanya
+        await deleteDoc(doc(db, "galeri", id));
         alert('Foto berhasil dihapus!');
-        loadGaleri(); // Refresh
+        loadGaleri(); 
       } catch (error) {
         console.error("Error hapus: ", error);
-        alert('Gagal menghapus foto.');
+        alert('Gagal menghapus foto. Pastikan data ini punya adminKey.');
       }
     }
 
