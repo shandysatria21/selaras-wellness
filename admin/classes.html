@@ -82,7 +82,7 @@
 
   <script type="module">
     import { firebaseConfig, app } from '../firebase-config.js';
-    import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, deleteDoc, doc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const db = getFirestore(app);
     const tabelKelas = document.getElementById('tabelKelas');
