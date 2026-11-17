@@ -141,14 +141,23 @@
 
     const db = getFirestore(app);
     const container = document.getElementById('container-kelas');
-    let semuaKelas = []; // Variabel untuk menyimpan data dari Firebase
+    let semuaKelas = []; 
 
     function formatTanggal(tglString) {
       if (!tglString) return '-';
       return new Date(tglString).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
     }
 
-    // 1. Ambil Data dari Database
+    // Fungsi Helper untuk bikin slug dari nama event
+    function slugify(text) {
+      return text.toString().toLowerCase()
+        .replace(/\s+/g, '-')           // Ganti spasi dengan -
+        .replace(/[^\w\-]+/g, '')       // Hapus karakter aneh
+        .replace(/\-\-+/g, '-')         // Ganti -- jadi -
+        .replace(/^-+/, '')             // Hapus - di awal
+        .replace(/-+$/, '');            // Hapus - di akhir
+    }
+
     async function muatKelasUser() {
       try {
         const q = query(collection(db, "classes"), orderBy("tanggal", "asc"));
@@ -161,14 +170,13 @@
           semuaKelas.push(data);
         });
 
-        renderKelas(semuaKelas); // Tampilkan semua di awal
+        renderKelas(semuaKelas); 
       } catch (error) {
         console.error("Error memuat kelas: ", error);
         container.innerHTML = '<p style="text-align:center; width: 100%; color: red;">Gagal memuat data.</p>';
       }
     }
 
-    // 2. Fungsi Render Tampilan Card
     function renderKelas(dataArray) {
       container.innerHTML = '';
 
@@ -179,6 +187,7 @@
 
       dataArray.forEach((data) => {
         const id = data.id;
+        const slug = slugify(data.nama); // Bikin slug dari nama
         const hargaRupiah = 'Rp ' + data.harga.toLocaleString('id-ID');
         const hargaBundlingRupiah = data.hargaBundling ? 'Rp ' + data.hargaBundling.toLocaleString('id-ID') : null;
         
@@ -192,13 +201,13 @@
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
-          <div class="card-img" style="background-image: url('${data.gambar}'); cursor: pointer;" onclick="window.location.href='detail-class.html?id=${id}'">
+          <div class="card-img" style="background-image: url('${data.gambar}'); cursor: pointer;" onclick="window.location.href='detail-class.html?nama=${slug}'">
             ${statusBadge}
             <span class="card-label" style="position: absolute; top: 15px; left: 15px; background: var(--primary); color: white; padding: 5px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 600;">${data.kategori || 'Event'}</span>
           </div>
           
           <div class="card-content" style="display: flex; flex-direction: column; flex: 1;">
-            <h3 style="cursor: pointer;" onclick="window.location.href='detail-class.html?id=${id}'">${data.nama}</h3>
+            <h3 style="cursor: pointer;" onclick="window.location.href='detail-class.html?nama=${slug}'">${data.nama}</h3>
             
             <div class="card-info">
               <div class="card-info-row">👤 Coach: <span>${data.coach || '-'}</span></div>
@@ -215,14 +224,14 @@
               </div>
 
               <div style="display: flex; gap: 8px; width: 100%;">
-                <button onclick="shareKelas('${data.nama}', '${id}', ${data.harga})" class="btn btn-outline" style="padding: 10px; border-radius: 8px; width: 45px; flex-shrink: 0;" title="Bagikan Kelas">
+                <button onclick="shareKelas('${data.nama}', '${slug}', ${data.harga})" class="btn btn-outline" style="padding: 10px; border-radius: 8px; width: 45px; flex-shrink: 0;" title="Bagikan Kelas">
                   <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle>
                     <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
                   </svg>
                 </button>
                 <div style="flex: 1;">
-                  <a href="detail-class.html?id=${id}" class="btn btn-primary" style="padding: 10px; font-size: 0.9rem; width: 100%; display: flex; justify-content: center; align-items: center;">Lihat Detail</a>
+                  <a href="detail-class.html?nama=${slug}" class="btn btn-primary" style="padding: 10px; font-size: 0.9rem; width: 100%; display: flex; justify-content: center; align-items: center;">Lihat Detail</a>
                 </div>
               </div>
             </div>
@@ -232,7 +241,6 @@
       });
     }
 
-    // 3. Fungsi Filter Pill
     window.filterKategori = function(kategori, btnElement) {
       const tombol = document.querySelectorAll('.pill-btn');
       tombol.forEach(btn => btn.classList.remove('active'));
@@ -246,9 +254,9 @@
       }
     }
 
-    // 4. Fungsi Share
-    window.shareKelas = function(namaKelas, idKelas, hargaKelas) {
-      const linkBooking = `${window.location.origin}/form-booking.html?kelas=${encodeURIComponent(namaKelas)}&harga=${hargaKelas}&id=${idKelas}`;
+    // Fungsi Share (Sekarang pakai Slug)
+    window.shareKelas = function(namaKelas, slugKelas, hargaKelas) {
+      const linkBooking = `${window.location.origin}/detail-class.html?nama=${slugKelas}`;
       const textShare = `Yuk ikutan kelas *${namaKelas}* di Selaras Wellness Club! 🧘‍♀️\n\nCek jadwal dan daftar di sini:\n${linkBooking}`;
 
       if (navigator.share) {
@@ -262,7 +270,6 @@
       }
     }
 
-    // Jalankan fungsi saat halaman dibuka
     muatKelasUser();
   </script>
 
