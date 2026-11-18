@@ -105,9 +105,16 @@
       try {
         const fileGambar = document.getElementById('inpGambarGaleri').files[0];
         
-        // Konfigurasi Cloudinary
-        const cloudName = 'd4cltmgp'; // GANTI DENGAN CLOUD NAME KAMU
-        const uploadPreset = 'selaras_bukti'; // GANTI DENGAN PRESET KAMU
+        // Cek dulu ukuran file (misal maksimal 5 MB)
+        if (fileGambar.size > 5 * 1024 * 1024) {
+          alert('Ukuran gambar terlalu besar! Maksimal 5 MB ya.');
+          btnUpload.innerText = 'Upload Gambar';
+          btnUpload.disabled = false;
+          return; // Hentikan proses
+        }
+
+        const cloudName = 'd4cltmgp';
+        const uploadPreset = 'selaras_bukti';
 
         const formData = new FormData();
         formData.append('file', fileGambar);
@@ -118,10 +125,21 @@
           body: formData
         });
 
+        // KALAU CLOUDINARY GAGAL, JANGAN LANJUT
+        if (!response.ok) {
+          throw new Error("Gagal upload ke Cloudinary. Cek koneksi atau ukuran file.");
+        }
+
         const cloudinaryData = await response.json();
+        
+        // Pastikan URL-nya ada
+        if (!cloudinaryData.secure_url) {
+          throw new Error("Cloudinary tidak mengembalikan URL gambar.");
+        }
+
         const imageUrl = cloudinaryData.secure_url;
 
-        // Simpan ke Firestore koleksi "galeri"
+        // Simpan ke Firestore (adminKey wajib ada!)
         await addDoc(collection(db, "galeri"), {
           adminKey: 'SELARAS_ADMIN_2026',
           url: imageUrl,
@@ -130,11 +148,11 @@
 
         alert('Foto berhasil ditambahkan!');
         form.reset();
-        loadGaleri(); // Refresh tampilan galeri admin
+        loadGaleri(); 
         
       } catch (error) {
         console.error("Error upload: ", error);
-        alert('Gagal mengunggah foto.');
+        alert('Gagal: ' + error.message);
       } finally {
         btnUpload.innerText = 'Upload Gambar';
         btnUpload.disabled = false;
