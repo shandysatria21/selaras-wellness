@@ -123,6 +123,7 @@
 
         // Simpan ke Firestore koleksi "galeri"
         await addDoc(collection(db, "galeri"), {
+          adminKey: 'SELARAS_ADMIN_2026',
           url: imageUrl,
           tanggal: new Date()
         });
