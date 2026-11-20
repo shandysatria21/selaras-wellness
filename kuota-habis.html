@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kuota Habis - Selaras Wellness Club</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/png" href="img/favicon.png">
+  <style>
+    .error-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 80vh;
+      text-align: center;
+      padding: 20px;
+    }
+    .error-image {
+      width: 100%;
+      max-width: 280px;
+      height: auto;
+      margin-bottom: 20px;
+    }
+    .error-code {
+      font-size: 5rem;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1;
+      margin-bottom: 10px;
+      letter-spacing: -2px;
+    }
+    .error-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 15px;
+    }
+    .error-desc {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 500px;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.add('active')">☰</button>
+
+  <aside class="sidebar">
+    <button class="close-menu" onclick="document.querySelector('.sidebar').classList.remove('active')">✕</button>
+    <a href="index.html" class="logo"><img src="img/SELARAS.png" alt="Logo"></a>
+    <div class="menu-group">
+      <a href="index.html" class="menu-item">Home</a>
+      <a href="classes.html" class="menu-item active">Event</a>
+      <a href="galeri.html" class="menu-item">Galeri</a>
+      <a href="about.html" class="menu-item">About Us</a>
+    </div>
+    <div class="menu-group">
+      <a href="contact.html" class="menu-item">Contact</a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="error-container">
+      <!-- Bisa pakai gambar 404 kamu yang lucu di sini -->
+      <img src="img/404.png" alt="Kuota Habis" class="error-image">
+      
+      <div class="error-title">Yah, Eventnya Udah Penuh Bun! 🥺</div>
+      <p class="error-desc">Kuota untuk event ini udah habis diserbu yang lain. Tapi tenang, masih banyak event seru lainnya yang bisa kamu ikutin!</p>
+      
+      <a href="classes.html" class="btn btn-primary" style="padding: 15px 40px; font-size: 1.1rem;">Lihat Event Lainnya</a>
+    </div>
+  </main>
+
+</body>
+</html>

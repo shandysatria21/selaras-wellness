@@ -402,6 +402,32 @@
       
       window.location.href = paymentUrl;
     });
+
+        // ==== PAGAR KEAMANAN: CEK KUOTA SAAT HALAMAN DIBUKA ====
+    async function cekKuotaAwal() {
+      if (!idKelas) return; // Kalau nggak ada ID, skip aja
+
+      try {
+        const kelasRef = doc(db, "classes", idKelas);
+        const kelasSnap = await getDoc(kelasRef);
+
+        if (kelasSnap.exists()) {
+          const dataKelas = kelasSnap.data();
+          const sisaKuota = dataKelas.kuotaTersisa || 0;
+          const isActive = dataKelas.statusAktif !== false;
+
+          // Kalau event ditutup atau kuota habis, tendang ke halaman Kuota Habis
+          if (!isActive || sisaKuota <= 0) {
+            window.location.href = 'kuota-habis.html';
+          }
+        }
+      } catch (error) {
+        console.error("Error cek kuota awal: ", error);
+      }
+    }
+
+    // Panggil fungsi ini saat halaman pertama kali dimuat
+    cekKuotaAwal();
   </script>
 
 </body>
