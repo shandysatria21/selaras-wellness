@@ -151,11 +151,11 @@
     // Fungsi Helper untuk bikin slug dari nama event
     function slugify(text) {
       return text.toString().toLowerCase()
-        .replace(/\s+/g, '-')           // Ganti spasi dengan -
-        .replace(/[^\w\-]+/g, '')       // Hapus karakter aneh
-        .replace(/\-\-+/g, '-')         // Ganti -- jadi -
-        .replace(/^-+/, '')             // Hapus - di awal
-        .replace(/-+$/, '');            // Hapus - di akhir
+        .replace(/\s+/g, '-')           // spasi jadi strip
+        .replace(/[^\w\-]+/g, '')       // hapus karakter aneh (termasuk &)
+        .replace(/\-\-+/g, '-')         // rapikan strip dobel
+        .replace(/^-+/, '')             
+        .replace(/-+$/, '');            
     }
 
     async function muatKelasUser() {

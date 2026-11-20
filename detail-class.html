@@ -121,7 +121,12 @@
           querySnapshot.forEach((doc) => {
             const data = doc.data();
             // Fungsi slugify manual untuk dicocokkan
-            const slugDatabase = data.nama.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '');
+            const slugDatabase = data.nama.toLowerCase()
+              .replace(/\s+/g, '-')
+              .replace(/[^\w\-]+/g, '')
+              .replace(/\-\-+/g, '-')
+              .replace(/^-+/, '')
+              .replace(/-+$/, '');
             
             if (slugDatabase === slugKelas) {
               dataKelas = data;
