@@ -130,7 +130,9 @@
 
         <div class="form-group">
           <label>Gambar Saat Ini:</label>
-          <img id="previewGambar" src="" alt="Gambar Kelas" class="img-preview">
+          <div id="previewGambarContainer" style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+            <!-- Gambar akan diisi otomatis lewat JavaScript -->
+          </div>
         </div>
 
         <div class="form-group">
@@ -189,7 +191,25 @@
           document.getElementById('inpKuotaPromo').value = dataAsli.kuotaPromo || 0;
           
           document.getElementById('inpDeskripsi').value = dataAsli.deskripsi || '';
-          if (dataAsli.gambar) previewGambar.src = dataAsli.gambar;
+          
+          const previewContainer = document.getElementById('previewGambarContainer');
+          previewContainer.innerHTML = ''; // Bersihin container dulu
+
+          if (dataAsli.gambarArray && dataAsli.gambarArray.length > 0) {
+            // Kalau ada array gambar (hasil multi-upload), tampilin semuanya
+            dataAsli.gambarArray.forEach(url => {
+              const img = document.createElement('img');
+              img.src = url;
+              img.className = 'img-preview';
+              previewContainer.appendChild(img);
+            });
+          } else if (dataAsli.gambar) {
+            // Fallback buat data lama yang cuma punya 1 gambar
+            const img = document.createElement('img');
+            img.src = dataAsli.gambar;
+            img.className = 'img-preview';
+            previewContainer.appendChild(img);
+          }
         } else {
           alert("Data kelas tidak ditemukan di database.");
           window.location.href = 'classes.html';
