@@ -4,34 +4,113 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Detail Event - Selaras Wellness Club</title>
-         <!-- SEO Meta Tags -->
-    <meta name="description" content="Detail Event Selaras Wellness Club. Daftar sekarang sebelum kuota habis!">
-    
-    <!-- Open Graph -->
-    <meta property="og:title" content="Detail Event - Selaras Wellness Club">
-    <meta property="og:description" content="Lihat detail jadwal dan daftar event wellness terbaik di sini.">
-    <meta property="og:image" content="https://res.cloudinary.com/d4cltmgp/image/upload/w_1200,q_auto,f_auto/v1793759626/siukbjycabb4nedieou4.jpg">
-    <meta property="og:url" content="https://selaraswellnessclub.com/detail-class.html">
-    <meta property="og:type" content="website">
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Detail Event Selaras Wellness Club. Daftar sekarang sebelum kuota habis!">
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" type="image/png" href="img/favicon.png">
   <style>
-    /* Style Khusus Halaman Detail */
-    .detail-wrapper { display: flex; gap: 50px; margin-top: 20px; align-items: flex-start; }
-    .detail-img { flex: 1.2; height: 500px; border-radius: 24px; background-size: cover; background-position: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1); position: relative; }
+    /* --- LAYOUT EDITORIAL & SLIDER --- */
+    .editorial-layout {
+      display: flex;
+      gap: 50px;
+      margin-top: 20px;
+      align-items: flex-start;
+    }
+
+    /* KOLOM KIRI: STICKY SLIDER */
+    .editorial-gallery {
+      flex: 1.1;
+      position: sticky;
+      top: 30px; /* Jarak dari atas saat di-scroll */
+    }
     
-    .detail-badge { position: absolute; top: 20px; right: 20px; padding: 8px 20px; border-radius: 30px; font-weight: 700; font-size: 0.9rem; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-    /* Warna badge detail */
-    .badge-active { background: #fff; color: var(--primary); }
+    .slider-container {
+      position: relative;
+      width: 100%;
+      /* Kita pakai rasio 4:5 biar pas sama foto 1440x1800 */
+      aspect-ratio: 4 / 5; 
+      max-height: 750px; /* Biar nggak terlalu tinggi di layar besar */
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      background: #e2e8f0;
+    }
+
+    .slider-track {
+      display: flex;
+      height: 100%;
+      transition: transform 0.4s ease-in-out;
+    }
+
+    .slider-track img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Tetep cover biar nggak ada ruang kosong */
+      object-position: center; /* Fokus di tengah gambar */
+      flex-shrink: 0;
+    }
+
+    .slider-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.9);
+      border: none;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--text-main);
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      z-index: 10;
+      transition: background 0.2s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .slider-btn:hover { background: #fff; transform: translateY(-50%) scale(1.1); }
+    .slider-btn.prev { left: 20px; }
+    .slider-btn.next { right: 20px; }
+
+    .slider-dots {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 10;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .dot.active { background: #fff; transform: scale(1.2); }
+
+    /* KOLOM KANAN: KONTEN & INFO */
+    .editorial-info {
+      flex: 1;
+      padding-bottom: 50px;
+    }
+
+    .detail-badge { display: inline-block; padding: 8px 20px; border-radius: 30px; font-weight: 700; font-size: 0.9rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 15px; }
+    .badge-active { background: #10b981; color: #fff; }
     .badge-inactive { background: #ef4444; color: #fff; }
     .badge-coming-soon { background: #3b82f6; color: #fff; }
     .badge-finished { background: #64748b; color: #fff; }
 
-    .detail-info { flex: 1; padding-top: 10px; }
-    .detail-info h1 { font-size: 2.8rem; margin-bottom: 15px; line-height: 1.1; letter-spacing: -1px; }
-    .info-meta { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 30px; }
-    .info-meta-item { background: #fff; border: 1px solid var(--border); padding: 8px 16px; border-radius: 12px; font-size: 0.9rem; font-weight: 500; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
-    .detail-desc { font-size: 1.05rem; color: var(--text-muted); line-height: 1.8; margin-bottom: 30px; white-space: pre-wrap; border-left: 4px solid var(--pink-light); padding-left: 20px; }
+    .editorial-info h1 { font-size: 2.8rem; margin-bottom: 20px; line-height: 1.1; letter-spacing: -1px; color: var(--text-main); }
+    
+    .info-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; }
+    .info-meta-item { background: #f8fafc; border: 1px solid var(--border); padding: 8px 16px; border-radius: 12px; font-size: 0.9rem; font-weight: 500; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+
     .detail-price-box { background: #fff; border: 1px solid var(--border); padding: 25px; border-radius: 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); }
     .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
     .price-row:last-child { margin-bottom: 0; }
@@ -39,25 +118,34 @@
     .price-amount { font-size: 1.4rem; font-weight: 700; color: var(--primary); }
     .price-bundling { color: #10b981; }
     .price-bundling .price-amount { color: #10b981; font-size: 1.2rem; }
-    .btn-book-large { display: block; width: 100%; padding: 18px; border-radius: 16px; font-size: 1.1rem; font-weight: 700; text-align: center; text-decoration: none; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: none; cursor: pointer; }
-    
+
+    .btn-book-large { display: block; width: 100%; padding: 18px; border-radius: 16px; font-size: 1.1rem; font-weight: 700; text-align: center; text-decoration: none; transition: all 0.3s; border: none; cursor: pointer; margin-bottom: 10px; }
     .btn-active { background: var(--primary); color: #fff; box-shadow: 0 10px 20px rgba(196, 69, 118, 0.3); }
     .btn-active:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 25px rgba(196, 69, 118, 0.4); }
-    
-    .btn-disabled { background: #ccc; color: #fff; cursor: not-allowed; box-shadow: none; transform: none; }
-    .btn-coming-soon { background: #3b82f6; color: #fff; cursor: not-allowed; box-shadow: none; }
-    .btn-finished { background: #64748b; color: #fff; cursor: not-allowed; box-shadow: none; }
+    .btn-disabled { background: #ccc; color: #fff; cursor: not-allowed; }
+    .btn-coming-soon { background: #3b82f6; color: #fff; cursor: not-allowed; }
+    .btn-finished { background: #64748b; color: #fff; cursor: not-allowed; }
+
+    .btn-calendar { display: block; width: 100%; padding: 15px; border-radius: 16px; font-size: 1rem; font-weight: 600; text-align: center; text-decoration: none; border: 1px solid var(--border); background: transparent; color: var(--text-main); transition: 0.2s; cursor: pointer; }
+    .btn-calendar:hover { background: #f8fafc; border-color: var(--text-main); }
+
+    .detail-desc { font-size: 1.05rem; color: var(--text-muted); line-height: 1.8; margin-top: 30px; margin-bottom: 40px; white-space: pre-wrap; }
+
+    .map-section { margin-top: 30px; }
+    .map-section h3 { font-size: 1.2rem; margin-bottom: 15px; }
+    .map-container { width: 100%; height: 250px; border-radius: 16px; overflow: hidden; border: 1px solid var(--border); }
+    .map-container iframe { width: 100%; height: 100%; border: none; }
 
     @media (max-width: 1024px) {
-      .detail-wrapper { flex-direction: column; gap: 30px; }
-      .detail-img { width: 100% !important; height: 450px !important; min-height: 450px !important; display: block !important; }
-      .detail-info h1 { font-size: 2.2rem; }
+      .editorial-layout { flex-direction: column; gap: 30px; }
+      .editorial-gallery { position: relative; top: 0; width: 100%; flex: none; }
+      .slider-container { aspect-ratio: 4 / 5; max-height: 600px; } /* Di tablet tetep portrait */
     }
+    
     @media (max-width: 768px) {
-      .detail-img { width: 100% !important; height: 300px !important; min-height: 300px !important; display: block !important; margin-bottom: 20px; }
-      .detail-info h1 { font-size: 2rem; margin-top: 10px; }
-      .detail-price-box { padding: 20px; }
-      .detail-badge { top: 15px; right: 15px; padding: 6px 15px; font-size: 0.8rem; }
+      .editorial-info h1 { font-size: 2rem; }
+      .slider-container { aspect-ratio: 4 / 5; } /* Di HP proporsi 4:5 pas banget */
+      .slider-btn { width: 35px; height: 35px; font-size: 1rem; }
     }
   </style>
 </head>
@@ -82,7 +170,7 @@
   <main class="main-content">
     <a href="classes.html" class="btn btn-outline" style="margin-bottom: 10px; padding: 8px 20px;">&larr; Kembali ke Event</a>
     
-    <div id="containerDetail" class="detail-wrapper">
+    <div id="containerDetail" class="editorial-layout">
       <p>Memuat data...</p>
     </div>
   </main>
@@ -102,6 +190,13 @@
       return new Date(tglString).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
     }
 
+    // Format tanggal untuk Google Calendar (YYYYMMDDTHHmmssZ)
+    function getCalendarDate(dateStr, timeStr) {
+      if (!dateStr) return '';
+      const date = new Date(dateStr + 'T' + (timeStr || '00:00') + ':00');
+      return date.toISOString().replace(/-|:|\.\d\d\d/g, '');
+    }
+
     async function loadDetail() {
       if (!slugKelas && !idKelas) {
         container.innerHTML = '<p>URL tidak valid.</p>';
@@ -117,13 +212,9 @@
           querySnapshot.forEach((doc) => {
             const data = doc.data();
             const slugDatabase = data.nama.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-').replace(/^-+/, '').replace(/-+$/, '');
-            if (slugDatabase === slugKelas) {
-              dataKelas = data;
-              idDokumen = doc.id;
-            }
+            if (slugDatabase === slugKelas) { dataKelas = data; idDokumen = doc.id; }
           });
         } 
-        
         if (!dataKelas && idDokumen) {
           const docSnap = await getDoc(doc(db, "classes", idDokumen));
           if (docSnap.exists()) { dataKelas = docSnap.data(); }
@@ -142,33 +233,68 @@
           let btnBook = '';
           let badgeText = '';
           let badgeClass = '';
+          let isBisaBooking = false;
 
           if (isEventSelesai) {
-            badgeText = 'Event Selesai';
-            badgeClass = 'badge-finished';
+            badgeText = 'Event Selesai'; badgeClass = 'badge-finished';
             btnBook = `<button class="btn-book-large btn-finished" disabled>Event Telah Selesai</button>`;
           } else if (!isActive) {
-            badgeText = 'Coming Soon';
-            badgeClass = 'badge-coming-soon';
+            badgeText = 'Coming Soon'; badgeClass = 'badge-coming-soon';
             btnBook = `<button class="btn-book-large btn-coming-soon" disabled>Segera Hadir</button>`;
           } else if (isKuotaHabis) {
-            badgeText = 'Kuota Habis';
-            badgeClass = 'badge-inactive';
+            badgeText = 'Kuota Habis'; badgeClass = 'badge-inactive';
             btnBook = `<button class="btn-book-large btn-disabled" disabled>Kuota Habis</button>`;
           } else {
-            badgeText = 'Tersedia';
-            badgeClass = 'badge-active';
+            badgeText = 'Tersedia'; badgeClass = 'badge-active';
+            isBisaBooking = true;
             btnBook = `<a href="form-booking.html?kelas=${encodeURIComponent(dataKelas.nama)}&harga=${dataKelas.harga}&hargaBundling=${dataKelas.hargaBundling || 0}&id=${idDokumen}&kategori=${encodeURIComponent(dataKelas.kategori || 'Yoga')}" class="btn-book-large btn-active">Book Now</a>`;
           }
 
           const hargaBundlingRupiah = dataKelas.hargaBundling ? 'Rp ' + dataKelas.hargaBundling.toLocaleString('id-ID') : null;
 
+          // --- LOGIKA SLIDER ---
+          // Untuk saat ini, karena cuma ada 1 gambar di database (data.gambar), 
+          // kita loop gambar itu 3x biar slider-nya berfungsi sebagai demo.
+          // Nanti kalau udah ada sistem multi-upload, tinggal ganti array `sliderImages` dengan data dari database.
+          const sliderImages = [dataKelas.gambar, dataKelas.gambar, dataKelas.gambar]; 
+          
+          let slidesHtml = '';
+          let dotsHtml = '';
+          sliderImages.forEach((img, index) => {
+            slidesHtml += `<img src="${img}" alt="Foto Event ${index + 1}">`;
+            dotsHtml += `<span class="dot ${index === 0 ? 'active' : ''}" onclick="goToSlide(${index})"></span>`;
+          });
+
+          // --- LOGIKA GOOGLE CALENDAR ---
+          const calStart = getCalendarDate(dataKelas.tanggal, dataKelas.jam);
+          const calEnd = calStart; // Bisa disesuaikan durasinya
+          const calTitle = encodeURIComponent(dataKelas.nama);
+          const calLoc = encodeURIComponent(dataKelas.lokasi || '');
+          const calDetails = encodeURIComponent('Event Selaras Wellness Club');
+          const gCalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${calTitle}&dates=${calStart}/${calEnd}&details=${calDetails}&location=${calLoc}&sf=true&output=xml`;
+          
+          // --- LOGIKA PETA ---
+          const mapQuery = encodeURIComponent(dataKelas.lokasi || 'Bandung');
+          const mapUrl = `https://maps.google.com/maps?q=${mapQuery}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+
           container.innerHTML = `
-            <div class="detail-img" style="background-image: url('${dataKelas.gambar}');">
-              <div class="detail-badge ${badgeClass}">${badgeText}</div>
+            <!-- KIRI: SLIDER -->
+            <div class="editorial-gallery">
+              <div class="slider-container">
+                <div class="slider-track" id="sliderTrack">
+                  ${slidesHtml}
+                </div>
+                <button class="slider-btn prev" onclick="moveSlide(-1)">&#10094;</button>
+                <button class="slider-btn next" onclick="moveSlide(1)">&#10095;</button>
+                <div class="slider-dots" id="sliderDots">
+                  ${dotsHtml}
+                </div>
+              </div>
             </div>
-            
-            <div class="detail-info">
+
+            <!-- KANAN: KONTEN -->
+            <div class="editorial-info">
+              <div class="detail-badge ${badgeClass}">${badgeText}</div>
               <h1>${dataKelas.nama}</h1>
               
               <div class="info-meta">
@@ -178,25 +304,60 @@
                 <div class="info-meta-item">🎟️ Sisa ${dataKelas.kuotaTersisa || 0} Kuota</div>
               </div>
               
-              <div class="detail-desc">${dataKelas.deskripsi || 'Belum ada deskripsi detail untuk Event ini. Silakan hubungi admin untuk informasi lebih lanjut.'}</div>
-              
               <div class="detail-price-box">
                 <div class="price-row">
                   <span class="price-title">Harga Satuan</span>
                   <span class="price-amount">Rp ${dataKelas.harga.toLocaleString('id-ID')}</span>
                 </div>
-                
                 ${hargaBundlingRupiah ? `
                 <div class="price-row price-bundling">
                   <span class="price-title">Bundling (2 Orang)</span>
                   <span class="price-amount">${hargaBundlingRupiah}</span>
-                </div>
-                ` : ''}
+                </div>` : ''}
               </div>
 
               ${btnBook}
+              
+              <a href="${gCalUrl}" target="_blank" class="btn-calendar">
+                📅 Simpan ke Google Calendar
+              </a>
+
+              <div class="detail-desc">${dataKelas.deskripsi || 'Belum ada deskripsi detail untuk Event ini. Silakan hubungi admin untuk informasi lebih lanjut.'}</div>
+
+              <div class="map-section">
+                <h3>📍 Lokasi Event</h3>
+                <div class="map-container">
+                  <iframe src="${mapUrl}" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+              </div>
             </div>
           `;
+
+          // --- INISIALISASI SLIDER JS ---
+          window.currentSlide = 0;
+          const totalSlides = sliderImages.length;
+          window.sliderTrack = document.getElementById('sliderTrack');
+          window.sliderDots = document.querySelectorAll('.dot');
+
+          window.moveSlide = function(direction) {
+            window.currentSlide += direction;
+            if (window.currentSlide >= totalSlides) window.currentSlide = 0;
+            if (window.currentSlide < 0) window.currentSlide = totalSlides - 1;
+            updateSlider();
+          };
+
+          window.goToSlide = function(index) {
+            window.currentSlide = index;
+            updateSlider();
+          };
+
+          function updateSlider() {
+            window.sliderTrack.style.transform = `translateX(-${window.currentSlide * 100}%)`;
+            window.sliderDots.forEach((dot, i) => {
+              dot.classList.toggle('active', i === window.currentSlide);
+            });
+          }
+
         } else {
           container.innerHTML = '<p>Event tidak ditemukan.</p>';
         }
