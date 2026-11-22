@@ -138,7 +138,7 @@
 
         <div class="form-group">
           <label>Ganti Gambar (Biarkan kosong jika tidak diganti)</label>
-          <input type="file" id="inpGambarBaru" class="form-control" accept="image/*" style="background: #fff;">
+          <input type="file" id="inpGambarBaru" class="form-control" accept="image/*" multiple style="background: #fff;">
         </div>
 
         <div class="form-group">
@@ -198,18 +198,23 @@
       btnSimpan.disabled = true;
 
       try {
-        let newImageUrl = null;
-        const fileGambar = document.getElementById('inpGambarBaru').files[0];
+        let newImageUrls = null;
+        const files = document.getElementById('inpGambarBaru').files;
 
-        if (fileGambar) {
-          const cloudName = 'd4cltmgp';
-          const uploadPreset = 'selaras_bukti';
-          const formData = new FormData();
-          formData.append('file', fileGambar);
-          formData.append('upload_preset', uploadPreset);
-          const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: 'POST', body: formData });
-          const data = await response.json();
-          newImageUrl = data.secure_url;
+        if (files.length > 0) {
+          newImageUrls = [];
+          for (let i = 0; i < files.length; i++) {
+            const formData = new FormData();
+            formData.append('file', files[i]);
+            formData.append('upload_preset', 'selaras_bukti');
+            
+            const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+              method: 'POST',
+              body: formData
+            });
+            const data = await response.json();
+            newImageUrls.push(data.secure_url);
+          }
         }
 
         const kuotaAwalBaru = parseInt(document.getElementById('inpKuotaAwal').value);
@@ -242,7 +247,10 @@
           deskripsi: document.getElementById('inpDeskripsi').value
         };
 
-        if (newImageUrl) updateData.gambar = newImageUrl;
+        if (newImageUrls) {
+          updateData.gambar = newImageUrls[0]; // Update thumbnail
+          updateData.gambarArray = newImageUrls; // Update array slider
+        
 
         await updateDoc(doc(db, "classes", idKelas), updateData);
         alert(`Berhasil! Total pendaftar valid: ${totalPeserta} orang. Sisa kuota: ${kuotaFinal}.`);

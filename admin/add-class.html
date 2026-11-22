@@ -118,7 +118,8 @@
 
         <div class="form-group">
           <label>Upload Gambar Kelas *</label>
-          <input type="file" id="gambar" class="form-control" accept="image/*" required style="background: #fff;">
+          <input type="file" id="gambar" class="form-control" accept="image/*" multiple required style="background: #fff;">
+            <small style="font-size: 0.75rem; color: #64748b;">Bisa pilih lebih dari 1 foto (maks 5).</small>
         </div>
 
         <div class="form-group">
@@ -145,23 +146,30 @@
       btnSimpan.disabled = true;
 
       try {
-        const fileGambar = document.getElementById('gambar').files[0];
-        if (!fileGambar) { alert("Pilih gambar dulu!"); return; }
+        const files = document.getElementById('gambar').files;
+        if (files.length === 0) { alert("Pilih gambar dulu!"); return; }
 
         const cloudName = 'd4cltmgp'; // CLOUD NAME KAMU
         const uploadPreset = 'selaras_bukti';
+        
+        let imageUrls = []; // Array buat nampung semua link gambar
 
-        const formData = new FormData();
-        formData.append('file', fileGambar);
-        formData.append('upload_preset', uploadPreset);
+        btnSimpan.innerText = 'Mengunggah gambar...';
 
-        const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-          method: 'POST',
-          body: formData
-        });
+        // Looping upload semua file yang dipilih
+        for (let i = 0; i < files.length; i++) {
+          const formData = new FormData();
+          formData.append('file', files[i]);
+          formData.append('upload_preset', uploadPreset);
+
+          const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+            method: 'POST',
+            body: formData
+          });
 
         const cloudinaryData = await response.json();
-        const imageUrl = cloudinaryData.secure_url;
+          imageUrls.push(cloudinaryData.secure_url);
+        }
 
         btnSimpan.innerText = 'Menyimpan data...';
 
@@ -180,7 +188,8 @@
           kodePromo: document.getElementById('kodePromo').value.trim().toUpperCase(),
           diskonPromo: parseInt(document.getElementById('diskonPromo').value) || 0,
           kuotaPromo: parseInt(document.getElementById('kuotaPromo').value) || 0,
-          gambar: imageUrl,
+          gambar: imageUrls[0],
+          gambarArray: imageUrls,
           deskripsi: document.getElementById('deskripsi').value,
           statusAktif: true,
           createdAt: new Date()

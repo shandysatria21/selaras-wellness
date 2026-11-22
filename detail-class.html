@@ -256,7 +256,10 @@
           // Untuk saat ini, karena cuma ada 1 gambar di database (data.gambar), 
           // kita loop gambar itu 3x biar slider-nya berfungsi sebagai demo.
           // Nanti kalau udah ada sistem multi-upload, tinggal ganti array `sliderImages` dengan data dari database.
-          const sliderImages = [dataKelas.gambar, dataKelas.gambar, dataKelas.gambar]; 
+          // Kalau ada gambarArray, pakai itu. Kalau nggak ada (data lama), pakai gambar utama.
+          const sliderImages = dataKelas.gambarArray && dataKelas.gambarArray.length > 0 
+            ? dataKelas.gambarArray 
+            : [dataKelas.gambar]; 
           
           let slidesHtml = '';
           let dotsHtml = '';
