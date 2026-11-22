@@ -96,7 +96,7 @@
           <label>Kuota (Orang) *</label>
           <input type="number" id="kuota" class="form-control" placeholder="20" required>
         </div>
-                <!-- SECTION KODE PROMO -->
+
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
           <h4 style="margin-bottom: 10px; font-size: 0.95rem; color: #0f172a;">Promo (Opsional)</h4>
           <div style="display: flex; gap: 10px; flex-wrap: wrap;">
@@ -113,13 +113,12 @@
               <input type="number" id="kuotaPromo" class="form-control" placeholder="5">
             </div>
           </div>
-          <small style="font-size: 0.75rem; color: #64748b;">Biarkan kosong jika tidak ada promo.</small>
         </div>
 
         <div class="form-group">
-          <label>Upload Gambar Kelas *</label>
+          <label>Upload Gambar Kelas * (Bisa pilih lebih dari 1)</label>
           <input type="file" id="gambar" class="form-control" accept="image/*" multiple required style="background: #fff;">
-            <small style="font-size: 0.75rem; color: #64748b;">Bisa pilih lebih dari 1 foto (maks 5).</small>
+          <small style="font-size: 0.75rem; color: #64748b;">Pilih maksimal 5 foto. Foto pertama akan jadi thumbnail utama.</small>
         </div>
 
         <div class="form-group">
@@ -142,7 +141,7 @@
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      btnSimpan.innerText = 'Mengunggah...';
+      btnSimpan.innerText = 'Mengunggah gambar...';
       btnSimpan.disabled = true;
 
       try {
@@ -151,12 +150,9 @@
 
         const cloudName = 'd4cltmgp'; // CLOUD NAME KAMU
         const uploadPreset = 'selaras_bukti';
-        
-        let imageUrls = []; // Array buat nampung semua link gambar
+        let imageUrls = [];
 
-        btnSimpan.innerText = 'Mengunggah gambar...';
-
-        // Looping upload semua file yang dipilih
+        // Looping untuk upload semua gambar yang dipilih
         for (let i = 0; i < files.length; i++) {
           const formData = new FormData();
           formData.append('file', files[i]);
@@ -167,14 +163,14 @@
             body: formData
           });
 
-        const cloudinaryData = await response.json();
+          const cloudinaryData = await response.json();
           imageUrls.push(cloudinaryData.secure_url);
         }
 
         btnSimpan.innerText = 'Menyimpan data...';
 
         await addDoc(collection(db, "classes"), {
-          adminKey: 'SELARAS_ADMIN_2026', // TAMBAHKAN INI
+          adminKey: 'SELARAS_ADMIN_2026',
           nama: document.getElementById('nama').value,
           kategori: document.getElementById('kategori').value,
           coach: document.getElementById('coach').value,
@@ -188,8 +184,10 @@
           kodePromo: document.getElementById('kodePromo').value.trim().toUpperCase(),
           diskonPromo: parseInt(document.getElementById('diskonPromo').value) || 0,
           kuotaPromo: parseInt(document.getElementById('kuotaPromo').value) || 0,
-          gambar: imageUrls[0],
-          gambarArray: imageUrls,
+          
+          gambar: imageUrls[0], // Gambar pertama untuk card
+          gambarArray: imageUrls, // Semua gambar untuk slider
+          
           deskripsi: document.getElementById('deskripsi').value,
           statusAktif: true,
           createdAt: new Date()
